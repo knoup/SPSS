@@ -22,7 +22,7 @@ namespace spss {
           m_rotateText{false},
           m_rotationDegrees{10},
           m_highlightColor{sf::Color::Yellow},
-          m_highlightScale{1.0f} {
+          m_highlightScale{1.0F} {
 
         m_window.setView(m_view);
         m_titleText.setFont(m_font);
@@ -111,7 +111,7 @@ namespace spss {
     void MenuState::adjustViewport() {
         float titleY{m_view.getSize().y / 10};
         float top{titleY + m_titleText.getLocalBounds().height};
-        m_view.setViewport({0.f, top / m_view.getSize().y, 1.f, 1.f});
+        m_view.setViewport({0.F, top / m_view.getSize().y, 1.F, 1.F});
     }
 
     void MenuState::resetTitlePosition() {
@@ -124,12 +124,12 @@ namespace spss {
             return;
         }
 
-        sf::Vector2f pos{m_view.getCenter().x,0.f};
+        sf::Vector2f pos{m_view.getCenter().x,0.F};
 
         auto it = m_menuItems.begin();
         while (it != m_menuItems.end()) {
             (*it).text.setPosition(pos);
-            pos.y += 1.25 * m_font.getLineSpacing((*it).text.getCharacterSize());
+            pos.y += 1.25F * m_font.getLineSpacing((*it).text.getCharacterSize());
             ++it;
         }
     }
@@ -145,7 +145,7 @@ namespace spss {
                     (m_menuItems.back()).text.getPosition().y};
 
         lower -= upper;
-        lower -= 1.25 * m_font.getLineSpacing(m_titleText.getCharacterSize());
+        lower -= 1.25F * m_font.getLineSpacing(m_titleText.getCharacterSize());
         lower -= m_titleText.getLocalBounds().height * 2;
 
         float diff{float(abs(upper-lower))};
@@ -174,9 +174,9 @@ namespace spss {
         m_titleText.setPosition(titlePos);
 
         upper += m_titleText.getLocalBounds().height;
-        upper += 1.25 * m_font.getLineSpacing(m_titleText.getCharacterSize());
+        upper += 1.25F * m_font.getLineSpacing(m_titleText.getCharacterSize());
 
-        m_view.setViewport({0.f, (upper / m_view.getSize().y), 1.f, 1.f});
+        m_view.setViewport({0.F, (upper / m_view.getSize().y), 1.F, 1.F});
     }
 
     void MenuState::detectMouseClicks() {
@@ -187,7 +187,7 @@ namespace spss {
             /// near the edge, we'll set the scale to the default level
             /// when detecting if it's moused over.
             //////////////////////////////////////////////////////////////
-            menuItem.text.setScale({1.0f, 1.0f});
+            menuItem.text.setScale({1.0F, 1.0F});
 
             if (isMousedOver(menuItem) && !isFunctionNull(menuItem)) {
                 menuItem.mousedOver = true;
@@ -210,7 +210,7 @@ namespace spss {
                 else {
                     menuItem.text.setFillColor(sf::Color::White);
                 }
-                menuItem.text.setScale({1.0f, 1.0f});
+                menuItem.text.setScale({1.0F, 1.0F});
             }
         }
     }
@@ -256,10 +256,10 @@ namespace spss {
             }
 
             if (rotatingLeft) {
-                deltaRotation = -1 * (f_timeslice / 1000.f);
+                deltaRotation = -1 * (f_timeslice / 1000.F);
             }
             else {
-                deltaRotation = (f_timeslice / 1000.f);
+                deltaRotation = (f_timeslice / 1000.F);
             }
             m_titleText.rotate(deltaRotation);
         }
@@ -280,12 +280,12 @@ namespace spss {
             }
 
             if (scalingDown) {
-                deltaScale.x -= f_timeslice / 10000.f;
-                deltaScale.y -= f_timeslice / 10000.f;
+                deltaScale.x -= f_timeslice / 10000.F;
+                deltaScale.y -= f_timeslice / 10000.F;
             }
             else {
-                deltaScale.x += f_timeslice / 10000.f;
-                deltaScale.y += f_timeslice / 10000.f;
+                deltaScale.x += f_timeslice / 10000.F;
+                deltaScale.y += f_timeslice / 10000.F;
             }
             m_titleText.setScale(deltaScale);
         }

@@ -282,6 +282,19 @@ namespace spss {
             void setActive(bool _b);
 
         private:
+			////////////////////////////////////////////////////////////
+			/// \brief Handles user input given the unicode code.
+			///
+			/// Depending on whether a sequence is selected, or if the 
+			/// key pressed is the backspace key, this function may call
+			/// deleteSelection before insert
+			///
+			/// \see deleteSelection
+			/// \see insert
+			///
+			////////////////////////////////////////////////////////////
+			void handleInput(sf::Uint32 _unicode);
+
             ////////////////////////////////////////////////////////////
             /// \brief Sets the text position.
             ///

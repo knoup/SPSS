@@ -202,37 +202,16 @@ namespace spss {
             }
 
             case sf::Event::TextEntered: {
-                if (!m_enteringText) {
-                    break;
-                }
-
-                //Since typing "A" counts as text entry, we'll see if
-                //CTRL is held too and not treat it as such if that's the
-                //case. If it isn't, we'll delete the selection.
-                if (sequenceSelected() && !keyPressed(LCTRL)) {
-                    deleteSelection();
-                }
-
-                //8 = backspace
-                //for some reason, 127 (delete)
-                //isn't registering
-                if (_event.text.unicode == 8) {
-                    deleteSelection();
-                }
-
-                else if (validInsertion(_event.text.unicode)) {
-                    if (sequenceSelected()) {
-                        deleteSelection();
-                    }
-
-                    insert(static_cast<char>(_event.text.unicode));
-                }
-
+				if (!m_enteringText) {
+					break;
+				}
+				handleInput(_event.text.unicode);
                 break;
             }
 
             case sf::Event::Resized: {
                 updateTransparency();
+				break;
             }
 
             default:
@@ -286,6 +265,30 @@ namespace spss {
         m_enteringText = _b;
     }
 
+	void TextEntryBox::handleInput(sf::Uint32 _unicode) {
+		//Since typing "A" counts as text entry, we'll see if
+		//CTRL is held too and not treat it as such if that's the
+		//case. If it isn't, we'll delete the selection.
+		if (sequenceSelected() && !keyPressed(LCTRL)) {
+			deleteSelection();
+		}
+
+		//8 = backspace
+		//for some reason, 127 (delete)
+		//isn't registering
+		if (_unicode == 8) {
+			deleteSelection();
+		}
+
+		else if (validInsertion(_unicode)) {
+			if (sequenceSelected()) {
+				deleteSelection();
+			}
+
+			insert(static_cast<char>(_unicode));
+		}
+	}
+
     void TextEntryBox::setTextPosition(const sf::Vector2f& _pos) {
         m_text.setPosition(_pos);
         updateCaret();
@@ -329,8 +332,8 @@ namespace spss {
         m_caret.setPosition(caretPos);
 
         if (m_enteringText) {
-            static bool caretAlphaDecreasing{true};
-            static int  caretAlphaValue{255};
+            static bool      caretAlphaDecreasing{true};
+            static sf::Uint8 caretAlphaValue{255};
 
             if (caretAlphaDecreasing) {
                 caretAlphaValue -= 5;

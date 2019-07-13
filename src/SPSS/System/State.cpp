@@ -16,22 +16,15 @@ namespace spss {
     }
 
     void State::getInput(sf::Event& _event) {
-        switch (_event.type) {
-            case sf::Event::Resized: {
-                sf::Vector2u newSize{_event.size.width, _event.size.height};
-                if (newSize.x < MIN_WIDTH) {
-                    newSize.x = MIN_WIDTH;
-                }
-                if (newSize.y < MIN_HEIGHT) {
-                    newSize.y = MIN_HEIGHT;
-                }
-                onResize(newSize);
-                break;
+        if (_event.type == sf::Event::Resized) {
+			sf::Vector2u newSize{_event.size.width, _event.size.height};
+            if (newSize.x < MIN_WIDTH) {
+                newSize.x = MIN_WIDTH;
             }
-
-            default:
-                break;
-
+            if (newSize.y < MIN_HEIGHT) {
+                newSize.y = MIN_HEIGHT;
+            }
+            onResize(newSize);
         }
     }
 
