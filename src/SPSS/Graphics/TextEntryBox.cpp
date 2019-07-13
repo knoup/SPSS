@@ -80,7 +80,7 @@ namespace spss {
     }
 
     void TextEntryBox::setCaretColor(const sf::Color& _color) {
-        m_caret.setColor(_color);
+        m_caret.setFillColor(_color);
     }
 
     void TextEntryBox::setFillColor(const sf::Color& _c) {

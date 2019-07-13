@@ -185,7 +185,7 @@ namespace spss {
             /// In order to avoid the menu items being rapidly detected
             /// as moused over and then not moused over when the mouse is
             /// near the edge, we'll set the scale to the default level
-            /// when detecting if its moused over.
+            /// when detecting if it's moused over.
             //////////////////////////////////////////////////////////////
             menuItem.text.setScale({1.0f, 1.0f});
 
@@ -350,7 +350,7 @@ namespace spss {
 
     void MenuState::setTitleColor(sf::Color _color) {
         setRandomisedColors(false);
-        m_titleText.setColor(_color);
+        m_titleText.setFillColor(_color);
     }
 
     void MenuState::setMenuItemsSize(unsigned int _size) {
@@ -361,7 +361,7 @@ namespace spss {
 
     void MenuState::setMenuItemsColor(sf::Color _color) {
         for(auto& item : m_menuItems) {
-            item.text.setColor(_color);
+            item.text.setFillColor(_color);
         }
     }
 

@@ -22,16 +22,16 @@ SPSS is based on the idea of a **Core** and **States**. A core is constructed wi
 
 `spss::Core core{window, 16};`
 
-spss::State is an abstract class that the user is meant to derive their desired states from. Overloads are required for the destructor, getInput(), update(), and draw() functions. Once a user has defined their own state, they can push it to the core's state stack like so:
+spss::State is an abstract class that the user is meant to derive their desired states from. Overloads are required for the destructor, `getInput()`, `update()`, and `draw()`. Once a user has defined their own state, they can push it to the core's state stack like so:
 
 ```
 auto state{std::make_unique<SampleState>(window)};
 core.pushState(std::move(state));
 ```
 
-We can then call `core.run()`, which will begin the program loop. By default, it performs the getInput() -> update() -> draw() loop using a fixed timestep, calling the state at the top of the state stack's versions of those functions. It can be overloaded should the user require more specific fine control over the loop.
+We can then call `core.run()`, which will begin the program loop. By default, it performs the `getInput()` -> `update()` -> `draw()` loop using a fixed timestep, calling the state at the top of the state stack's versions of those functions. It can be overloaded should the user require more specific fine control over the loop.
 
-Sometimes, we'll want to still draw the previous state behind the current state, such as in a pause menu. This is possible by calling `State::setDrawnInBackground()` (also see `State::setUpdatedInBackground()` and `State::setGetInputInBackground()`).
+Sometimes, we'll want to still draw the previous state behind the current state, such as in a pause menu. This is possible by calling State's `setDrawnInBackground()` (also see `setUpdatedInBackground()` and `setGetInputInBackground()`).
 
 ## MenuState
 
@@ -42,19 +42,21 @@ void say(const std::string& _str) {
 	std::cout << _str << std::endl;
 }
 
-auto menuState{std::make_unique<spss::MenuState>(window, font, "Title Text")};
+int main() {
+	auto menuState{std::make_unique<spss::MenuState>(window, font, "Title Text")};
 
-//We can bind functions to menu items and provide an optional keyboard shortcut
-menuState->addMenuItem("Why, hello there!", std::bind(say, "Hi"), sf::Keyboard::H);
+	//We can bind functions to menu items and provide an optional keyboard shortcut
+	menuState->addMenuItem("Why, hello there!", std::bind(say, "Hi"), sf::Keyboard::H);
 
-menuState->addMenuItem("This does nothing");
-menuState->addGap();
+	menuState->addMenuItem("This does nothing");
+	menuState->addGap();
 
-//We can also bind member functions
-menuState->addMenuItem("Quit", std::bind(&spss::Core::exit, &core));
+	//We can also bind member functions
+	menuState->addMenuItem("Quit", std::bind(&spss::Core::exit, &core));
 
-core.pushState(std::move(menuState));
-core.run();
+	core.pushState(std::move(menuState));
+	core.run();
+}
 ```
 
 ![img](https://i.imgur.com/TmUWMYA.png)
