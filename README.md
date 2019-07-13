@@ -42,11 +42,11 @@ void say(const std::string& _str) {
 	std::cout << _str << std::endl;
 }
 
-auto menuState{std::make_unique<MenuState>(window, font, "Title Text")};
+auto menuState{std::make_unique<spss::MenuState>(window, font, "Title Text")};
 
 //We can bind functions to menu items and provide an optional keyboard shortcut
-
 menuState->addMenuItem("Why, hello there!", std::bind(say, "Hi"), sf::Keyboard::H);
+
 menuState->addMenuItem("This does nothing");
 menuState->addGap();
 
