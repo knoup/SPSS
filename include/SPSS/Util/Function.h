@@ -12,10 +12,9 @@
 
 namespace spss {
 
-    template <typename ...Args>
-    using Function = std::function<void(Args...)>;
+	template<typename... Args>
+	using Function = std::function<void(Args...)>;
 
 } //namespace spss
-
 
 #endif // SPSS_FUNCTION_H_INCLUDED

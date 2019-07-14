@@ -31,326 +31,327 @@
 
 namespace spss {
 
-    class MenuState : public State {
+	class MenuState : public State {
+	  private:
+		////////////////////////////////////////////////////////////
+		///
+		/// We'll represent the menu items with its own struct
+		///
+		/// The first element, a boolean, represents whether the
+		/// element is currently being moused over or not
+		///
+		/// The second element, a function pointer, will be used to
+		/// determine what happens when the item is clicked on
+		///
+		/// The third element, an sf::Text object, is what the user
+		/// sees on the menu screen
+		///
+		/// The fourth and final element will be an integer representing
+		/// a key (sf::Keyboard). This is optional and can be used as a
+		/// shortcut to simulate a click on this MenuItem
+		///
+		////////////////////////////////////////////////////////////
+		struct MenuItem {
+			MenuItem(bool               _mousedOver,
+			         Function<std::any> _boundFunction,
+			         sf::Text&          _text,
+			         int                _keyCode)
+			            : mousedOver{_mousedOver},
+			              boundFunction{_boundFunction},
+			              text{_text},
+			              keyCode{_keyCode} {};
 
-        private:
-            ////////////////////////////////////////////////////////////
-            ///
-            /// We'll represent the menu items with its own struct
-            ///
-            /// The first element, a boolean, represents whether the
-            /// element is currently being moused over or not
-            ///
-            /// The second element, a function pointer, will be used to
-            /// determine what happens when the item is clicked on
-            ///
-            /// The third element, an sf::Text object, is what the user
-            /// sees on the menu screen
-            ///
-            /// The fourth and final element will be an integer representing
-            /// a key (sf::Keyboard). This is optional and can be used as a
-            /// shortcut to simulate a click on this MenuItem
-            ///
-            ////////////////////////////////////////////////////////////
-            struct MenuItem {
-                MenuItem(bool               _mousedOver,
-                         Function<std::any> _boundFunction,
-                         sf::Text&          _text,
-                         int                _keyCode) :
-                    mousedOver{_mousedOver},
-                    boundFunction{_boundFunction},
-                    text{_text},
-                    keyCode{_keyCode} {};
+			bool               mousedOver;
+			Function<std::any> boundFunction;
+			sf::Text           text;
+			int                keyCode;
+		};
 
-                bool               mousedOver;
-                Function<std::any> boundFunction;
-                sf::Text           text;
-                int                keyCode;
-            };
-        public:
-            ////////////////////////////////////////////////////////////
-            /// \brief Construct the menu state
-            ///
-            /// In order to be able to call a class's functions, a
-            /// pointer to an instance of the class needs to be
-            /// supplied. This is the second argument.
-            ///
-            ///
-            /// \param _w        RenderWindow used to draw the state
-            /// \param _o        The callable function scope
-            /// \param _f        Font used to draw text
-            /// \param _titleStr The default title string
-            ///
-            ////////////////////////////////////////////////////////////
-            MenuState(sf::RenderWindow&  _w,
-                      const sf::Font&    _f,
-                      const std::string& _titleStr = "");
+	  public:
+		////////////////////////////////////////////////////////////
+		/// \brief Construct the menu state
+		///
+		/// In order to be able to call a class's functions, a
+		/// pointer to an instance of the class needs to be
+		/// supplied. This is the second argument.
+		///
+		///
+		/// \param _w        RenderWindow used to draw the state
+		/// \param _o        The callable function scope
+		/// \param _f        Font used to draw text
+		/// \param _titleStr The default title string
+		///
+		////////////////////////////////////////////////////////////
+		MenuState(sf::RenderWindow&  _w,
+		          const sf::Font&    _f,
+		          const std::string& _titleStr = "");
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Get input
-            ///
-            /// \param A reference to a captured event
-            ///
-            ////////////////////////////////////////////////////////////
-            virtual void getInput(sf::Event& _event);
+		////////////////////////////////////////////////////////////
+		/// \brief Get input
+		///
+		/// \param A reference to a captured event
+		///
+		////////////////////////////////////////////////////////////
+		virtual void getInput(sf::Event& _event);
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Update
-            ///
-            /// \param Timeslice value
-            ///
-            ////////////////////////////////////////////////////////////
-            virtual void update(int _timeslice);
+		////////////////////////////////////////////////////////////
+		/// \brief Update
+		///
+		/// \param Timeslice value
+		///
+		////////////////////////////////////////////////////////////
+		virtual void update(int _timeslice);
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Draw
-            ///
-            ////////////////////////////////////////////////////////////
-            virtual void draw();
+		////////////////////////////////////////////////////////////
+		/// \brief Draw
+		///
+		////////////////////////////////////////////////////////////
+		virtual void draw();
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Add a clickable menu item
-            ///
-            /// Creates a menu item that, upon being clicked, can call
-            /// any public member function of the function scope object
-            /// (the template used to create this class). A null function
-            /// can be specified, in which case nothing will happen upon
-            /// click. Additionally, a sf::Keyboard keycode can also be
-            /// provided, which will emulate a mouse click on this item
-            /// upon being pressed.
-            ///
-            ///
-            /// \param _string  The menu item's description
-            /// \param f        The callable function scope
-            /// \param _keyCode The keyboard shortcut to emulate a mouse click
-            ///
-            ////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////
+		/// \brief Add a clickable menu item
+		///
+		/// Creates a menu item that, upon being clicked, can call
+		/// any public member function of the function scope object
+		/// (the template used to create this class). A null function
+		/// can be specified, in which case nothing will happen upon
+		/// click. Additionally, a sf::Keyboard keycode can also be
+		/// provided, which will emulate a mouse click on this item
+		/// upon being pressed.
+		///
+		///
+		/// \param _string  The menu item's description
+		/// \param f        The callable function scope
+		/// \param _keyCode The keyboard shortcut to emulate a mouse click
+		///
+		////////////////////////////////////////////////////////////
 
-            virtual void addMenuItem(const std::string&            _string,
-                                     spss::Function<std::any>      f = nullptr,
-                                     int                           _keyCode = sf::Keyboard::Unknown);
+		virtual void addMenuItem(const std::string&       _string,
+		                         spss::Function<std::any> f        = nullptr,
+		                         int                      _keyCode = sf::Keyboard::Unknown);
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Adds an empty line
-            ///
-            /// Simply a short way of calling addMenuItem("").
-            ///
-            /// \see addMenuItem
-            ///
-            ////////////////////////////////////////////////////////////
-            void addGap();
+		////////////////////////////////////////////////////////////
+		/// \brief Adds an empty line
+		///
+		/// Simply a short way of calling addMenuItem("").
+		///
+		/// \see addMenuItem
+		///
+		////////////////////////////////////////////////////////////
+		void addGap();
 
-        private:
-            ////////////////////////////////////////////////////////////
-            /// \brief Resets both m_view and m_backgroundView
-            ///
-            /// Resets both views to encompass the entirety of the new
-            /// window size.
-            ///
-            /// \param _newSize The new size of the window
-            ///
-            ////////////////////////////////////////////////////////////
-            void resetViews(sf::Vector2u _newSize);
+	  private:
+		////////////////////////////////////////////////////////////
+		/// \brief Resets both m_view and m_backgroundView
+		///
+		/// Resets both views to encompass the entirety of the new
+		/// window size.
+		///
+		/// \param _newSize The new size of the window
+		///
+		////////////////////////////////////////////////////////////
+		void resetViews(sf::Vector2u _newSize);
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Adjusts m_view's viewport
-            ///
-            /// Appropriately sets up m_view's viewport to start just
-            /// under the title text.
-            ///
-            ////////////////////////////////////////////////////////////
-            void adjustViewport();
+		////////////////////////////////////////////////////////////
+		/// \brief Adjusts m_view's viewport
+		///
+		/// Appropriately sets up m_view's viewport to start just
+		/// under the title text.
+		///
+		////////////////////////////////////////////////////////////
+		void adjustViewport();
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Resets the title text's position
-            ///
-            /// Positions the title text at the very top of the window.
-            ///
-            ////////////////////////////////////////////////////////////
-            void resetTitlePosition();
+		////////////////////////////////////////////////////////////
+		/// \brief Resets the title text's position
+		///
+		/// Positions the title text at the very top of the window.
+		///
+		////////////////////////////////////////////////////////////
+		void resetTitlePosition();
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Adjusts the position of the menu items
-            ///
-            /// Positions the menu items in order with the appropriate
-            /// vertical spacing between them.
-            ///
-            ////////////////////////////////////////////////////////////
-            void adjustMenuItems();
+		////////////////////////////////////////////////////////////
+		/// \brief Adjusts the position of the menu items
+		///
+		/// Positions the menu items in order with the appropriate
+		/// vertical spacing between them.
+		///
+		////////////////////////////////////////////////////////////
+		void adjustMenuItems();
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Centers the title text and menu items
-            ///
-            /// Appropriately positions the title text and adjusts
-            /// m_view's viewport so that the distance between the top
-            /// of the window and the top of the title text is roughly
-            /// equivalent to the distance between the bottom of the
-            /// window and the bottom of the last menu item.
-            ///
-            ////////////////////////////////////////////////////////////
-            void adjustBoundaries();
+		////////////////////////////////////////////////////////////
+		/// \brief Centers the title text and menu items
+		///
+		/// Appropriately positions the title text and adjusts
+		/// m_view's viewport so that the distance between the top
+		/// of the window and the top of the title text is roughly
+		/// equivalent to the distance between the bottom of the
+		/// window and the bottom of the last menu item.
+		///
+		////////////////////////////////////////////////////////////
+		void adjustBoundaries();
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Detects mouseclicks
-            ///
-            /// Detects mouseclicks and mouseovers
-            ///
-            ////////////////////////////////////////////////////////////
-            void detectMouseClicks();
+		////////////////////////////////////////////////////////////
+		/// \brief Detects mouseclicks
+		///
+		/// Detects mouseclicks and mouseovers
+		///
+		////////////////////////////////////////////////////////////
+		void detectMouseClicks();
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Update the title text
-            ///
-            /// Randomises title color, scale, and rotation if these
-            /// options have been enabled.
-            ///
-            /// \param _timeslice The timeslice value
-            ///
-            ///
-            /// \see setRandomisedColors
-            /// \see setScalingText
-            /// \see setRotatingText
-            ///
-            ////////////////////////////////////////////////////////////
-            void updateTitleText(int _timeslice);
+		////////////////////////////////////////////////////////////
+		/// \brief Update the title text
+		///
+		/// Randomises title color, scale, and rotation if these
+		/// options have been enabled.
+		///
+		/// \param _timeslice The timeslice value
+		///
+		///
+		/// \see setRandomisedColors
+		/// \see setScalingText
+		/// \see setRotatingText
+		///
+		////////////////////////////////////////////////////////////
+		void updateTitleText(int _timeslice);
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Checks if a menu item is being moused over
-            ///
-            /// \param _menuItem The menu item to check
-            ///
-            ////////////////////////////////////////////////////////////
-            bool isMousedOver(const MenuItem& _menuItem) const;
+		////////////////////////////////////////////////////////////
+		/// \brief Checks if a menu item is being moused over
+		///
+		/// \param _menuItem The menu item to check
+		///
+		////////////////////////////////////////////////////////////
+		bool isMousedOver(const MenuItem& _menuItem) const;
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Checks if a menu item's bound function is null
-            ///
-            /// \param _menuItem The menu item to check
-            ///
-            ////////////////////////////////////////////////////////////
-            bool isFunctionNull(const MenuItem& _menuItem) const;
+		////////////////////////////////////////////////////////////
+		/// \brief Checks if a menu item's bound function is null
+		///
+		/// \param _menuItem The menu item to check
+		///
+		////////////////////////////////////////////////////////////
+		bool isFunctionNull(const MenuItem& _menuItem) const;
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Checks if an event's type is a LMB press
-            ///
-            /// \param _event The captured event
-            ///
-            ////////////////////////////////////////////////////////////
-            bool lmbPressed(sf::Event& _event);
-        protected:
-            ////////////////////////////////////////////////////////////
-            /// \brief Called when the window is resized
-            ///
-            /// \param _newSize The new window size
-            ///
-            ////////////////////////////////////////////////////////////
-            virtual void onResize(sf::Vector2u _newSize);
+		////////////////////////////////////////////////////////////
+		/// \brief Checks if an event's type is a LMB press
+		///
+		/// \param _event The captured event
+		///
+		////////////////////////////////////////////////////////////
+		bool lmbPressed(sf::Event& _event);
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Enable or disable the title text's random colors
-            ///
-            /// \param _b        The boolean value
-            /// \param _duration MS the title's color persists for before being randomised again
-            ///
-            ////////////////////////////////////////////////////////////
-            void setRandomisedColors(bool _b, int _duration = 500);
+	  protected:
+		////////////////////////////////////////////////////////////
+		/// \brief Called when the window is resized
+		///
+		/// \param _newSize The new window size
+		///
+		////////////////////////////////////////////////////////////
+		virtual void onResize(sf::Vector2u _newSize);
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Enable or disable the title text's scaling
-            ///
-            /// \param _b        The boolean value
-            /// \param _minScale The minimum possible scaling value
-            /// \param _masScale The maximum possible scaling value
-            ///
-            ////////////////////////////////////////////////////////////
-            void setScalingText(bool _b, float _minScale = 0.75, float _maxScale = 1.25);
+		////////////////////////////////////////////////////////////
+		/// \brief Enable or disable the title text's random colors
+		///
+		/// \param _b        The boolean value
+		/// \param _duration MS the title's color persists for before being randomised again
+		///
+		////////////////////////////////////////////////////////////
+		void setRandomisedColors(bool _b, int _duration = 500);
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Enable or disable the title text's rotation
-            ///
-            /// \param _b        The boolean value
-            /// \param _minScale The maximum degree of rotation
-            ///
-            ////////////////////////////////////////////////////////////
-            void setRotatingText(bool _b, float _rotationDegrees = 10);
+		////////////////////////////////////////////////////////////
+		/// \brief Enable or disable the title text's scaling
+		///
+		/// \param _b        The boolean value
+		/// \param _minScale The minimum possible scaling value
+		/// \param _masScale The maximum possible scaling value
+		///
+		////////////////////////////////////////////////////////////
+		void setScalingText(bool _b, float _minScale = 0.75, float _maxScale = 1.25);
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Set the title text string
-            ///
-            /// \param _str The new title text's string
-            ///
-            ////////////////////////////////////////////////////////////
-            void setTitleString(const std::string& _str);
+		////////////////////////////////////////////////////////////
+		/// \brief Enable or disable the title text's rotation
+		///
+		/// \param _b        The boolean value
+		/// \param _minScale The maximum degree of rotation
+		///
+		////////////////////////////////////////////////////////////
+		void setRotatingText(bool _b, float _rotationDegrees = 10);
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Set the title text size
-            ///
-            /// \param _size The new title text's size
-            ///
-            ////////////////////////////////////////////////////////////
-            void setTitleSize(unsigned int _size);
+		////////////////////////////////////////////////////////////
+		/// \brief Set the title text string
+		///
+		/// \param _str The new title text's string
+		///
+		////////////////////////////////////////////////////////////
+		void setTitleString(const std::string& _str);
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Set the title text color
-            ///
-            /// \param _color The new title text's color
-            ///
-            ////////////////////////////////////////////////////////////
-            void setTitleColor(sf::Color _color);
+		////////////////////////////////////////////////////////////
+		/// \brief Set the title text size
+		///
+		/// \param _size The new title text's size
+		///
+		////////////////////////////////////////////////////////////
+		void setTitleSize(unsigned int _size);
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Set the menu items' size
-            ///
-            /// \param _size The new menu items' size
-            ///
-            ////////////////////////////////////////////////////////////
-            void setMenuItemsSize(unsigned int _size);
+		////////////////////////////////////////////////////////////
+		/// \brief Set the title text color
+		///
+		/// \param _color The new title text's color
+		///
+		////////////////////////////////////////////////////////////
+		void setTitleColor(sf::Color _color);
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Set the menu items' color
-            ///
-            /// \param _color The new menu items' color
-            ///
-            ////////////////////////////////////////////////////////////
-            void setMenuItemsColor(sf::Color _color);
+		////////////////////////////////////////////////////////////
+		/// \brief Set the menu items' size
+		///
+		/// \param _size The new menu items' size
+		///
+		////////////////////////////////////////////////////////////
+		void setMenuItemsSize(unsigned int _size);
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Set the menu items' higlighted color
-            ///
-            /// \param _color The new menu items' higlighted color
-            ///
-            ////////////////////////////////////////////////////////////
-            void setHighlightColor(sf::Color _color);
+		////////////////////////////////////////////////////////////
+		/// \brief Set the menu items' color
+		///
+		/// \param _color The new menu items' color
+		///
+		////////////////////////////////////////////////////////////
+		void setMenuItemsColor(sf::Color _color);
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Set the menu items' highlighted scale
-            ///
-            /// \param _f The new menu items' highlighted scale
-            ///
-            ////////////////////////////////////////////////////////////
-            void setHighlightScale(float _f);
+		////////////////////////////////////////////////////////////
+		/// \brief Set the menu items' higlighted color
+		///
+		/// \param _color The new menu items' higlighted color
+		///
+		////////////////////////////////////////////////////////////
+		void setHighlightColor(sf::Color _color);
 
-            ///////////////////////////////////////////////////////////
-            //Data members --------------------------------------------
-            ///////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////
+		/// \brief Set the menu items' highlighted scale
+		///
+		/// \param _f The new menu items' highlighted scale
+		///
+		////////////////////////////////////////////////////////////
+		void setHighlightScale(float _f);
 
-        private:
-            const sf::Font&        m_font;                  ///< Font used to display the title and menu items
-            std::vector<MenuItem>  m_menuItems;             ///< The menu items
-            sf::View               m_view;                  ///< The view used to draw the menu items
-            sf::View               m_backgroundView;        ///< The view used to draw the title text
-            sf::Text               m_titleText;             ///< The title text
-            bool                   m_randomiseTextColor;    ///< Is the title's color randomised?
-            int                    m_randomColorDurationMS; ///< How many MS the title's color persists for before it is randomised again
-            bool                   m_scaleText;             ///< Is the title being scaled up and down?
-            float                  m_minScale;              ///< The title text's minimum possible scaling value
-            float                  m_maxScale;              ///< The title text's maximum possible scaling value
-            bool                   m_rotateText;            ///< Is the title text being rotated?
-            float                  m_rotationDegrees;       ///< The title text's maximum rotation in degrees
-            sf::Color              m_highlightColor;        ///< The color of highlighted menu items
-            float                  m_highlightScale;        ///< The scaling value for highlighted menu items
-            //---------------------------------------------
-    };
+		///////////////////////////////////////////////////////////
+		//Data members --------------------------------------------
+		///////////////////////////////////////////////////////////
+
+	  private:
+		const sf::Font&       m_font;                  ///< Font used to display the title and menu items
+		std::vector<MenuItem> m_menuItems;             ///< The menu items
+		sf::View              m_view;                  ///< The view used to draw the menu items
+		sf::View              m_backgroundView;        ///< The view used to draw the title text
+		sf::Text              m_titleText;             ///< The title text
+		bool                  m_randomiseTextColor;    ///< Is the title's color randomised?
+		int                   m_randomColorDurationMS; ///< How many MS the title's color persists for before it is randomised again
+		bool                  m_scaleText;             ///< Is the title being scaled up and down?
+		float                 m_minScale;              ///< The title text's minimum possible scaling value
+		float                 m_maxScale;              ///< The title text's maximum possible scaling value
+		bool                  m_rotateText;            ///< Is the title text being rotated?
+		float                 m_rotationDegrees;       ///< The title text's maximum rotation in degrees
+		sf::Color             m_highlightColor;        ///< The color of highlighted menu items
+		float                 m_highlightScale;        ///< The scaling value for highlighted menu items
+		                                               //---------------------------------------------
+	};
 
 } //namespace spss
 

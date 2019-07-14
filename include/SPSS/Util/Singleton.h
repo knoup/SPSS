@@ -11,32 +11,31 @@
 
 namespace spss {
 
-    template<typename T>
-    class Singleton {
-        protected:
-            Singleton() noexcept = default;
-            Singleton(const Singleton&) = delete;
-            Singleton& operator=(const Singleton&) = delete;
+	template<typename T>
+	class Singleton {
+	  protected:
+		Singleton() noexcept        = default;
+		Singleton(const Singleton&) = delete;
+		Singleton& operator=(const Singleton&) = delete;
 
-            ////////////////////////////////////////////////////////////
-            /// To silence "Base class Singleton<T> has a
-            /// non-virtual destructor" [-Weffc++]"
-            ////////////////////////////////////////////////////////////
-            virtual ~Singleton() = default;
+		////////////////////////////////////////////////////////////
+		/// To silence "Base class Singleton<T> has a
+		/// non-virtual destructor" [-Weffc++]"
+		////////////////////////////////////////////////////////////
+		virtual ~Singleton() = default;
 
-        public:
-            ////////////////////////////////////////////////////////////
-            /// Guaranteed to be destroyed.
-            ///	Instantiated on first use.
-            /// Thread safe in C++11
-            ////////////////////////////////////////////////////////////
-            static T& get_instance() noexcept(std::is_nothrow_constructible<T>::value) {
-                static T instance;
-                return instance;
-            }
-    };
+	  public:
+		////////////////////////////////////////////////////////////
+		/// Guaranteed to be destroyed.
+		///	Instantiated on first use.
+		/// Thread safe in C++11
+		////////////////////////////////////////////////////////////
+		static T& get_instance() noexcept(std::is_nothrow_constructible<T>::value) {
+			static T instance;
+			return instance;
+		}
+	};
 
 } //namespace spss
-
 
 #endif // SPSS_SINGLETON_H_INCLUDED

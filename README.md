@@ -2,7 +2,7 @@
 
 SPSS (Simple Program State System) is a modern C++ library built on top of [SFML 2.5.1](https://www.sfml-dev.org/). Its primary purpose is to provide an intuitive and easy to use **state-based core** that handles the typical "game loop" (get input, update, draw) with a fixed timestep in an elegant manner. I found myself rewriting the same basic concept across projects and thus decided to create this libary.
 
-In addition, SPSS contains a **MenuState** system that's very easy to use. It allows you to create simple menus and bind callback functions (with a void return type) to your menu items that are called upon clicking, so you can get started with the meat of your program right away rather than spending valuable time creating menus. 
+In addition, SPSS contains a **MenuState** system that's very easy to use. It allows you to create simple menus and bind callback functions (only with a void return type, for now) to your menu items that are called upon clicking, so you can get started with the meat of your program right away rather than spending valuable time creating menus. 
 
 SPSS also contains some other useful modules, such as:
 
@@ -32,6 +32,8 @@ core.pushState(std::move(state));
 We can then call `core.run()`, which will begin the program loop. By default, it performs the `getInput()` -> `update()` -> `draw()` loop using a fixed timestep, calling the state at the top of the state stack's versions of those functions. It can be overloaded should the user require more specific fine control over the loop.
 
 Sometimes, we'll want to still draw the previous state behind the current state, such as in a pause menu. This is possible by calling State's `setDrawnInBackground()` (also see `setUpdatedInBackground()` and `setGetInputInBackground()`).
+
+We can simply call `core.popState()` to remove the current state from the top of the stack and return to the previous state. If there are no more states, `core.exit()` is called.
 
 ## MenuState
 
@@ -93,7 +95,7 @@ Upon pressing RETURN, the contents of the box are cleared and the box becomes in
 
 Usage is identical to sf::Text, except `setFillColor()`, `setOutlineColor()`, and `setOutlineThickness()` can also be given optional start and end pos arguments.
 
-Note that upon calling setString(), all current fill colors, outline colors, and outline thicknesses are reset.
+Note that upon calling `setString()`, all current fill colors, outline colors, and outline thicknesses are reset.
 
 ## Contributing
 

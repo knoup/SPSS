@@ -16,76 +16,75 @@
 
 namespace spss {
 
-    class State {
-        public:
-            State(sf::RenderWindow& _w);
-            virtual ~State() = 0;
+	class State {
+	  public:
+		State(sf::RenderWindow& _w);
+		virtual ~State() = 0;
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Get input
-            ///
-            /// \param A reference to a captured event
-            ///
-            ////////////////////////////////////////////////////////////
-            virtual void getInput(sf::Event& _event);
+		////////////////////////////////////////////////////////////
+		/// \brief Get input
+		///
+		/// \param A reference to a captured event
+		///
+		////////////////////////////////////////////////////////////
+		virtual void getInput(sf::Event& _event);
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Update
-            ///
-            /// \param Timeslice value
-            ///
-            ////////////////////////////////////////////////////////////
-            virtual void update(int _timeslice) = 0;
+		////////////////////////////////////////////////////////////
+		/// \brief Update
+		///
+		/// \param Timeslice value
+		///
+		////////////////////////////////////////////////////////////
+		virtual void update(int _timeslice) = 0;
 
-            ////////////////////////////////////////////////////////////
-            /// \brief Draw
-            ///
-            ////////////////////////////////////////////////////////////
-            virtual void draw()                 = 0;
+		////////////////////////////////////////////////////////////
+		/// \brief Draw
+		///
+		////////////////////////////////////////////////////////////
+		virtual void draw() = 0;
 
-            ////////////////////////////////////////////////////////////
-            /// \brief On state switch
-            ///
-            /// Called by the new current state when a state is popped
-            /// from the states stack.
-            /// By default, all it does is call the onResize() function,
-            /// ensuring the views aren't all messed up.
-            ///
-            ////////////////////////////////////////////////////////////
-            virtual void onStateSwitch();
+		////////////////////////////////////////////////////////////
+		/// \brief On state switch
+		///
+		/// Called by the new current state when a state is popped
+		/// from the states stack.
+		/// By default, all it does is call the onResize() function,
+		/// ensuring the views aren't all messed up.
+		///
+		////////////////////////////////////////////////////////////
+		virtual void onStateSwitch();
 
-            void setGetInputInBackground(bool _b);
-            void setDrawnInBackground(bool _b);
-            void setUpdatedInBackground(bool _b);
+		void setGetInputInBackground(bool _b);
+		void setDrawnInBackground(bool _b);
+		void setUpdatedInBackground(bool _b);
 
-            bool getInputInBackground() const;
-            bool drawnInBackground() const;
-            bool updatedInBackground() const;
+		bool getInputInBackground() const;
+		bool drawnInBackground() const;
+		bool updatedInBackground() const;
 
-        protected:
-            ////////////////////////////////////////////////////////////
-            /// \brief On resize
-            ///
-            /// \param The new window size
-            ///
-            /// Called when the window is resized
-            ///
-            ////////////////////////////////////////////////////////////
-            virtual void onResize(sf::Vector2u _newSize);
+	  protected:
+		////////////////////////////////////////////////////////////
+		/// \brief On resize
+		///
+		/// \param The new window size
+		///
+		/// Called when the window is resized
+		///
+		////////////////////////////////////////////////////////////
+		virtual void onResize(sf::Vector2u _newSize);
 
-            ///////////////////////////////////////////////////////////
-            //Data members --------------------------------------------
-            ///////////////////////////////////////////////////////////
-        protected:
-            sf::RenderWindow& m_window;
-        private:
-            bool m_drawnInBackground;
-            bool m_updatedInBackground;
-            bool m_getInputInBackground;
-    };
+		///////////////////////////////////////////////////////////
+		//Data members --------------------------------------------
+		///////////////////////////////////////////////////////////
+	  protected:
+		sf::RenderWindow& m_window;
+
+	  private:
+		bool m_drawnInBackground;
+		bool m_updatedInBackground;
+		bool m_getInputInBackground;
+	};
 
 } //namespace spss
-
-
 
 #endif // SPSSPSS_STATE_H_INCLUDED
