@@ -61,6 +61,8 @@ int main() {
 }
 ```
 
+Additionally, if there are more MenuItems than can fit on the screen, a scrollbar will be automatically activated.
+
 ![img](https://i.imgur.com/TmUWMYA.png)
 
 See the demo for a more complete example.

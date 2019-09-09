@@ -140,6 +140,12 @@ namespace spss {
 		////////////////////////////////////////////////////////////
 		void addGap();
 
+		////////////////////////////////////////////////////////////
+		/// \brief Sets the scrollbar's color
+		///
+		////////////////////////////////////////////////////////////
+		void setScrollbarColor(sf::Color _c);
+
 	  private:
 		////////////////////////////////////////////////////////////
 		/// \brief Resets both m_view and m_backgroundView
@@ -238,6 +244,14 @@ namespace spss {
 		////////////////////////////////////////////////////////////
 		bool lmbPressed(sf::Event& _event);
 
+		////////////////////////////////////////////////////////////
+		/// \brief Checks if an event's type is a LMB release
+		///
+		/// \param _event The captured event
+		///
+		////////////////////////////////////////////////////////////
+		bool lmbReleased(sf::Event& _event);
+
 	  protected:
 		////////////////////////////////////////////////////////////
 		/// \brief Called when the window is resized
@@ -331,6 +345,56 @@ namespace spss {
 		////////////////////////////////////////////////////////////
 		void setHighlightScale(float _f);
 
+		////////////////////////////////////////////////////////////
+		/// \brief Get the space above the the beginning of m_menuItems
+		///
+		////////////////////////////////////////////////////////////
+		float getMenuOffset() const;
+
+		////////////////////////////////////////////////////////////
+		/// \brief Get the distance between the first/last menu items
+		///
+		////////////////////////////////////////////////////////////
+		float getMenuHeight() const;
+
+		////////////////////////////////////////////////////////////
+		/// \brief Update the scrollbar
+		///
+		////////////////////////////////////////////////////////////
+		void updateScrollbar();
+
+		////////////////////////////////////////////////////////////
+		/// \brief (Re)initialize scrollbar parameters as appropriate
+		///
+		////////////////////////////////////////////////////////////
+		void adjustScrollbar();
+
+		////////////////////////////////////////////////////////////
+		/// \brief Move the scrollbar if it's being dragged
+		///
+		////////////////////////////////////////////////////////////
+		void dragScrollbar();
+
+		////////////////////////////////////////////////////////////
+		/// \brief Handle scrollbar related user input
+		///
+		////////////////////////////////////////////////////////////
+		void detectScrollbarInteractions(sf::Event& _event);
+
+		////////////////////////////////////////////////////////////
+		/// \brief Calculate the view's center based on the scrollbar
+		///
+		////////////////////////////////////////////////////////////
+		void calculateNewScrollbarCenter();
+
+		////////////////////////////////////////////////////////////
+		/// \brief Scroll a step up or down
+		///
+		/// \param _up The desired direction
+		///
+		////////////////////////////////////////////////////////////
+		void scroll(bool _up);
+
 		///////////////////////////////////////////////////////////
 		//Data members --------------------------------------------
 		///////////////////////////////////////////////////////////
@@ -350,6 +414,13 @@ namespace spss {
 		float                 m_rotationDegrees;       ///< The title text's maximum rotation in degrees
 		sf::Color             m_highlightColor;        ///< The color of highlighted menu items
 		float                 m_highlightScale;        ///< The scaling value for highlighted menu items
+		sf::Color             m_scrollbarColor;        ///< The scrollbar's color
+		bool                  m_scrollbarActive;       ///< Is the scrollbar being used?
+		mutable bool          m_scrollbarDragging;     ///< Is the user holding LMB and dragging the scrollbar?
+		sf::RectangleShape    m_scrollbarOuter;        ///< The outer scrollbar shape
+		sf::RectangleShape    m_scrollbarInner;        ///< The inner scrollbar shape
+		float                 m_scrollbarMinRange;     ///< The scrollbar's smallest possible value for the view center
+		float                 m_scrollbarMaxRange;     ///< The scrollbar's largest possible value for the view center
 		                                               //---------------------------------------------
 	};
 
