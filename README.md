@@ -1,6 +1,9 @@
 # About
 
-SPSS (Simple Program State System) is a modern C++ library built on top of [SFML 2.5.1](https://www.sfml-dev.org/). Its primary purpose is to provide an intuitive and easy to use **state-based core** that handles the typical "game loop" (get input, update, draw) with a fixed timestep in an elegant manner. I found myself rewriting the same basic concept across projects and thus decided to create this libary.
+## SPSS (Simple Program State System) 
+
+is a modern C++ library 
+built on top of [SFML 2.5.1](https://www.sfml-dev.org/). Its primary purpose is to provide an intuitive and easy to use **state-based core** that handles the typical "game loop" (get input, update, draw) with a fixed timestep in an elegant manner. I found myself rewriting the same basic concept across projects and thus decided to create this libary.
 
 In addition, SPSS contains a **MenuState** system that's very easy to use. It allows you to create simple menus and bind callback functions (only with a void return type, for now) to your menu items that are called upon clicking, so you can get started with the meat of your program right away rather than spending valuable time creating menus. 
 
@@ -69,9 +72,10 @@ See the demo for a more complete example.
 
 ## TextEntryBox
 
-Initialise it with a sf::Font reference and your desired width:
+Initialise it with a sf::Font reference, character size, and 
+your desired width:
 
-`spss::TextEntryBox entry{font, 500};`
+`spss::TextEntryBox entry{font, 18, 500};`
 
 Use setActive() to enable text entry when desired:
 

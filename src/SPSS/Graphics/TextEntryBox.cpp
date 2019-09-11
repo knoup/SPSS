@@ -723,18 +723,30 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::moveSelectionBegin(int _a) {
-		m_selectionBegin += _a;
-		if(m_selectionBegin < 0) {
+		int d{int(m_selectionBegin) + _a};
+		if (d < 0) {
 			m_selectionBegin = 0;
+			return;
 		}
+		else if (d > m_text.getString().getSize()) {
+			m_selectionBegin = m_text.getString().getSize();
+			return;
+		}
+		m_selectionBegin += _a;
 	}
 
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::moveSelectionEnd(int _a) {
-		m_selectionEnd += _a;
-		if(m_selectionEnd > m_text.getString().getSize()) {
-			m_selectionEnd = m_text.getString().getSize();
+		int d{int(m_selectionEnd) + _a};
+		if (d < 0) {
+			m_selectionEnd = 0;
+			return;
 		}
+		else if (d > m_text.getString().getSize()) {
+			m_selectionEnd = m_text.getString().getSize();
+			return;
+		}
+		m_selectionEnd += _a;
 	}
 
 	////////////////////////////////////////////////////////////
