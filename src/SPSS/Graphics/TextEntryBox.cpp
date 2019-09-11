@@ -437,40 +437,57 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::selectLeft() {
-		if (keyPressed(LCTRL)) {
-			m_selectionBegin = posAtPreviousWord();
-		}
-		else if (m_selectionDirection == SELDIR::NEUTRAL || m_selectionDirection == SELDIR::LEFT) {
-			if (m_selectionBegin <= 0) {
-				return;
+		if (m_selectionDirection == SELDIR::NEUTRAL || m_selectionDirection == SELDIR::LEFT) {
+			if (keyPressed(LCTRL)) {
+				m_selectionBegin = posAtPreviousWord(m_selectionBegin);
 			}
-			--m_selectionBegin;
+			else {
+				moveSelectionBegin(-1);
+			}
+
+			m_selectionDirection = SELDIR::LEFT;
 		}
 		else {
-			--m_selectionEnd;
-		}
+			if (keyPressed(LCTRL)) {
+				m_selectionEnd = posAtPreviousWord(m_selectionEnd);
+			}
+			else {
+				moveSelectionEnd(-1);
+			}
 
-		m_selectionDirection == SELDIR::LEFT;
+			if (m_selectionEnd < m_selectionBegin) {
+				swapBeginAndEnd();
+				m_selectionDirection = SELDIR::LEFT;
+			}
+		}
 
 		shiftTextToRight();
 	}
 
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::selectRight() {
-		if (keyPressed(LCTRL)) {
-			m_selectionEnd = posAtNextWord();
-		}
-		else if (m_selectionDirection == SELDIR::NEUTRAL || m_selectionDirection == SELDIR::RIGHT) {
-			if (m_selectionEnd >= m_text.getString().getSize()) {
-				return;
+		if (m_selectionDirection == SELDIR::NEUTRAL || m_selectionDirection == SELDIR::RIGHT) {
+			if (keyPressed(LCTRL)) {
+				m_selectionEnd = posAtNextWord(m_selectionEnd);
 			}
-			++m_selectionEnd;
+			else{
+				moveSelectionEnd(1);
+			}
+
+			m_selectionDirection = SELDIR::RIGHT;
 		}
 		else {
-			++m_selectionBegin;
+			if (keyPressed(LCTRL)) {
+				m_selectionBegin = posAtNextWord(m_selectionBegin);
+			}
+			else {
+				moveSelectionBegin(1);
+			}
+			if (m_selectionEnd < m_selectionBegin) {
+				swapBeginAndEnd();
+				m_selectionDirection = SELDIR::RIGHT;
+			}
 		}
-
-		m_selectionDirection = SELDIR::RIGHT;
 
 		shiftTextToLeft();
 	}
@@ -520,17 +537,13 @@ namespace spss {
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::moveLeft() {
 		if (keyPressed(LCTRL)) {
-			m_selectionBegin = posAtPreviousWord();
-			m_selectionEnd   = m_selectionBegin;
+			m_selectionBegin = posAtPreviousWord(m_selectionBegin);
 		}
 		else if (!sequenceSelected() && m_selectionBegin > 0) {
-			--m_selectionBegin;
-			m_selectionEnd = m_selectionBegin;
-		}
-		else if (sequenceSelected()) {
-			m_selectionEnd = m_selectionBegin;
+			moveSelectionBegin(-1);
 		}
 
+		m_selectionEnd   = m_selectionBegin;
 		m_selectionDirection = SELDIR::NEUTRAL;
 
 		updateCaret();
@@ -540,12 +553,12 @@ namespace spss {
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::moveRight() {
 		if (keyPressed(LCTRL)) {
-			m_selectionBegin = posAtNextWord();
+			m_selectionBegin = posAtNextWord(m_selectionBegin);
 			m_selectionEnd   = m_selectionBegin;
 		}
 		else if (!sequenceSelected() &&
 		         m_selectionBegin < m_text.getString().getSize()) {
-			++m_selectionBegin;
+			moveSelectionBegin(1);
 			m_selectionEnd = m_selectionBegin;
 		}
 		else if (sequenceSelected()) {
@@ -559,8 +572,8 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
-	size_t TextEntryBox::posAtPreviousWord() const {
-		size_t pos{m_selectionBegin};
+	size_t TextEntryBox::posAtPreviousWord(size_t _from) const {
+		size_t pos{_from};
 		if (pos == 0) {
 			return pos;
 		}
@@ -581,8 +594,8 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
-	size_t TextEntryBox::posAtNextWord() const {
-		size_t      pos{m_selectionEnd};
+	size_t TextEntryBox::posAtNextWord(size_t _from) const {
+		size_t      pos{_from};
 		std::string s{m_text.getString()};
 		if (pos == s.length()) {
 			return pos;
@@ -688,6 +701,29 @@ namespace spss {
 		m_selectionDirection = SELDIR::NEUTRAL;
 		setTextString("");
 		resetTextPosition();
+	}
+
+	////////////////////////////////////////////////////////////
+	void TextEntryBox::moveSelectionBegin(int _a) {
+		m_selectionBegin += _a;
+		if(m_selectionBegin < 0) {
+			m_selectionBegin = 0;
+		}
+	}
+
+	////////////////////////////////////////////////////////////
+	void TextEntryBox::moveSelectionEnd(int _a) {
+		m_selectionEnd += _a;
+		if(m_selectionEnd > m_text.getString().getSize()) {
+			m_selectionEnd = m_text.getString().getSize();
+		}
+	}
+
+	////////////////////////////////////////////////////////////
+	void TextEntryBox::swapBeginAndEnd() {
+		size_t t{m_selectionEnd};
+		m_selectionEnd = m_selectionBegin;
+		m_selectionBegin = t;
 	}
 
 } //namespace spss
