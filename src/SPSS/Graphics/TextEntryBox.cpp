@@ -161,6 +161,11 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
+	float TextEntryBox::getHeight() const {
+		return m_rectangle.getSize().y;
+	}
+
+	////////////////////////////////////////////////////////////
 	float TextEntryBox::getLineSpacing() const {
 		return m_font.getLineSpacing(m_charSize);
 	}
