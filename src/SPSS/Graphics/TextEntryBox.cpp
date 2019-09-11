@@ -59,6 +59,7 @@ namespace spss {
 		m_caret.setFont(m_font);
 		m_caret.setFillColor(sf::Color(230, 230, 230));
 		m_caret.setString("|");
+		m_caret.setOrigin(m_caret.getGlobalBounds().width / 2, 0);
 
 		setWidth(_width);
 		setCharSize(m_charSize);
@@ -368,7 +369,19 @@ namespace spss {
 
 		if (!stringEmpty()) {
 			caretPos = m_text.findCharacterPos(m_selectionBegin);
-			caretPos.x -= m_text.getLetterSpacing() * 2;
+			if(m_selectionBegin > 0) {
+				//We'll position the caret as accurately as possible,
+				//by positioning it exactly between the current and
+				//previous characters
+				size_t prevPos{m_selectionBegin - 1};
+				std::string textStr{m_text.getString()};
+				char charAtPrevPos{textStr.at(prevPos)};
+				auto prevGlyph{m_font.getGlyph(charAtPrevPos, m_charSize, false, m_text.getOutlineThickness(prevPos))};
+				auto prevCharPos {m_text.findCharacterPos(prevPos)};
+				auto prevCharWidth{prevGlyph.bounds.width};
+				prevCharPos.x += prevCharWidth;
+				caretPos.x = prevCharPos.x + ((caretPos.x - prevCharPos.x) / 2);
+			}
 		}
 
 		m_caret.setPosition(caretPos);
