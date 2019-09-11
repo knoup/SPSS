@@ -288,6 +288,12 @@ namespace spss {
 		void setActive(bool _b);
 
 	  private:
+	  	////////////////////////////////////////////////////////////
+		/// \brief Used to denote the current selection direction
+		///
+		////////////////////////////////////////////////////////////
+	  	enum class SELDIR{LEFT, NEUTRAL, RIGHT};
+
 		////////////////////////////////////////////////////////////
 		/// \brief Handles user input given the unicode code.
 		///
@@ -515,7 +521,7 @@ namespace spss {
 		sf::RectangleShape   m_highlightedRectangle; ///< The rectangle used to highlight the current selection
 		size_t               m_selectionBegin;       ///< The beginning index of the current selection
 		size_t               m_selectionEnd;         ///< The end index of the current selection
-		int                  m_selectionDirection;   ///< What direction the user is selecting text in (-1 => left, 0 => neutral, 1 => right)
+		SELDIR               m_selectionDirection;   ///< What direction the user is selecting text in
 		spss::MulticolorText m_text;                 ///< The text used to display what the user is entering
 		sf::Text             m_caret;                ///< The caret
 		bool                 m_enteringText;         ///< Is the text entry box active, i.e. accepting input?

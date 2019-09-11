@@ -37,7 +37,7 @@ namespace spss {
 	              m_rectangle(),
 	              m_selectionBegin(0),
 	              m_selectionEnd(0),
-	              m_selectionDirection(0),
+	              m_selectionDirection(SELDIR::NEUTRAL),
 	              m_text(),
 	              m_enteringText{false},
 	              m_inputComplete{false},
@@ -426,13 +426,13 @@ namespace spss {
 	void TextEntryBox::selectAll() {
 		m_selectionBegin     = 0;
 		m_selectionEnd       = m_text.getString().getSize();
-		m_selectionDirection = 0;
+		m_selectionDirection = SELDIR::NEUTRAL;
 	}
 
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::unselectAll() {
 		m_selectionEnd       = m_selectionBegin;
-		m_selectionDirection = 0;
+		m_selectionDirection = SELDIR::NEUTRAL;
 	}
 
 	////////////////////////////////////////////////////////////
@@ -440,7 +440,7 @@ namespace spss {
 		if (keyPressed(LCTRL)) {
 			m_selectionBegin = posAtPreviousWord();
 		}
-		else if (m_selectionDirection <= 0) {
+		else if (m_selectionDirection == SELDIR::NEUTRAL || m_selectionDirection == SELDIR::LEFT) {
 			if (m_selectionBegin <= 0) {
 				return;
 			}
@@ -449,7 +449,8 @@ namespace spss {
 		else {
 			--m_selectionEnd;
 		}
-		--m_selectionDirection;
+
+		m_selectionDirection == SELDIR::LEFT;
 
 		shiftTextToRight();
 	}
@@ -459,7 +460,7 @@ namespace spss {
 		if (keyPressed(LCTRL)) {
 			m_selectionEnd = posAtNextWord();
 		}
-		else if (m_selectionDirection >= 0) {
+		else if (m_selectionDirection == SELDIR::NEUTRAL || m_selectionDirection == SELDIR::RIGHT) {
 			if (m_selectionEnd >= m_text.getString().getSize()) {
 				return;
 			}
@@ -468,7 +469,8 @@ namespace spss {
 		else {
 			++m_selectionBegin;
 		}
-		++m_selectionDirection;
+
+		m_selectionDirection = SELDIR::RIGHT;
 
 		shiftTextToLeft();
 	}
@@ -528,7 +530,8 @@ namespace spss {
 		else if (sequenceSelected()) {
 			m_selectionEnd = m_selectionBegin;
 		}
-		m_selectionDirection = 0;
+
+		m_selectionDirection = SELDIR::NEUTRAL;
 
 		updateCaret();
 		shiftTextToRight();
@@ -548,7 +551,8 @@ namespace spss {
 		else if (sequenceSelected()) {
 			m_selectionBegin = m_selectionEnd;
 		}
-		m_selectionDirection = 0;
+
+		m_selectionDirection = SELDIR::NEUTRAL;
 
 		updateCaret();
 		shiftTextToLeft();
@@ -620,7 +624,7 @@ namespace spss {
 		}
 
 		m_selectionEnd       = m_selectionBegin;
-		m_selectionDirection = 0;
+		m_selectionDirection = SELDIR::NEUTRAL;
 		setTextString(newString);
 
 		updateCaret();
@@ -658,7 +662,7 @@ namespace spss {
 
 		m_selectionEnd       = m_selectionBegin + _str.length();
 		m_selectionBegin     = m_selectionEnd;
-		m_selectionDirection = 0;
+		m_selectionDirection = SELDIR::NEUTRAL;
 
 		updateCaret();
 		shiftTextToLeft();
@@ -681,7 +685,7 @@ namespace spss {
 	void TextEntryBox::clearText() {
 		m_selectionBegin     = 0;
 		m_selectionEnd       = 0;
-		m_selectionDirection = 0;
+		m_selectionDirection = SELDIR::NEUTRAL;
 		setTextString("");
 		resetTextPosition();
 	}
