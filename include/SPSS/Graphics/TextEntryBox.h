@@ -30,11 +30,13 @@ namespace spss {
 		/// \brief Construct the text entry box
 		///
 		/// \param _font     Font used to draw text
+		/// \param _charSize The character size
 		/// \param _width    The width of the box
 		/// \param _str      The default string value
 		///
 		////////////////////////////////////////////////////////////
 		TextEntryBox(const sf::Font&    _font,
+					 unsigned int       _charSize,
 		             float              _width,
 		             const std::string& _str = "");
 

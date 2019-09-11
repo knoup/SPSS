@@ -31,6 +31,7 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	TextEntryBox::TextEntryBox(const sf::Font&    _font,
+							   unsigned int       _charSize,
 	                           float              _width,
 	                           const std::string& _str)
 	            : m_font{_font},
@@ -44,7 +45,7 @@ namespace spss {
 	              m_alwaysVisible{false},
 	              m_alwaysActive{false},
 	              m_lastString{},
-	              m_charSize{18},
+	              m_charSize{_charSize},
 	              m_maxChars{255},
 	              m_fillColor{sf::Color::White},
 	              m_outlineColor{sf::Color::Black},
@@ -348,12 +349,16 @@ namespace spss {
 			char charAtPos{textStr.at(i)};
 			auto glyph{m_font.getGlyph(charAtPos, m_charSize, false, m_text.getOutlineThickness(i))};
 			auto charWidth{glyph.bounds.width};
-			auto color{m_fillColor};
+			auto fillColor{m_fillColor};
+			auto outlineColor{m_outlineColor};
 
 			if (pos.x < rectPos.x || (pos.x + charWidth) > (rectPos.x + rectBounds.width)) {
-				color = sf::Color::Transparent;
+				fillColor    = sf::Color::Transparent;
+				outlineColor = sf::Color::Transparent;
 			}
-			m_text.setFillColor(color, i, i);
+
+			m_text.setFillColor(fillColor, i, i);
+			m_text.setOutlineColor(outlineColor, i, i);
 		}
 	}
 
