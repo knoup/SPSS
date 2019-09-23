@@ -25,6 +25,8 @@ namespace spss {
 		void setTransparency(int _a);
 
 		sf::Vector2f getPosition() const;
+		sf::FloatRect getGlobalBounds() const;
+		sf::FloatRect getLocalBounds() const;
 		int          getTransparency() const;
 		unsigned int getNumberOfLines(size_t _startPos = 0,
 									  size_t _endPos   = 0) const;

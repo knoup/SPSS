@@ -20,7 +20,7 @@ namespace spss {
 		void getInput(sf::Event& _event);
 		void update();
 		void draw(sf::RenderWindow& window, sf::RenderStates states) const;
-		//Since we only MenuLists to be drawable on sf::RenderWindows, and
+		//Since we only want MenuLists to be drawable on sf::RenderWindows, and
 		//since sf::Drawable requires this function to be overloaded, we'll
 		//dynamically cast target to a sf::RenderWindow. If that's not possible,
 		//then draw will do nothing.
@@ -33,18 +33,30 @@ namespace spss {
 	  private:
 		//Functions -----------------------------------
 		//
-		bool mousedOver() const;
+		bool menuMousedOver() const;
+		bool scrollbarMousedOver() const;
+
 		void positionMessage(int _index);
 		float getLineSpacing() const;
 		void  reset(sf::Vector2u _newSize);
-		void  snapToTop();
-		void  snapToBottom();
 		float getUpperViewBound() const;
 		float getLowerViewBound() const;
 		bool  viewAtHighest() const;
 		bool  viewAtLowest() const;
-		void  scrollUp();
-		void  scrollDown();
+
+		void scroll(bool _up);
+
+		//Gets the maximum width text items can be; if
+		//scrollbar is active, it will be smaller
+		float getUsableWidth() const;
+
+		float getMenuHeight() const;
+		void updateScrollbar();
+		void adjustScrollbar();
+		void dragScrollbar();
+		void detectMenulistInteractions(sf::Event& _event);
+		void detectScrollbarInteractions(sf::Event& _event);
+		void calculateNewScrollbarCenter();
 		//---------------------------------------------
 
 		//Data members --------------------------------
@@ -65,6 +77,14 @@ namespace spss {
 		sf::RectangleShape m_shadedRectangle;
 
 		std::vector<MenuListMessage> m_messages;
+
+		sf::Color             m_scrollbarColor;
+		bool                  m_scrollbarActive;
+		mutable bool          m_scrollbarDragging;
+		sf::RectangleShape    m_scrollbarOuter;
+		sf::RectangleShape    m_scrollbarInner;
+		float                 m_scrollbarMinRange;
+		float                 m_scrollbarMaxRange;
 		//---------------------------------------------
 	};
 }

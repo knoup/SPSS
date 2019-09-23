@@ -112,6 +112,14 @@ namespace spss {
 		return m_text.getPosition();
 	}
 
+	sf::FloatRect MenuListMessage::getGlobalBounds() const {
+		return m_text.getGlobalBounds();
+	}
+
+	sf::FloatRect MenuListMessage::getLocalBounds() const {
+		return m_text.getLocalBounds();
+	}
+
 	int MenuListMessage::getTransparency() const {
 		return m_text.getFillColor(0).a;
 	}
