@@ -28,15 +28,15 @@ namespace spss {
 
 		void setSize(const sf::Vector2f& _size);
 		void setPosition(const sf::Vector2f& _pos);
+		void setDraggable(bool _d);
 
 	  private:
 		//Functions -----------------------------------
 		//
-		//Message-related
+		bool mousedOver() const;
 		void positionMessage(int _index);
 		float getLineSpacing() const;
-		//View-related
-		void  onResize(sf::Vector2u _newSize);
+		void  reset(sf::Vector2u _newSize);
 		void  snapToTop();
 		void  snapToBottom();
 		float getUpperViewBound() const;
@@ -58,8 +58,7 @@ namespace spss {
 
 		bool               m_draggable;
 		bool               m_dragging;
-		sf::Vector2i       m_lastClickedMousePosition;
-		sf::Vector2i       m_currentMousePosition;
+		sf::Vector2i       m_lastMousePosition;
 
 		sf::View           m_view;
 		sf::View           m_shadedRectangleView;

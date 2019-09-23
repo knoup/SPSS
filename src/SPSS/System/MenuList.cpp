@@ -16,6 +16,9 @@ namespace spss {
 				  m_position{_position},
 				  m_font{_font},
 				  m_charSize{_charSize},
+	              m_draggable{false},
+		          m_dragging{false},
+				  m_lastMousePosition{},
 				  m_view{},
 				  m_shadedRectangleView{},
 				  m_shadedRectangle{},
@@ -34,20 +37,60 @@ namespace spss {
 	}
 
 	void MenuList::getInput(sf::Event& _event) {
+		if(m_window == nullptr) {
+			return;
+		}
+
+		if(m_draggable) {
+			if(_event.type == sf::Event::MouseButtonPressed) {
+				if(_event.mouseButton.button == sf::Mouse::Left) {
+					sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
+
+					if(mousedOver()) {
+						m_lastMousePosition = mousePos;
+						m_dragging = true;
+					}
+				}
+			}
+
+			else if (_event.type == sf::Event::MouseButtonReleased) {
+				if(_event.mouseButton.button == sf::Mouse::Left) {
+					m_dragging = false;
+				}
+			}
+		}
 
 	}
 
 	void MenuList::update() {
-		//onResize() will need to be called at least once after
+		//reset() will need to be called at least once after
 		//m_window is set, so this code will be needed here.
 		//As a result, we also won't really need to detect
 		//a Resized event in getInput(), since this part
 		//will handle that as well.
-		if (m_window != nullptr) {
-			if (m_window->getSize() != m_lastWindowSize) {
-				m_lastWindowSize = m_window->getSize();
-				onResize(m_lastWindowSize);
-			}
+		if (m_window == nullptr) {
+			return;
+		}
+
+		if (m_window->getSize() != m_lastWindowSize) {
+			m_lastWindowSize = m_window->getSize();
+			reset(m_lastWindowSize);
+		}
+
+		if(m_dragging) {
+			sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
+
+			sf::Vector2i diff{mousePos.x - m_lastMousePosition.x,
+			                  mousePos.y - m_lastMousePosition.y};
+
+			m_lastMousePosition = mousePos;
+
+			sf::Vector2f newPos{m_position};
+			newPos.x += diff.x;
+			newPos.y += diff.y;
+			setPosition(newPos);
+
+			reset(m_lastWindowSize);
 		}
 	}
 
@@ -67,7 +110,7 @@ namespace spss {
 
 	void MenuList::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 		sf::RenderWindow* w{dynamic_cast<sf::RenderWindow*>(&target)};
-		if(w == nullptr) {
+		if (w == nullptr) {
 			return;
 		}
 
@@ -75,13 +118,65 @@ namespace spss {
 	}
 
 	void MenuList::setSize(const sf::Vector2f& _size) {
+		if(m_window == nullptr) {
+			return;
+		}
+
 		m_size = _size;
+
+		if (m_size.x < 0) {
+			m_size.x = 0;
+		}
+		else if (m_size.x > m_window->getSize().x) {
+			m_size.x = m_window->getSize().x;
+		}
+
+		if (m_size.y < 0) {
+			m_size.y = 0;
+		}
+		else if (m_size.y > m_window->getSize().y) {
+			m_position.y = m_window->getSize().y;
+		}
 	}
 
 	void MenuList::setPosition(const sf::Vector2f& _pos) {
+		if(m_window == nullptr) {
+			return;
+		}
+
 		m_position = _pos;
+
+		if (m_position.x < 0) {
+			m_position.x = 0;
+		}
+		else if (m_position.x + m_size.x > m_window->getSize().x) {
+			m_position.x = m_window->getSize().x - m_size.x;
+		}
+
+		if (m_position.y < 0) {
+			m_position.y = 0;
+		}
+		else if (m_position.y + m_size.y > m_window->getSize().y) {
+			m_position.y = m_window->getSize().y - m_size.y;
+		}
+
 	}
 
+	void MenuList::setDraggable(bool _d) {
+		m_draggable = _d;
+	}
+
+
+	bool MenuList::mousedOver() const {
+		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
+		sf::Vector2f pixelPos{m_window->mapPixelToCoords(mousePos, m_view)};
+
+		if(m_shadedRectangle.getGlobalBounds().contains(pixelPos.x, pixelPos.y)) {
+			return true;
+		}
+
+		return false;
+	}
 
 	//This function sets the position of a new message, at the
 	//very bottom of the box
@@ -101,7 +196,10 @@ namespace spss {
 	}
 
 
-	void MenuList::onResize(sf::Vector2u _newSize) {
+	void MenuList::reset(sf::Vector2u _newSize) {
+		setPosition(m_position);
+		setSize(m_size);
+
 		float left{m_position.x / _newSize.x};
 		float top{m_position.y / _newSize.y};
 		float width{m_size.x / _newSize.x};
@@ -115,6 +213,7 @@ namespace spss {
 
 		m_view.setViewport(viewPort);
 		m_shadedRectangleView.setViewport(viewPort);
+
 
 		m_shadedRectangle.setSize(m_shadedRectangleView.getSize());
 
