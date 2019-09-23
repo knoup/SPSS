@@ -384,7 +384,17 @@ namespace spss {
 		float ratio{visibleHeight / getMenuHeight()};
 		m_scrollbarInner.setFillColor(m_scrollbarColor);
 		m_scrollbarInner.setSize({15, visibleHeight * ratio});
-		m_scrollbarInner.setPosition({m_scrollbarOuter.getPosition()});
+
+		//In order to avoid resetting the inner Y when unneccessary, we'll
+		//keep it and adjust it only if it goes out of range.
+		float innerY{m_scrollbarInner.getPosition().y};
+		float maxY{m_scrollbarOuter.getPosition().y};
+		maxY += m_scrollbarOuter.getGlobalBounds().height;
+		maxY -= m_scrollbarInner.getGlobalBounds().height;
+		if(innerY > maxY) {
+			innerY = maxY;
+		}
+		m_scrollbarInner.setPosition({scrollbarX, innerY});
 	}
 
 	void MenuList::dragScrollbar() {
