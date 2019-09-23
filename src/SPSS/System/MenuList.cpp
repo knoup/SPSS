@@ -10,8 +10,8 @@ namespace spss {
 					   const sf::Vector2f& _position,
 					   const sf::Font&     _font,
 					   unsigned            _charSize)
-				: m_target{nullptr},
-				  m_lastTargetSize{},
+				: m_window{nullptr},
+				  m_lastWindowSize{},
 				  m_size{_size},
 				  m_position{_position},
 				  m_font{_font},
@@ -39,30 +39,39 @@ namespace spss {
 
 	void MenuList::update() {
 		//onResize() will need to be called at least once after
-		//m_target is set, so this code will be needed here.
+		//m_window is set, so this code will be needed here.
 		//As a result, we also won't really need to detect
 		//a Resized event in getInput(), since this part
 		//will handle that as well.
-		if (m_target != nullptr) {
-			if (m_target->getSize() != m_lastTargetSize) {
-				m_lastTargetSize = m_target->getSize();
-				onResize(m_lastTargetSize);
+		if (m_window != nullptr) {
+			if (m_window->getSize() != m_lastWindowSize) {
+				m_lastWindowSize = m_window->getSize();
+				onResize(m_lastWindowSize);
 			}
 		}
 	}
 
-	void MenuList::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-		m_target              = &target;
-		sf::View previousView = m_target->getView();
+	void MenuList::draw(sf::RenderWindow& window, sf::RenderStates states) const {
+		m_window              = &window;
+		sf::View previousView = m_window->getView();
 
-		m_target->setView(m_shadedRectangleView);
-		m_target->draw(m_shadedRectangle, states);
+		m_window->setView(m_shadedRectangleView);
+		m_window->draw(m_shadedRectangle, states);
 
-		m_target->setView(m_view);
+		m_window->setView(m_view);
 		for (const auto& message : m_messages) {
-			m_target->draw(message, states);
+			m_window->draw(message, states);
 		}
-		m_target->setView(previousView);
+		m_window->setView(previousView);
+	}
+
+	void MenuList::draw(sf::RenderTarget& target, sf::RenderStates states) const {
+		sf::RenderWindow* w{dynamic_cast<sf::RenderWindow*>(&target)};
+		if(w == nullptr) {
+			return;
+		}
+
+		draw(*w, states);
 	}
 
 	void MenuList::setSize(const sf::Vector2f& _size) {

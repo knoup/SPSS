@@ -19,6 +19,11 @@ namespace spss {
 		void appendMessage(const Message _msg);
 		void getInput(sf::Event& _event);
 		void update();
+		void draw(sf::RenderWindow& window, sf::RenderStates states) const;
+		//Since we only MenuLists to be drawable on sf::RenderWindows, and
+		//since sf::Drawable requires this function to be overloaded, we'll
+		//dynamically cast target to a sf::RenderWindow. If that's not possible,
+		//then draw will do nothing.
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 		void setSize(const sf::Vector2f& _size);
@@ -43,13 +48,18 @@ namespace spss {
 		//---------------------------------------------
 
 		//Data members --------------------------------
-		mutable sf::RenderTarget* m_target;
-		sf::Vector2u              m_lastTargetSize;
+		mutable sf::RenderWindow* m_window;
+		sf::Vector2u              m_lastWindowSize;
 
 		sf::Vector2f       m_size;
 		sf::Vector2f       m_position;
 		const sf::Font&    m_font;
 		unsigned           m_charSize;
+
+		bool               m_draggable;
+		bool               m_dragging;
+		sf::Vector2i       m_lastClickedMousePosition;
+		sf::Vector2i       m_currentMousePosition;
 
 		sf::View           m_view;
 		sf::View           m_shadedRectangleView;
