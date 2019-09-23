@@ -11,8 +11,8 @@ namespace spss {
 	class MenuListMessage : public sf::Drawable {
 	  public:
 		MenuListMessage(const Message&  _msg,
-					   const sf::Font& _font,
-					   unsigned int    _charSize);
+		                const sf::Font& _font,
+		                unsigned int    _charSize);
 
 		void removeNewlines(std::string& _str);
 
@@ -24,12 +24,12 @@ namespace spss {
 		void setPosition(sf::Vector2f _pos);
 		void setTransparency(int _a);
 
-		sf::Vector2f getPosition() const;
+		sf::Vector2f  getPosition() const;
 		sf::FloatRect getGlobalBounds() const;
 		sf::FloatRect getLocalBounds() const;
-		int          getTransparency() const;
-		unsigned int getNumberOfLines(size_t _startPos = 0,
-									  size_t _endPos   = 0) const;
+		int           getTransparency() const;
+		unsigned int  getNumberOfLines(size_t _startPos = 0,
+		                               size_t _endPos   = 0) const;
 
 	  private:
 		//Data members --------------------------------
@@ -37,6 +37,6 @@ namespace spss {
 		Message              m_message;
 		//---------------------------------------------
 	};
-}
+} // namespace spss
 
 #endif // MENULISTMESSAGE_H_INCLUDED

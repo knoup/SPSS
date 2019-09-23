@@ -12,9 +12,9 @@ namespace spss {
 	class MenuList : public sf::Drawable {
 	  public:
 		MenuList(const sf::Vector2f& _size,
-				 const sf::Vector2f& _position,
-				 const sf::Font&     _font,
-				 unsigned            _charSize = 20);
+		         const sf::Vector2f& _position,
+		         const sf::Font&     _font,
+		         unsigned            _charSize = 20);
 
 		void appendMessage(const Message _msg);
 		void getInput(sf::Event& _event);
@@ -36,7 +36,7 @@ namespace spss {
 		bool menuMousedOver() const;
 		bool scrollbarMousedOver() const;
 
-		void positionMessage(int _index);
+		void  positionMessage(int _index);
 		float getLineSpacing() const;
 		void  reset(sf::Vector2u _newSize);
 		float getUpperViewBound() const;
@@ -51,26 +51,27 @@ namespace spss {
 		float getUsableWidth() const;
 
 		float getMenuHeight() const;
-		void updateScrollbar();
-		void adjustScrollbar();
-		void dragScrollbar();
-		void detectMenulistInteractions(sf::Event& _event);
-		void detectScrollbarInteractions(sf::Event& _event);
-		void calculateNewScrollbarCenter();
+		void  updateScrollbar();
+		void  adjustScrollbar();
+		void  dragScrollbar();
+		void  dragMenu();
+		void  detectMenulistInteractions(sf::Event& _event);
+		void  detectScrollbarInteractions(sf::Event& _event);
+		void  calculateNewScrollbarCenter();
 		//---------------------------------------------
 
 		//Data members --------------------------------
 		mutable sf::RenderWindow* m_window;
 		sf::Vector2u              m_lastWindowSize;
 
-		sf::Vector2f       m_size;
-		sf::Vector2f       m_position;
-		const sf::Font&    m_font;
-		unsigned           m_charSize;
+		sf::Vector2f    m_size;
+		sf::Vector2f    m_position;
+		const sf::Font& m_font;
+		unsigned        m_charSize;
 
-		bool               m_draggable;
-		bool               m_dragging;
-		sf::Vector2i       m_lastMousePosition;
+		bool         m_draggable;
+		bool         m_dragging;
+		sf::Vector2i m_lastMousePosition;
 
 		sf::View           m_view;
 		sf::View           m_shadedRectangleView;
@@ -78,15 +79,15 @@ namespace spss {
 
 		std::vector<MenuListMessage> m_messages;
 
-		sf::Color             m_scrollbarColor;
-		bool                  m_scrollbarActive;
-		mutable bool          m_scrollbarDragging;
-		sf::RectangleShape    m_scrollbarOuter;
-		sf::RectangleShape    m_scrollbarInner;
-		float                 m_scrollbarMinRange;
-		float                 m_scrollbarMaxRange;
+		sf::Color          m_scrollbarColor;
+		bool               m_scrollbarActive;
+		mutable bool       m_scrollbarDragging;
+		sf::RectangleShape m_scrollbarOuter;
+		sf::RectangleShape m_scrollbarInner;
+		float              m_scrollbarMinRange;
+		float              m_scrollbarMaxRange;
 		//---------------------------------------------
 	};
-}
+} // namespace spss
 
 #endif // MENULIST_H_INCLUDED

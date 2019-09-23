@@ -3,9 +3,9 @@
 namespace spss {
 
 	MenuListMessage::MenuListMessage(const Message&  _msg,
-								   const sf::Font& _font,
-								   unsigned int    _charSize)
-				: m_text{}, m_message{_msg} {
+	                                 const sf::Font& _font,
+	                                 unsigned int    _charSize)
+	            : m_text{}, m_message{_msg} {
 		m_text.setFont(_font);
 		m_text.setCharacterSize(_charSize);
 
@@ -27,14 +27,14 @@ namespace spss {
 	}
 
 	void MenuListMessage::draw(sf::RenderTarget& target,
-							  sf::RenderStates  states) const {
+	                           sf::RenderStates  states) const {
 		target.draw(m_text, states);
 	}
 
 	void MenuListMessage::fitWidth(float _width) {
 		bool tooWide{m_text.getGlobalBounds().width >= _width};
 		bool tooNarrow{m_text.getGlobalBounds().width < _width &&
-					   getNumberOfLines() > 1};
+		               getNumberOfLines() > 1};
 
 		if (!tooWide && !tooNarrow) {
 			return;
@@ -125,7 +125,7 @@ namespace spss {
 	}
 
 	unsigned int MenuListMessage::getNumberOfLines(size_t _startPos,
-												  size_t _endPos) const {
+	                                               size_t _endPos) const {
 		const std::string& s{m_text.getString()};
 		if (_endPos == 0) {
 			_endPos = s.length() - 1;
@@ -141,4 +141,4 @@ namespace spss {
 
 		return count;
 	}
-}
+} // namespace spss

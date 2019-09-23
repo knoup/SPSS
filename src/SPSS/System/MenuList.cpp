@@ -8,7 +8,7 @@
 
 bool lmbPressed(sf::Event& _event) {
 	if (_event.type == sf::Event::MouseButtonPressed &&
-		_event.mouseButton.button == sf::Mouse::Left) {
+	    _event.mouseButton.button == sf::Mouse::Left) {
 		return true;
 	}
 	else {
@@ -18,7 +18,7 @@ bool lmbPressed(sf::Event& _event) {
 
 bool lmbReleased(sf::Event& _event) {
 	if (_event.type == sf::Event::MouseButtonReleased &&
-		_event.mouseButton.button == sf::Mouse::Left) {
+	    _event.mouseButton.button == sf::Mouse::Left) {
 		return true;
 	}
 	else {
@@ -29,23 +29,23 @@ bool lmbReleased(sf::Event& _event) {
 namespace spss {
 
 	MenuList::MenuList(const sf::Vector2f& _size,
-					   const sf::Vector2f& _position,
-					   const sf::Font&     _font,
-					   unsigned            _charSize)
-				: m_window{nullptr},
-				  m_lastWindowSize{},
-				  m_size{_size},
-				  m_position{_position},
-				  m_font{_font},
-				  m_charSize{_charSize},
+	                   const sf::Vector2f& _position,
+	                   const sf::Font&     _font,
+	                   unsigned            _charSize)
+	            : m_window{nullptr},
+	              m_lastWindowSize{},
+	              m_size{_size},
+	              m_position{_position},
+	              m_font{_font},
+	              m_charSize{_charSize},
 	              m_draggable{false},
-		          m_dragging{false},
-				  m_lastMousePosition{},
-				  m_view{},
-				  m_shadedRectangleView{},
-				  m_shadedRectangle{},
-				  m_messages{},
-				  m_scrollbarColor{sf::Color::White},
+	              m_dragging{false},
+	              m_lastMousePosition{},
+	              m_view{},
+	              m_shadedRectangleView{},
+	              m_shadedRectangle{},
+	              m_messages{},
+	              m_scrollbarColor{sf::Color::White},
 	              m_scrollbarActive{false},
 	              m_scrollbarDragging{false},
 	              m_scrollbarMinRange{0},
@@ -65,7 +65,7 @@ namespace spss {
 	}
 
 	void MenuList::getInput(sf::Event& _event) {
-		if(m_window == nullptr) {
+		if (m_window == nullptr) {
 			return;
 		}
 
@@ -88,22 +88,7 @@ namespace spss {
 			reset(m_lastWindowSize);
 		}
 
-		if(m_dragging) {
-			sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
-
-			sf::Vector2i diff{mousePos.x - m_lastMousePosition.x,
-			                  mousePos.y - m_lastMousePosition.y};
-
-			m_lastMousePosition = mousePos;
-
-			sf::Vector2f newPos{m_position};
-			newPos.x += diff.x;
-			newPos.y += diff.y;
-			setPosition(newPos);
-
-			reset(m_lastWindowSize);
-		}
-
+		dragMenu();
 		updateScrollbar();
 	}
 
@@ -135,7 +120,7 @@ namespace spss {
 	}
 
 	void MenuList::setSize(const sf::Vector2f& _size) {
-		if(m_window == nullptr) {
+		if (m_window == nullptr) {
 			return;
 		}
 
@@ -157,7 +142,7 @@ namespace spss {
 	}
 
 	void MenuList::setPosition(const sf::Vector2f& _pos) {
-		if(m_window == nullptr) {
+		if (m_window == nullptr) {
 			return;
 		}
 
@@ -176,31 +161,28 @@ namespace spss {
 		else if (m_position.y + m_size.y > m_window->getSize().y) {
 			m_position.y = m_window->getSize().y - m_size.y;
 		}
-
 	}
 
 	void MenuList::setDraggable(bool _d) {
 		m_draggable = _d;
 	}
 
-
 	bool MenuList::menuMousedOver() const {
 		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 		sf::Vector2f pixelPos{m_window->mapPixelToCoords(mousePos, m_shadedRectangleView)};
 
-		if(m_shadedRectangle.getGlobalBounds().contains(pixelPos.x, pixelPos.y)) {
+		if (m_shadedRectangle.getGlobalBounds().contains(pixelPos.x, pixelPos.y)) {
 			return true;
 		}
 
 		return false;
 	}
 
-
 	bool MenuList::scrollbarMousedOver() const {
 		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 		sf::Vector2f pixelPos{m_window->mapPixelToCoords(mousePos, m_shadedRectangleView)};
 
-		if(m_scrollbarOuter.getGlobalBounds().contains(pixelPos.x, pixelPos.y)) {
+		if (m_scrollbarOuter.getGlobalBounds().contains(pixelPos.x, pixelPos.y)) {
 			return true;
 		}
 
@@ -212,9 +194,9 @@ namespace spss {
 	void MenuList::positionMessage(int _index) {
 		if (!m_messages.empty() && _index > 0) {
 			MenuListMessage& message = m_messages[_index];
-			sf::Vector2f    newPosition{m_messages[_index - 1].getPosition()};
-			unsigned int    lastMessageLines{
-			  m_messages[_index - 1].getNumberOfLines()};
+			sf::Vector2f     newPosition{m_messages[_index - 1].getPosition()};
+			unsigned int     lastMessageLines{
+              m_messages[_index - 1].getNumberOfLines()};
 			newPosition.y += lastMessageLines * (getLineSpacing());
 			message.setPosition(newPosition);
 		}
@@ -223,7 +205,6 @@ namespace spss {
 	float MenuList::getLineSpacing() const {
 		return m_font.getLineSpacing(m_charSize);
 	}
-
 
 	void MenuList::reset(sf::Vector2u _newSize) {
 		setPosition(m_position);
@@ -391,7 +372,7 @@ namespace spss {
 		float maxY{m_scrollbarOuter.getPosition().y};
 		maxY += m_scrollbarOuter.getGlobalBounds().height;
 		maxY -= m_scrollbarInner.getGlobalBounds().height;
-		if(innerY > maxY) {
+		if (innerY > maxY) {
 			innerY = maxY;
 		}
 		m_scrollbarInner.setPosition({scrollbarX, innerY});
@@ -404,7 +385,6 @@ namespace spss {
 
 		auto pos{sf::Mouse::getPosition(*m_window)};
 		auto mousePos{m_window->mapPixelToCoords(pos, m_shadedRectangleView)};
-
 
 		//Just some aliases for readability
 		auto outerPos{m_scrollbarOuter.getPosition()};
@@ -429,18 +409,44 @@ namespace spss {
 		m_scrollbarInner.setPosition(innerPos);
 	}
 
+	//TODO: this needs to be optimized. It's currently
+	//taking too much processing power while dragging and
+	//making the rest of the program choppy.
+	void MenuList::dragMenu() {
+		if (!m_dragging || m_window == nullptr) {
+			return;
+		}
+		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
+
+		sf::Vector2i diff{mousePos.x - m_lastMousePosition.x,
+		                  mousePos.y - m_lastMousePosition.y};
+
+		if (m_lastMousePosition == mousePos) {
+			return;
+		}
+
+		m_lastMousePosition = mousePos;
+
+		sf::Vector2f newPos{m_position};
+		newPos.x += diff.x;
+		newPos.y += diff.y;
+		setPosition(newPos);
+
+		reset(m_lastWindowSize);
+	}
+
 	void MenuList::detectMenulistInteractions(sf::Event& _event) {
-		if(!m_draggable || m_scrollbarDragging) {
+		if (!m_draggable || m_scrollbarDragging) {
 			std::cout << "can't drag menu, scrollbar is being dragged" << std::endl;
 			return;
 		}
 
-		if(lmbPressed(_event)) {
+		if (lmbPressed(_event)) {
 			sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 
-			if(menuMousedOver()) {
+			if (menuMousedOver()) {
 				m_lastMousePosition = mousePos;
-				m_dragging = true;
+				m_dragging          = true;
 				std::cout << "menu dragging" << std::endl;
 			}
 		}
@@ -502,4 +508,4 @@ namespace spss {
 		c.y = newCenterY;
 		m_view.setCenter(c);
 	}
-}
+} // namespace spss

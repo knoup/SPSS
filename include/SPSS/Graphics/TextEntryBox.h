@@ -36,7 +36,7 @@ namespace spss {
 		///
 		////////////////////////////////////////////////////////////
 		TextEntryBox(const sf::Font&    _font,
-					 unsigned int       _charSize,
+		             unsigned int       _charSize,
 		             float              _width,
 		             const std::string& _str = "");
 
@@ -290,11 +290,16 @@ namespace spss {
 		void setActive(bool _b);
 
 	  private:
-	  	////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////
 		/// \brief Used to denote the current selection direction
 		///
 		////////////////////////////////////////////////////////////
-	  	enum class SELDIR{LEFT, NEUTRAL, RIGHT};
+		enum class SELDIR
+		{
+			LEFT,
+			NEUTRAL,
+			RIGHT
+		};
 
 		////////////////////////////////////////////////////////////
 		/// \brief Handles user input given the unicode code.

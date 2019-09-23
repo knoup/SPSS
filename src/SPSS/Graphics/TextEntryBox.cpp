@@ -31,7 +31,7 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	TextEntryBox::TextEntryBox(const sf::Font&    _font,
-							   unsigned int       _charSize,
+	                           unsigned int       _charSize,
 	                           float              _width,
 	                           const std::string& _str)
 	            : m_font{_font},
@@ -369,16 +369,16 @@ namespace spss {
 
 		if (!stringEmpty()) {
 			caretPos = m_text.findCharacterPos(m_selectionBegin);
-			if(m_selectionBegin > 0) {
+			if (m_selectionBegin > 0) {
 				//We'll position the caret as accurately as possible,
 				//by positioning it exactly between the current and
 				//previous characters
-				size_t prevPos{m_selectionBegin - 1};
+				size_t      prevPos{m_selectionBegin - 1};
 				std::string textStr{m_text.getString()};
-				char charAtPrevPos{textStr.at(prevPos)};
-				auto prevGlyph{m_font.getGlyph(charAtPrevPos, m_charSize, false, m_text.getOutlineThickness(prevPos))};
-				auto prevCharPos {m_text.findCharacterPos(prevPos)};
-				auto prevCharWidth{prevGlyph.bounds.width};
+				char        charAtPrevPos{textStr.at(prevPos)};
+				auto        prevGlyph{m_font.getGlyph(charAtPrevPos, m_charSize, false, m_text.getOutlineThickness(prevPos))};
+				auto        prevCharPos{m_text.findCharacterPos(prevPos)};
+				auto        prevCharWidth{prevGlyph.bounds.width};
 				prevCharPos.x += prevCharWidth;
 				caretPos.x = prevCharPos.x + ((caretPos.x - prevCharPos.x) / 2);
 			}
@@ -488,7 +488,7 @@ namespace spss {
 			if (keyPressed(LCTRL)) {
 				m_selectionEnd = posAtNextWord(m_selectionEnd);
 			}
-			else{
+			else {
 				moveSelectionEnd(1);
 			}
 
@@ -561,7 +561,7 @@ namespace spss {
 			moveSelectionBegin(-1);
 		}
 
-		m_selectionEnd   = m_selectionBegin;
+		m_selectionEnd       = m_selectionBegin;
 		m_selectionDirection = SELDIR::NEUTRAL;
 
 		updateCaret();
@@ -752,7 +752,7 @@ namespace spss {
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::swapBeginAndEnd() {
 		size_t t{m_selectionEnd};
-		m_selectionEnd = m_selectionBegin;
+		m_selectionEnd   = m_selectionBegin;
 		m_selectionBegin = t;
 	}
 
