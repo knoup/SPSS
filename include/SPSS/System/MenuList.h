@@ -38,7 +38,7 @@ namespace spss {
 
 		void  positionMessage(int _index);
 		float getLineSpacing() const;
-		void  reset(sf::Vector2u _newSize);
+		void  reset();
 		float getUpperViewBound() const;
 		float getLowerViewBound() const;
 		bool  viewAtHighest() const;

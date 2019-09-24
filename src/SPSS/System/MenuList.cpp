@@ -85,7 +85,7 @@ namespace spss {
 
 		if (m_window->getSize() != m_lastWindowSize) {
 			m_lastWindowSize = m_window->getSize();
-			reset(m_lastWindowSize);
+			reset();
 		}
 
 		dragMenu();
@@ -206,16 +206,16 @@ namespace spss {
 		return m_font.getLineSpacing(m_charSize);
 	}
 
-	void MenuList::reset(sf::Vector2u _newSize) {
+	void MenuList::reset() {
 		setPosition(m_position);
 		setSize(m_size);
 
-		float left{m_position.x / _newSize.x};
-		float top{m_position.y / _newSize.y};
-		float width{m_size.x / _newSize.x};
-		float height{m_size.y / _newSize.y};
+		float left{m_position.x / m_lastWindowSize.x};
+		float top{m_position.y / m_lastWindowSize.y};
+		float width{m_size.x / m_lastWindowSize.x};
+		float height{m_size.y / m_lastWindowSize.y};
 
-		sf::FloatRect viewRect{0, 0, _newSize.x * width, _newSize.y * height};
+		sf::FloatRect viewRect{0, 0, m_lastWindowSize.x * width, m_lastWindowSize.y * height};
 		sf::FloatRect viewPort{left, top, width, height};
 
 		m_view.reset(viewRect);
@@ -432,7 +432,7 @@ namespace spss {
 		newPos.y += diff.y;
 		setPosition(newPos);
 
-		reset(m_lastWindowSize);
+		reset();
 	}
 
 	void MenuList::detectMenulistInteractions(sf::Event& _event) {
