@@ -1,6 +1,13 @@
 #ifndef INFOBOX_H_INCLUDED
 #define INFOBOX_H_INCLUDED
 
+////////////////////////////////////////////////////////////////////
+/// spss::InfoBox is a resizable and movable box to which text entries
+/// can be added. If the text is too wide, line breaks will be automa-
+/// tically inserted, and if the text is too tall, a scrollbar will be
+/// automatically activated. Useful for tooltip-style boxes.
+////////////////////////////////////////////////////////////////////
+
 #include <SPSS/Graphics/MulticolorText.h>
 #include <SPSS/System/InfoBoxMessage.h>
 
@@ -9,89 +16,235 @@
 namespace spss {
 
 	class InfoBox : public sf::Drawable {
-	  public:
-		InfoBox(const sf::Vector2f& _size,
-		         const sf::Vector2f& _position,
-		         const sf::Font&     _font,
-		         unsigned            _charSize = 20);
 
+	  public:
+	  	////////////////////////////////////////////////////////////
+		/// \brief Construct the InfoBox
+		///
+		/// \param _size     The size (in pixels)
+		/// \param _position The position (in pixels)
+		/// \param _font     Font used to draw text
+		/// \param _charSize The character size
+		///
+		////////////////////////////////////////////////////////////
+		InfoBox(const sf::Vector2f& _size,
+				const sf::Vector2f& _position,
+				const sf::Font&     _font,
+		        unsigned            _charSize = 20);
+
+		////////////////////////////////////////////////////////////
+		/// \brief Add a message (title + content) entry
+		///
+		/// \param _msg The message to add
+		///
+		////////////////////////////////////////////////////////////
 		void appendMessage(const Message _msg);
+
+		////////////////////////////////////////////////////////////
+		/// \brief Get input
+		///
+		/// \param A reference to a captured event
+		///
+		////////////////////////////////////////////////////////////
 		void getInput(sf::Event& _event);
+
+		////////////////////////////////////////////////////////////
+		/// \brief Update
+		///
+		////////////////////////////////////////////////////////////
 		void update();
+
+		////////////////////////////////////////////////////////////
+		/// \brief Draw the text to a render window
+		///
+		/// \param target Render window to draw to
+		/// \param states Current render states
+		///
+		////////////////////////////////////////////////////////////
 		void draw(sf::RenderWindow& window, sf::RenderStates states) const;
-		//Since we only want InfoBoxs to be drawable on sf::RenderWindows, and
-		//since sf::Drawable requires this function to be overloaded, we'll
-		//dynamically cast target to a sf::RenderWindow. If that's not possible,
-		//then draw will do nothing.
+
+		////////////////////////////////////////////////////////////
+		/// \brief Draw the text to a render target
+		///
+		/// Since we only want InfoBoxes to be drawable on sf::Render-
+		/// Windows, and since sf::Drawable requires this function to
+		/// be overloaded, we'll dynamically cast target to a sf::Render-
+		/// Window. If that's not possible, then draw() will do nothing.
+		///
+		/// \param target Render target to draw to
+		/// \param states Current render states
+		///
+		////////////////////////////////////////////////////////////
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
+		////////////////////////////////////////////////////////////
+		/// \brief Set the size
+		///
+		/// \param _size The size
+		///
+		////////////////////////////////////////////////////////////
 		void setSize(const sf::Vector2f& _size);
+
+		////////////////////////////////////////////////////////////
+		/// \brief Set the position
+		///
+		/// \param _pos The position
+		///
+		////////////////////////////////////////////////////////////
 		void setPosition(const sf::Vector2f& _pos);
+
+		////////////////////////////////////////////////////////////
+		/// \brief Set whether the InfoBox is draggable
+		///
+		/// \param _d The boolean value
+		///
+		////////////////////////////////////////////////////////////
 		void setDraggable(bool _d);
 
 	  private:
-		//Functions -----------------------------------
-		//
-		bool menuMousedOver() const;
+		////////////////////////////////////////////////////////////
+		/// \brief Is the box being moused over?
+		///
+		////////////////////////////////////////////////////////////
+		bool boxMousedOver() const;
+
+		////////////////////////////////////////////////////////////
+		/// \brief Is the scrollbar being moused over?
+		///
+		////////////////////////////////////////////////////////////
 		bool scrollbarMousedOver() const;
+
+		////////////////////////////////////////////////////////////
+		/// \brief Is the resizing strip being moused over?
+		///
+		////////////////////////////////////////////////////////////
 		bool resizeStripMousedOver() const;
 
+		////////////////////////////////////////////////////////////
+		/// \brief Sets the position of the message at the given index
+		///
+		/// This function appropriately sets the position of a message
+		/// by taking into account all previous messages and how many
+		/// lines they have.
+		///
+		/// \param _index The index [in m_messages]
+		///
+		////////////////////////////////////////////////////////////
 		void  positionMessage(int _index);
-		float getLineSpacing() const;
-		void  reset();
-		float getUpperViewBound() const;
-		float getLowerViewBound() const;
-		bool  viewAtHighest() const;
-		bool  viewAtLowest() const;
 
+		////////////////////////////////////////////////////////////
+		/// \brief Re-initialise the InfoBox
+		///
+		/// Ensures the views, positions, sizes, etc. of everything
+		/// are properly initialised according to the InfoBox's size
+		/// and position, and the window's size
+		///
+		////////////////////////////////////////////////////////////
+		void  reset();
+
+		////////////////////////////////////////////////////////////
+		/// \brief Scroll up or down a notch
+		///
+		/// \param _up Up?
+		///
+		////////////////////////////////////////////////////////////
 		void scroll(bool _up);
 
-		//Gets the maximum width text items can be; if
-		//scrollbar is active, it will be smaller
+		////////////////////////////////////////////////////////////
+		/// \brief Get the effective width of the InfoBox
+		///
+		/// Gets the maximum width Message items can be; if scrollbar
+		/// is active, it will be smaller.
+		///
+		////////////////////////////////////////////////////////////
 		float getUsableWidth() const;
 
+		////////////////////////////////////////////////////////////
+		/// \brief Get the distance between the first/last menu items
+		///
+		////////////////////////////////////////////////////////////
 		float getMenuHeight() const;
+
+		////////////////////////////////////////////////////////////
+		/// \brief Update the scrollbar
+		///
+		////////////////////////////////////////////////////////////
 		void  updateScrollbar();
+
+		////////////////////////////////////////////////////////////
+		/// \brief (Re)initialise scrollbar parameters as appropriate
+		///
+		////////////////////////////////////////////////////////////
 		void  adjustScrollbar();
+
+		////////////////////////////////////////////////////////////
+		/// \brief Move the scrollbar if it's being dragged
+		///
+		////////////////////////////////////////////////////////////
 		void  dragScrollbar();
-		void  dragMenu();
-		void  resizeMenu();
-		void  detectMenulistInteractions(sf::Event& _event);
+
+		////////////////////////////////////////////////////////////
+		/// \brief Move the InfoBox if it's being dragged
+		///
+		////////////////////////////////////////////////////////////
+		void  dragBox();
+
+		////////////////////////////////////////////////////////////
+		/// \brief Resize the InfoBox if it's being resized
+		///
+		////////////////////////////////////////////////////////////
+		void  resizeBox();
+
+		////////////////////////////////////////////////////////////
+		/// \brief Handle InfoBox-related user input
+		///
+		////////////////////////////////////////////////////////////
+		void  detectBoxInteractions(sf::Event& _event);
+
+		////////////////////////////////////////////////////////////
+		/// \brief Handle scrollbar-related user input
+		///
+		////////////////////////////////////////////////////////////
 		void  detectScrollbarInteractions(sf::Event& _event);
+
+		////////////////////////////////////////////////////////////
+		/// \brief Handle resize strip-related user input
+		///
+		////////////////////////////////////////////////////////////
 		void  detectResizeStripInteractions(sf::Event& _event);
+
+		////////////////////////////////////////////////////////////
+		/// \brief Calculate the view's center based on the scrollbar
+		///
+		////////////////////////////////////////////////////////////
 		void  calculateNewScrollbarCenter();
-		//---------------------------------------------
 
-		//Data members --------------------------------
-		mutable sf::RenderWindow* m_window;
-		sf::Vector2u              m_lastWindowSize;
-
-		sf::Vector2f    m_size;
-		sf::Vector2f    m_position;
-		const sf::Font& m_font;
-		unsigned        m_charSize;
-
-		bool 		 m_resizing;
-
-		bool         m_draggable;
-		bool         m_dragging;
-		sf::Vector2i m_lastMousePosition;
-
-		sf::View           m_view;
-		sf::View           m_shadedRectangleView;
-		sf::RectangleShape m_shadedRectangle;
-		sf::VertexArray    m_resizeStrip;
-
-		std::vector<InfoBoxMessage> m_messages;
-
-		sf::Color          m_scrollbarColor;
-		bool               m_scrollbarActive;
-		mutable bool       m_scrollbarDragging;
-		sf::RectangleShape m_scrollbarOuter;
-		sf::RectangleShape m_scrollbarInner;
-		float              m_scrollbarMinRange;
-		float              m_scrollbarMaxRange;
-		//---------------------------------------------
+		///////////////////////////////////////////////////////////
+		//Data members --------------------------------------------
+		///////////////////////////////////////////////////////////
+		mutable sf::RenderWindow*   m_window;              ///< The last window draw() is called on
+		sf::Vector2u                m_lastWindowSize;      ///< The last known window size
+		sf::Vector2f                m_size;                ///< The size of the box
+		sf::Vector2f                m_position;            ///< The position of the box
+		const sf::Font&             m_font;                ///< Font used to draw text
+		unsigned                    m_charSize;            ///< The character size
+		bool 		                m_resizing;            ///< Is the box being resized?
+		bool                        m_draggable;           ///< Is the box draggable?
+		bool                        m_dragging;            ///< Is the box being dragged?
+		sf::Vector2i                m_lastMousePosition;   ///< The last known mouse position
+		sf::View                    m_view;                ///< The scrollable view
+		sf::View                    m_shadedRectangleView; ///< The background shaded rectangle view
+		sf::RectangleShape          m_shadedRectangle;     ///< The background shaded rectangle
+		sf::VertexArray             m_resizeStrip;         ///< The triangle you click to resize the box
+		std::vector<InfoBoxMessage> m_messages;            ///< The messages contained within the box
+		sf::Color                   m_scrollbarColor;      ///< The color of the scrollbar
+		bool                        m_scrollbarActive;     ///< Is the scrollbar active?
+		mutable bool                m_scrollbarDragging;   ///< Is the scrollbar being dragged?
+		sf::RectangleShape          m_scrollbarOuter;      ///< The outer part of the scrollbar
+		sf::RectangleShape          m_scrollbarInner;      ///< The inner part of the scrollbar
+		float                       m_scrollbarMinRange;   ///< The minimum value for the scrollable view's center
+		float                       m_scrollbarMaxRange;   ///< The maximum value for the scrollable view's center
+														   //---------------------------------------------
 	};
 } // namespace spss
 

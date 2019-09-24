@@ -3,8 +3,10 @@
 
 #include <string>
 
-//A struct of two strings representing the
-//title and content of a message
+////////////////////////////////////////////////////////////////////
+/// spss::Message is a struct containing two strings, representing
+/// the title and contents of a message
+////////////////////////////////////////////////////////////////////
 
 namespace spss {
 

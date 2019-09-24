@@ -1,34 +1,12 @@
-#include "SPSS/System/InfoBox.h"
-
-#include "FontManager.h"
-#include "InputLocker.h"
-#include "Keybinds.h"
+#include <SPSS/System/InfoBox.h>
+#include <SPSS/Util/Input.h>
 
 constexpr float MIN_SIZE_X{100};
 constexpr float MIN_SIZE_Y{150};
 
-bool lmbPressed(sf::Event& _event) {
-	if (_event.type == sf::Event::MouseButtonPressed &&
-	    _event.mouseButton.button == sf::Mouse::Left) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
-bool lmbReleased(sf::Event& _event) {
-	if (_event.type == sf::Event::MouseButtonReleased &&
-	    _event.mouseButton.button == sf::Mouse::Left) {
-		return true;
-	}
-	else {
-		return false;
-	}
-}
-
 namespace spss {
 
+	////////////////////////////////////////////////////////////
 	InfoBox::InfoBox(const sf::Vector2f& _size,
 	                   const sf::Vector2f& _position,
 	                   const sf::Font&     _font,
@@ -57,6 +35,7 @@ namespace spss {
 		m_shadedRectangle.setFillColor(sf::Color(0, 0, 0, 100));
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBox::appendMessage(const Message _msg) {
 		InfoBoxMessage newMessage{_msg, m_font, m_charSize};
 
@@ -67,6 +46,7 @@ namespace spss {
 		adjustScrollbar();
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBox::getInput(sf::Event& _event) {
 		if (m_window == nullptr) {
 			return;
@@ -74,9 +54,10 @@ namespace spss {
 
 		detectResizeStripInteractions(_event);
 		detectScrollbarInteractions(_event);
-		detectMenulistInteractions(_event);
+		detectBoxInteractions(_event);
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBox::update() {
 		//reset() will need to be called at least once after
 		//m_window is set, so this code will be needed here.
@@ -92,11 +73,12 @@ namespace spss {
 			reset();
 		}
 
-		resizeMenu();
-		dragMenu();
+		resizeBox();
+		dragBox();
 		updateScrollbar();
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBox::draw(sf::RenderWindow& window, sf::RenderStates states) const {
 		m_window              = &window;
 		sf::View previousView = m_window->getView();
@@ -117,6 +99,7 @@ namespace spss {
 		m_window->setView(previousView);
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBox::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 		sf::RenderWindow* w{dynamic_cast<sf::RenderWindow*>(&target)};
 		if (w == nullptr) {
@@ -126,6 +109,7 @@ namespace spss {
 		draw(*w, states);
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBox::setSize(const sf::Vector2f& _size) {
 		if (m_window == nullptr) {
 			return;
@@ -148,6 +132,7 @@ namespace spss {
 		}
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBox::setPosition(const sf::Vector2f& _pos) {
 		if (m_window == nullptr) {
 			return;
@@ -170,11 +155,13 @@ namespace spss {
 		}
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBox::setDraggable(bool _d) {
 		m_draggable = _d;
 	}
 
-	bool InfoBox::menuMousedOver() const {
+	////////////////////////////////////////////////////////////
+	bool InfoBox::boxMousedOver() const {
 		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 		sf::Vector2f pixelPos{m_window->mapPixelToCoords(mousePos, m_shadedRectangleView)};
 
@@ -185,6 +172,7 @@ namespace spss {
 		return false;
 	}
 
+	////////////////////////////////////////////////////////////
 	bool InfoBox::scrollbarMousedOver() const {
 		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 		sf::Vector2f pixelPos{m_window->mapPixelToCoords(mousePos, m_shadedRectangleView)};
@@ -196,6 +184,7 @@ namespace spss {
 		return false;
 	}
 
+	////////////////////////////////////////////////////////////
 	bool InfoBox::resizeStripMousedOver() const {
 		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 		sf::Vector2f pixelPos{m_window->mapPixelToCoords(mousePos, m_shadedRectangleView)};
@@ -215,23 +204,24 @@ namespace spss {
 		return false;
 	}
 
-	//This function sets the position of a new message, at the
-	//very bottom of the box
+	////////////////////////////////////////////////////////////
 	void InfoBox::positionMessage(int _index) {
 		if (!m_messages.empty() && _index > 0) {
-			InfoBoxMessage& message = m_messages[_index];
-			sf::Vector2f     newPosition{m_messages[_index - 1].getPosition()};
-			unsigned int     lastMessageLines{
-              m_messages[_index - 1].getNumberOfLines()};
-			newPosition.y += lastMessageLines * (getLineSpacing());
-			message.setPosition(newPosition);
+			float lineSpacing{m_font.getLineSpacing(m_charSize)};
+
+			InfoBoxMessage& msg{m_messages[_index]};
+			InfoBoxMessage& lastMsg{m_messages[_index - 1]};
+
+			auto lastMessageLines{lastMsg.getNumberOfLines()};
+			auto newPosition{lastMsg.getPosition()};
+
+			newPosition.y += (lastMessageLines * lineSpacing);
+
+			msg.setPosition(newPosition);
 		}
 	}
 
-	float InfoBox::getLineSpacing() const {
-		return m_font.getLineSpacing(m_charSize);
-	}
-
+	////////////////////////////////////////////////////////////
 	void InfoBox::reset() {
 		setPosition(m_position);
 		setSize(m_size);
@@ -274,33 +264,7 @@ namespace spss {
 		m_resizeStrip[2].color = sf::Color::Black;
 	}
 
-	float InfoBox::getUpperViewBound() const {
-		return 0;
-	}
-	float InfoBox::getLowerViewBound() const {
-		if (m_messages.empty()) {
-			return 0;
-		}
-		float lowestPoint{m_messages.back().getPosition().y};
-		return lowestPoint;
-	}
-
-	bool InfoBox::viewAtHighest() const {
-		if (m_view.getCenter().y - m_view.getSize().y / 2 <= getUpperViewBound()) {
-			return true;
-		}
-
-		return false;
-	}
-
-	bool InfoBox::viewAtLowest() const {
-		if (m_view.getCenter().y + m_view.getSize().y / 2 >= getLowerViewBound()) {
-			return true;
-		}
-
-		return false;
-	}
-
+	////////////////////////////////////////////////////////////
 	void InfoBox::scroll(bool _up) {
 		if (!m_scrollbarActive) {
 			return;
@@ -328,6 +292,7 @@ namespace spss {
 		m_scrollbarInner.setPosition(pos);
 	}
 
+	////////////////////////////////////////////////////////////
 	float InfoBox::getUsableWidth() const {
 		float scrollbarWidth{0};
 		if (m_scrollbarActive) {
@@ -336,6 +301,7 @@ namespace spss {
 		return m_view.getSize().x - scrollbarWidth;
 	}
 
+	////////////////////////////////////////////////////////////
 	float InfoBox::getMenuHeight() const {
 		if (m_messages.empty()) {
 			return 0;
@@ -353,6 +319,7 @@ namespace spss {
 		       firstTextPos.y;
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBox::updateScrollbar() {
 		if (!m_scrollbarActive) {
 			return;
@@ -361,6 +328,7 @@ namespace spss {
 		calculateNewScrollbarCenter();
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBox::adjustScrollbar() {
 		if (m_messages.empty()) {
 			return;
@@ -387,7 +355,7 @@ namespace spss {
 		//We'll add a little extra space (linespacing / 2) at the end to
 		//ensure no text is cut off.
 		m_scrollbarMinRange = m_size.y / 2;
-		m_scrollbarMaxRange = getMenuHeight() - (visibleHeight / 2) + getLineSpacing() / 2;
+		m_scrollbarMaxRange = getMenuHeight() - (visibleHeight / 2) + m_font.getLineSpacing(m_charSize) / 2;
 
 		//Initialize the outer scrollbar
 		m_scrollbarOuter.setFillColor(sf::Color::Transparent);
@@ -425,6 +393,7 @@ namespace spss {
 		m_scrollbarInner.setPosition({scrollbarX, innerY});
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBox::dragScrollbar() {
 		if (!m_scrollbarDragging) {
 			return;
@@ -456,10 +425,8 @@ namespace spss {
 		m_scrollbarInner.setPosition(innerPos);
 	}
 
-	//TODO: this needs to be optimized. It's currently
-	//taking too much processing power while dragging and
-	//making the rest of the program choppy.
-	void InfoBox::dragMenu() {
+	////////////////////////////////////////////////////////////
+	void InfoBox::dragBox() {
 		if (m_resizing || !m_dragging || m_window == nullptr) {
 			return;
 		}
@@ -482,7 +449,8 @@ namespace spss {
 		reset();
 	}
 
-	void InfoBox::resizeMenu() {
+	////////////////////////////////////////////////////////////
+	void InfoBox::resizeBox() {
 		if (!m_resizing || m_window == nullptr) {
 			return;
 		}
@@ -506,34 +474,36 @@ namespace spss {
 		reset();
 	}
 
-	void InfoBox::detectMenulistInteractions(sf::Event& _event) {
+	////////////////////////////////////////////////////////////
+	void InfoBox::detectBoxInteractions(sf::Event& _event) {
 		if (!m_draggable || m_scrollbarDragging) {
 			return;
 		}
 
-		if (lmbPressed(_event)) {
+		if (Util::Input::lmbPressed(_event)) {
 			sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 
-			if (menuMousedOver()) {
+			if (boxMousedOver()) {
 				m_lastMousePosition = mousePos;
 				m_dragging          = true;
 			}
 		}
 
-		else if (lmbReleased(_event)) {
+		else if (Util::Input::lmbReleased(_event)) {
 			m_dragging = false;
 		}
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBox::detectScrollbarInteractions(sf::Event& _event) {
-		if (lmbPressed(_event) && scrollbarMousedOver()) {
+		if (Util::Input::lmbPressed(_event) && scrollbarMousedOver()) {
 			m_scrollbarDragging = true;
 		}
-		else if (lmbReleased(_event)) {
+		else if (Util::Input::lmbReleased(_event)) {
 			m_scrollbarDragging = false;
 		}
 
-		if (_event.type == sf::Event::MouseWheelMoved && menuMousedOver()) {
+		if (_event.type == sf::Event::MouseWheelMoved && boxMousedOver()) {
 			if (_event.mouseWheel.delta > 0) {
 				scroll(true);
 			}
@@ -543,15 +513,17 @@ namespace spss {
 		}
 	}
 
+	////////////////////////////////////////////////////////////
 	void  InfoBox::detectResizeStripInteractions(sf::Event& _event) {
-		if (lmbPressed(_event) && resizeStripMousedOver()) {
+		if (Util::Input::lmbPressed(_event) && resizeStripMousedOver()) {
 			m_resizing = true;
 		}
-		else if (lmbReleased(_event)) {
+		else if (Util::Input::lmbReleased(_event)) {
 			m_resizing = false;
 		}
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBox::calculateNewScrollbarCenter() {
 		if (!m_scrollbarActive) {
 			return;
