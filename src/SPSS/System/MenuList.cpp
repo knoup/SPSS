@@ -46,6 +46,7 @@ namespace spss {
 	              m_view{},
 	              m_shadedRectangleView{},
 	              m_shadedRectangle{},
+	              m_resizeStrip{sf::Triangles, 3},
 	              m_messages{},
 	              m_scrollbarColor{sf::Color::White},
 	              m_scrollbarActive{false},
@@ -54,15 +55,6 @@ namespace spss {
 	              m_scrollbarMaxRange{0} {
 		m_shadedRectangle.setOutlineColor(sf::Color(255, 165, 0));
 		m_shadedRectangle.setFillColor(sf::Color(0, 0, 0, 100));
-
-		//m_resizeStrip is going to be angled 45 degrees at the bottom
-		//of the scrollbar (if present); i.e., it will be the hypotenuse
-		//of a right triangle with the two other sides being 15.
-		//Pythagoras saves the day and gives us 21!
-
-		m_resizeStrip.setRotation(45);
-		m_resizeStrip.setSize({1, 21});
-		m_resizeStrip.setFillColor({sf::Color::White});
 	}
 
 	void MenuList::appendMessage(const Message _msg) {
@@ -211,7 +203,12 @@ namespace spss {
 		//We'll want to see if the resize strip is being held, i.e. the 15 x 15 area
 		//on the bottom right of the MenuList.
 
-		if (m_resizeStrip.getGlobalBounds().contains(pixelPos.x, pixelPos.y)) {
+		sf::FloatRect region{m_shadedRectangle.getGlobalBounds().width - 15,
+		                     m_shadedRectangle.getGlobalBounds().height - 15,
+		                     15,
+		                     15};
+
+		if (region.contains(pixelPos.x, pixelPos.y)) {
 			return true;
 		}
 
@@ -263,10 +260,18 @@ namespace spss {
 
 		adjustScrollbar();
 
-		sf::Vector2f resizeStripPos{m_shadedRectangle.getGlobalBounds().width,
-		                            m_shadedRectangle.getGlobalBounds().height};
-		resizeStripPos.y -= 15;
-		m_resizeStrip.setPosition(resizeStripPos);
+		sf::Vector2f bottomRight{m_shadedRectangle.getGlobalBounds().width,
+								 m_shadedRectangle.getGlobalBounds().height};
+
+		// define the position of the triangle's points
+		m_resizeStrip[0].position = bottomRight;
+		m_resizeStrip[1].position = {bottomRight.x, bottomRight.y - 15};
+		m_resizeStrip[2].position = {bottomRight.x - 15, bottomRight.y};
+
+		// define the color of the triangle's points
+		m_resizeStrip[0].color = sf::Color::White;
+		m_resizeStrip[1].color = sf::Color::Black;
+		m_resizeStrip[2].color = sf::Color::Black;
 	}
 
 	float MenuList::getUpperViewBound() const {

@@ -81,7 +81,7 @@ namespace spss {
 		sf::View           m_view;
 		sf::View           m_shadedRectangleView;
 		sf::RectangleShape m_shadedRectangle;
-		sf::RectangleShape m_resizeStrip;
+		sf::VertexArray    m_resizeStrip;
 
 		std::vector<MenuListMessage> m_messages;
 
