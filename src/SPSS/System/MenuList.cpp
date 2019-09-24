@@ -38,6 +38,7 @@ namespace spss {
 	              m_position{_position},
 	              m_font{_font},
 	              m_charSize{_charSize},
+	              m_resizing{false},
 	              m_draggable{false},
 	              m_dragging{false},
 	              m_lastMousePosition{},
@@ -51,7 +52,16 @@ namespace spss {
 	              m_scrollbarMinRange{0},
 	              m_scrollbarMaxRange{0} {
 		m_shadedRectangle.setOutlineColor(sf::Color(255, 165, 0));
-		m_shadedRectangle.setFillColor(sf::Color(0, 0, 175, 100));
+		m_shadedRectangle.setFillColor(sf::Color(0, 0, 0, 100));
+
+		//m_resizeStrip is going to be angled 45 degrees at the bottom
+		//of the scrollbar (if present); i.e., it will be the hypotenuse
+		//of a right triangle with the two other sides being 15.
+		//Pythagoras saves the day and gives us 21!
+
+		m_resizeStrip.setRotation(45);
+		m_resizeStrip.setSize({1, 21});
+		m_resizeStrip.setFillColor({sf::Color::White});
 	}
 
 	void MenuList::appendMessage(const Message _msg) {
@@ -69,6 +79,7 @@ namespace spss {
 			return;
 		}
 
+		detectResizeStripInteractions(_event);
 		detectScrollbarInteractions(_event);
 		detectMenulistInteractions(_event);
 	}
@@ -88,6 +99,7 @@ namespace spss {
 			reset();
 		}
 
+		resizeMenu();
 		dragMenu();
 		updateScrollbar();
 	}
@@ -98,6 +110,8 @@ namespace spss {
 
 		m_window->setView(m_shadedRectangleView);
 		m_window->draw(m_shadedRectangle, states);
+		m_window->draw(m_resizeStrip, states);
+
 		if (m_scrollbarActive) {
 			m_window->draw(m_scrollbarOuter);
 			m_window->draw(m_scrollbarInner);
@@ -126,18 +140,18 @@ namespace spss {
 
 		m_size = _size;
 
-		if (m_size.x < 0) {
-			m_size.x = 0;
+		if (m_size.x < 100) {
+			m_size.x = 100;
 		}
 		else if (m_size.x > m_window->getSize().x) {
 			m_size.x = m_window->getSize().x;
 		}
 
-		if (m_size.y < 0) {
-			m_size.y = 0;
+		if (m_size.y < 100) {
+			m_size.y = 100;
 		}
 		else if (m_size.y > m_window->getSize().y) {
-			m_position.y = m_window->getSize().y;
+			m_size.y = m_window->getSize().y;
 		}
 	}
 
@@ -189,6 +203,20 @@ namespace spss {
 		return false;
 	}
 
+	bool MenuList::resizeStripMousedOver() const {
+		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
+		sf::Vector2f pixelPos{m_window->mapPixelToCoords(mousePos, m_shadedRectangleView)};
+
+		//We'll want to see if the resize strip is being held, i.e. the 15 x 15 area
+		//on the bottom right of the MenuList.
+
+		if (m_resizeStrip.getGlobalBounds().contains(pixelPos.x, pixelPos.y)) {
+			return true;
+		}
+
+		return false;
+	}
+
 	//This function sets the position of a new message, at the
 	//very bottom of the box
 	void MenuList::positionMessage(int _index) {
@@ -233,6 +261,11 @@ namespace spss {
 		}
 
 		adjustScrollbar();
+
+		sf::Vector2f resizeStripPos{m_shadedRectangle.getGlobalBounds().width,
+		                            m_shadedRectangle.getGlobalBounds().height};
+		resizeStripPos.y -= 15;
+		m_resizeStrip.setPosition(resizeStripPos);
 	}
 
 	float MenuList::getUpperViewBound() const {
@@ -294,7 +327,6 @@ namespace spss {
 		if (m_scrollbarActive) {
 			scrollbarWidth = m_scrollbarOuter.getGlobalBounds().width;
 		}
-
 		return (m_view.getSize().x * 0.9f) - scrollbarWidth;
 	}
 
@@ -335,7 +367,15 @@ namespace spss {
 
 		m_scrollbarActive = true;
 
+		//visibleHeight is essentially the height of the menu. However,
+		//trueHeight will be used for all scrollbar size related
+		//calculations.
+		//
+		//We'll subtract 15 and work under the assumption that the
+		//scrollbar won't take up all vertical space; there will be
+		//a little extra space at the bottom to be used for resizing.
 		float visibleHeight{m_size.y};
+		float trueHeight{m_size.y - 15};
 
 		//Adjust the ranges so that they don't leave excess empty space.
 		//We'll add a little extra space (linespacing / 2) at the end to
@@ -347,7 +387,7 @@ namespace spss {
 		m_scrollbarOuter.setFillColor(sf::Color::Transparent);
 		m_scrollbarOuter.setOutlineColor(m_scrollbarColor);
 		m_scrollbarOuter.setOutlineThickness(-1);
-		m_scrollbarOuter.setSize({15, visibleHeight});
+		m_scrollbarOuter.setSize({15, trueHeight});
 
 		float scrollbarX{m_shadedRectangleView.getCenter().x};
 		scrollbarX += m_shadedRectangleView.getSize().x / 2;
@@ -357,14 +397,14 @@ namespace spss {
 
 		//Initialize the inner scrollbar
 
-		//The ratio of inner height  :  outer height (i.e. visibleHeight)
+		//The ratio of inner height  :  outer height (i.e. trueHeight)
 		//should equal
-		//the ratio of visibleHeight :  total menu height
+		//the ratio of trueHeight :  total menu height
 		//so that the inner scrollbar's height scales linearly with the
 		//amount of visible content
-		float ratio{visibleHeight / getMenuHeight()};
+		float ratio{trueHeight / getMenuHeight()};
 		m_scrollbarInner.setFillColor(m_scrollbarColor);
-		m_scrollbarInner.setSize({15, visibleHeight * ratio});
+		m_scrollbarInner.setSize({15, trueHeight * ratio});
 
 		//In order to avoid resetting the inner Y when unneccessary, we'll
 		//keep it and adjust it only if it goes out of range.
@@ -375,6 +415,7 @@ namespace spss {
 		if (innerY > maxY) {
 			innerY = maxY;
 		}
+
 		m_scrollbarInner.setPosition({scrollbarX, innerY});
 	}
 
@@ -413,7 +454,7 @@ namespace spss {
 	//taking too much processing power while dragging and
 	//making the rest of the program choppy.
 	void MenuList::dragMenu() {
-		if (!m_dragging || m_window == nullptr) {
+		if (m_resizing || !m_dragging || m_window == nullptr) {
 			return;
 		}
 		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
@@ -431,6 +472,30 @@ namespace spss {
 		newPos.x += diff.x;
 		newPos.y += diff.y;
 		setPosition(newPos);
+
+		reset();
+	}
+
+	void MenuList::resizeMenu() {
+		if (!m_resizing || m_window == nullptr) {
+			return;
+		}
+
+		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
+
+		sf::Vector2i diff{mousePos.x - m_lastMousePosition.x,
+		                  mousePos.y - m_lastMousePosition.y};
+
+		if (m_lastMousePosition == mousePos) {
+			return;
+		}
+
+		m_lastMousePosition = mousePos;
+
+		sf::Vector2f newSize{m_size};
+		newSize.x += diff.x;
+		newSize.y += diff.y;
+		setSize(newSize);
 
 		reset();
 	}
@@ -474,6 +539,17 @@ namespace spss {
 			else if (_event.mouseWheel.delta < 0) {
 				scroll(false);
 			}
+		}
+	}
+
+	void  MenuList::detectResizeStripInteractions(sf::Event& _event) {
+		if (lmbPressed(_event) && resizeStripMousedOver()) {
+			m_resizing = true;
+			std::cout << "menu resizing" << std::endl;
+		}
+		else if (lmbReleased(_event)) {
+			m_resizing = false;
+			std::cout << "menu not resizing" << std::endl;
 		}
 	}
 

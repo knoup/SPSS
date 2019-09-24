@@ -35,6 +35,7 @@ namespace spss {
 		//
 		bool menuMousedOver() const;
 		bool scrollbarMousedOver() const;
+		bool resizeStripMousedOver() const;
 
 		void  positionMessage(int _index);
 		float getLineSpacing() const;
@@ -55,8 +56,10 @@ namespace spss {
 		void  adjustScrollbar();
 		void  dragScrollbar();
 		void  dragMenu();
+		void  resizeMenu();
 		void  detectMenulistInteractions(sf::Event& _event);
 		void  detectScrollbarInteractions(sf::Event& _event);
+		void  detectResizeStripInteractions(sf::Event& _event);
 		void  calculateNewScrollbarCenter();
 		//---------------------------------------------
 
@@ -69,6 +72,8 @@ namespace spss {
 		const sf::Font& m_font;
 		unsigned        m_charSize;
 
+		bool 		 m_resizing;
+
 		bool         m_draggable;
 		bool         m_dragging;
 		sf::Vector2i m_lastMousePosition;
@@ -76,6 +81,7 @@ namespace spss {
 		sf::View           m_view;
 		sf::View           m_shadedRectangleView;
 		sf::RectangleShape m_shadedRectangle;
+		sf::RectangleShape m_resizeStrip;
 
 		std::vector<MenuListMessage> m_messages;
 
