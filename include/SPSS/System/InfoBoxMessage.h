@@ -1,16 +1,16 @@
-#ifndef MENULISTMESSAGE_H_INCLUDED
-#define MENULISTMESSAGE_H_INCLUDED
+#ifndef INFOBOXMESSAGE_H_INCLUDED
+#define INFOBOXMESSAGE_H_INCLUDED
 
 #include <SPSS/Graphics/MulticolorText.h>
-#include <SFML/Graphics.hpp>
+#include <SPSS/Util/Message.h>
 
-#include "Message.h"
+#include <SFML/Graphics.hpp>
 
 namespace spss {
 
-	class MenuListMessage : public sf::Drawable {
+	class InfoBoxMessage : public sf::Drawable {
 	  public:
-		MenuListMessage(const Message&  _msg,
+		InfoBoxMessage(const Message&  _msg,
 		                const sf::Font& _font,
 		                unsigned int    _charSize);
 
@@ -39,4 +39,4 @@ namespace spss {
 	};
 } // namespace spss
 
-#endif // MENULISTMESSAGE_H_INCLUDED
+#endif // INFOBOXMESSAGE_H_INCLUDED

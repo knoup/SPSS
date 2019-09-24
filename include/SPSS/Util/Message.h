@@ -1,4 +1,5 @@
-#pragma once
+#ifndef MESSAGE_H_INCLUDED
+#define MESSAGE_H_INCLUDED
 
 #include <string>
 
@@ -15,3 +16,5 @@ namespace spss {
 		std::string content;
 	};
 } // namespace spss
+
+#endif // MESSAGE_H_INCLUDED

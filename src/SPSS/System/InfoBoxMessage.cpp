@@ -1,8 +1,8 @@
-#include <SPSS/System/MenuListMessage.h>
+#include <SPSS/System/InfoBoxMessage.h>
 
 namespace spss {
 
-	MenuListMessage::MenuListMessage(const Message&  _msg,
+	InfoBoxMessage::InfoBoxMessage(const Message&  _msg,
 	                                 const sf::Font& _font,
 	                                 unsigned int    _charSize)
 	            : m_text{}, m_message{_msg} {
@@ -17,7 +17,7 @@ namespace spss {
 		setString(finalStr);
 	}
 
-	void MenuListMessage::removeNewlines(std::string& _str) {
+	void InfoBoxMessage::removeNewlines(std::string& _str) {
 		std::string newline{"\n"};
 		auto        i = _str.find(newline);
 		while (i != std::string::npos) {
@@ -26,12 +26,12 @@ namespace spss {
 		}
 	}
 
-	void MenuListMessage::draw(sf::RenderTarget& target,
+	void InfoBoxMessage::draw(sf::RenderTarget& target,
 	                           sf::RenderStates  states) const {
 		target.draw(m_text, states);
 	}
 
-	void MenuListMessage::fitWidth(float _width) {
+	void InfoBoxMessage::fitWidth(float _width) {
 		bool tooWide{m_text.getGlobalBounds().width >= _width};
 		bool tooNarrow{m_text.getGlobalBounds().width < _width &&
 		               getNumberOfLines() > 1};
@@ -68,7 +68,7 @@ namespace spss {
 		setString(textStr);
 	}
 
-	void MenuListMessage::setString(const std::string& _str) {
+	void InfoBoxMessage::setString(const std::string& _str) {
 		m_text.setString(_str);
 
 		//After changing the string, our fill/outline colours
@@ -99,31 +99,31 @@ namespace spss {
 		}
 	}
 
-	void MenuListMessage::setPosition(sf::Vector2f _pos) {
+	void InfoBoxMessage::setPosition(sf::Vector2f _pos) {
 		m_text.setPosition(_pos);
 	}
 
-	void MenuListMessage::setTransparency(int _a) {
+	void InfoBoxMessage::setTransparency(int _a) {
 		m_text.setTransparency(_a);
 	}
 
-	sf::Vector2f MenuListMessage::getPosition() const {
+	sf::Vector2f InfoBoxMessage::getPosition() const {
 		return m_text.getPosition();
 	}
 
-	sf::FloatRect MenuListMessage::getGlobalBounds() const {
+	sf::FloatRect InfoBoxMessage::getGlobalBounds() const {
 		return m_text.getGlobalBounds();
 	}
 
-	sf::FloatRect MenuListMessage::getLocalBounds() const {
+	sf::FloatRect InfoBoxMessage::getLocalBounds() const {
 		return m_text.getLocalBounds();
 	}
 
-	int MenuListMessage::getTransparency() const {
+	int InfoBoxMessage::getTransparency() const {
 		return m_text.getFillColor(0).a;
 	}
 
-	unsigned int MenuListMessage::getNumberOfLines(size_t _startPos,
+	unsigned int InfoBoxMessage::getNumberOfLines(size_t _startPos,
 	                                               size_t _endPos) const {
 		const std::string& s{m_text.getString()};
 		if (_endPos == 0) {

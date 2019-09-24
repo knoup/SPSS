@@ -1,17 +1,16 @@
-#ifndef MENULIST_H_INCLUDED
-#define MENULIST_H_INCLUDED
+#ifndef INFOBOX_H_INCLUDED
+#define INFOBOX_H_INCLUDED
 
 #include <SPSS/Graphics/MulticolorText.h>
-#include <SFML/Graphics.hpp>
+#include <SPSS/System/InfoBoxMessage.h>
 
-#include <SPSS/System/MenuListMessage.h>
-#include <SPSS/System/Message.h>
+#include <SFML/Graphics.hpp>
 
 namespace spss {
 
-	class MenuList : public sf::Drawable {
+	class InfoBox : public sf::Drawable {
 	  public:
-		MenuList(const sf::Vector2f& _size,
+		InfoBox(const sf::Vector2f& _size,
 		         const sf::Vector2f& _position,
 		         const sf::Font&     _font,
 		         unsigned            _charSize = 20);
@@ -20,7 +19,7 @@ namespace spss {
 		void getInput(sf::Event& _event);
 		void update();
 		void draw(sf::RenderWindow& window, sf::RenderStates states) const;
-		//Since we only want MenuLists to be drawable on sf::RenderWindows, and
+		//Since we only want InfoBoxs to be drawable on sf::RenderWindows, and
 		//since sf::Drawable requires this function to be overloaded, we'll
 		//dynamically cast target to a sf::RenderWindow. If that's not possible,
 		//then draw will do nothing.
@@ -83,7 +82,7 @@ namespace spss {
 		sf::RectangleShape m_shadedRectangle;
 		sf::VertexArray    m_resizeStrip;
 
-		std::vector<MenuListMessage> m_messages;
+		std::vector<InfoBoxMessage> m_messages;
 
 		sf::Color          m_scrollbarColor;
 		bool               m_scrollbarActive;
@@ -96,4 +95,4 @@ namespace spss {
 	};
 } // namespace spss
 
-#endif // MENULIST_H_INCLUDED
+#endif // INFOBOX_H_INCLUDED
