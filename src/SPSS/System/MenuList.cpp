@@ -4,7 +4,8 @@
 #include "InputLocker.h"
 #include "Keybinds.h"
 
-#include <iostream>
+constexpr float MIN_SIZE_X{100};
+constexpr float MIN_SIZE_Y{150};
 
 bool lmbPressed(sf::Event& _event) {
 	if (_event.type == sf::Event::MouseButtonPressed &&
@@ -140,15 +141,15 @@ namespace spss {
 
 		m_size = _size;
 
-		if (m_size.x < 100) {
-			m_size.x = 100;
+		if (m_size.x < MIN_SIZE_X) {
+			m_size.x = MIN_SIZE_X;
 		}
 		else if (m_size.x > m_window->getSize().x) {
 			m_size.x = m_window->getSize().x;
 		}
 
-		if (m_size.y < 100) {
-			m_size.y = 100;
+		if (m_size.y < MIN_SIZE_Y) {
+			m_size.y = MIN_SIZE_Y;
 		}
 		else if (m_size.y > m_window->getSize().y) {
 			m_size.y = m_window->getSize().y;
@@ -327,7 +328,7 @@ namespace spss {
 		if (m_scrollbarActive) {
 			scrollbarWidth = m_scrollbarOuter.getGlobalBounds().width;
 		}
-		return (m_view.getSize().x * 0.9f) - scrollbarWidth;
+		return m_view.getSize().x - scrollbarWidth;
 	}
 
 	float MenuList::getMenuHeight() const {
@@ -502,7 +503,6 @@ namespace spss {
 
 	void MenuList::detectMenulistInteractions(sf::Event& _event) {
 		if (!m_draggable || m_scrollbarDragging) {
-			std::cout << "can't drag menu, scrollbar is being dragged" << std::endl;
 			return;
 		}
 
@@ -512,24 +512,20 @@ namespace spss {
 			if (menuMousedOver()) {
 				m_lastMousePosition = mousePos;
 				m_dragging          = true;
-				std::cout << "menu dragging" << std::endl;
 			}
 		}
 
 		else if (lmbReleased(_event)) {
 			m_dragging = false;
-			std::cout << "menu not dragging" << std::endl;
 		}
 	}
 
 	void MenuList::detectScrollbarInteractions(sf::Event& _event) {
 		if (lmbPressed(_event) && scrollbarMousedOver()) {
 			m_scrollbarDragging = true;
-			std::cout << "scrollbar dragging" << std::endl;
 		}
 		else if (lmbReleased(_event)) {
 			m_scrollbarDragging = false;
-			std::cout << "scrollbar not dragging" << std::endl;
 		}
 
 		if (_event.type == sf::Event::MouseWheelMoved && menuMousedOver()) {
@@ -545,11 +541,9 @@ namespace spss {
 	void  MenuList::detectResizeStripInteractions(sf::Event& _event) {
 		if (lmbPressed(_event) && resizeStripMousedOver()) {
 			m_resizing = true;
-			std::cout << "menu resizing" << std::endl;
 		}
 		else if (lmbReleased(_event)) {
 			m_resizing = false;
-			std::cout << "menu not resizing" << std::endl;
 		}
 	}
 

@@ -44,26 +44,25 @@ namespace spss {
 		removeNewlines(textStr);
 		setString(textStr);
 
-		float charSize = m_text.getGlobalBounds().width / textStr.size();
-		float currentWidth{0};
+		float lineWidth{0};
 
 		for (size_t i{0}; i < textStr.length(); i++) {
-			currentWidth += charSize;
+			auto pos{m_text.findCharacterPos(i)};
+			char charAtPos{textStr.at(i)};
+			auto glyph{m_text.getFont()->getGlyph(charAtPos, m_text.getCharacterSize(), false, m_text.getOutlineThickness(i))};
 
-			//Insert a newline at the position, if it's
-			//too wide
-			if (currentWidth >= _width) {
+			float charWidth{glyph.bounds.width};
+			float spacing{glyph.advance};
+
+			//Insert a newline at the prior position
+			//if needed
+			if (lineWidth + spacing >= _width) {
 				textStr.insert(i, 1, '\n');
-				currentWidth = 0;
+				lineWidth = 0;
+				i++;
 			}
 
-			//If we have a space as the first character
-			//on a new line, we'll get rid of it
-			else if (currentWidth == charSize) {
-				if (isspace(textStr.at(i))) {
-					textStr.erase(i, 1);
-				}
-			}
+			lineWidth += spacing;
 		}
 
 		setString(textStr);
