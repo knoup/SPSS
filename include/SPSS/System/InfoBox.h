@@ -130,17 +130,21 @@ namespace spss {
 		/// \param _index The index [in m_messages]
 		///
 		////////////////////////////////////////////////////////////
-		void  positionMessage(int _index);
+		void positionMessage(int _index);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Re-initialise the InfoBox
 		///
 		/// Ensures the views, positions, sizes, etc. of everything
 		/// are properly initialised according to the InfoBox's size
-		/// and position, and the window's size
+		/// and position, and the window's size. It also takes in an
+		/// optional parameter that - if set to false - can make it run
+		/// significantly faster by skipping logic related to resizing.
+		///
+		/// \param _resized Whether the window was resized
 		///
 		////////////////////////////////////////////////////////////
-		void  reset();
+		void reset(bool _resized = true);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Scroll up or down a notch
@@ -153,8 +157,7 @@ namespace spss {
 		////////////////////////////////////////////////////////////
 		/// \brief Get the effective width of the InfoBox
 		///
-		/// Gets the maximum width Message items can be; if scrollbar
-		/// is active, it will be smaller.
+		/// Gets the maximum width Message items can be.
 		///
 		////////////////////////////////////////////////////////////
 		float getUsableWidth() const;
@@ -169,55 +172,55 @@ namespace spss {
 		/// \brief Update the scrollbar
 		///
 		////////////////////////////////////////////////////////////
-		void  updateScrollbar();
+		void updateScrollbar();
 
 		////////////////////////////////////////////////////////////
 		/// \brief (Re)initialise scrollbar parameters as appropriate
 		///
 		////////////////////////////////////////////////////////////
-		void  adjustScrollbar();
+		void adjustScrollbar();
 
 		////////////////////////////////////////////////////////////
 		/// \brief Move the scrollbar if it's being dragged
 		///
 		////////////////////////////////////////////////////////////
-		void  dragScrollbar();
+		void dragScrollbar();
 
 		////////////////////////////////////////////////////////////
 		/// \brief Move the InfoBox if it's being dragged
 		///
 		////////////////////////////////////////////////////////////
-		void  dragBox();
+		void dragBox();
 
 		////////////////////////////////////////////////////////////
 		/// \brief Resize the InfoBox if it's being resized
 		///
 		////////////////////////////////////////////////////////////
-		void  resizeBox();
+		void resizeBox();
 
 		////////////////////////////////////////////////////////////
 		/// \brief Handle InfoBox-related user input
 		///
 		////////////////////////////////////////////////////////////
-		void  detectBoxInteractions(sf::Event& _event);
+		void detectBoxInteractions(sf::Event& _event);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Handle scrollbar-related user input
 		///
 		////////////////////////////////////////////////////////////
-		void  detectScrollbarInteractions(sf::Event& _event);
+		void detectScrollbarInteractions(sf::Event& _event);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Handle resize strip-related user input
 		///
 		////////////////////////////////////////////////////////////
-		void  detectResizeStripInteractions(sf::Event& _event);
+		void detectResizeStripInteractions(sf::Event& _event);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Calculate the view's center based on the scrollbar
 		///
 		////////////////////////////////////////////////////////////
-		void  calculateNewScrollbarCenter();
+		void calculateNewScrollbarCenter();
 
 		///////////////////////////////////////////////////////////
 		//Data members --------------------------------------------

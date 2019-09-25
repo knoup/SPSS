@@ -4,6 +4,11 @@
 constexpr float MIN_SIZE_X{100};
 constexpr float MIN_SIZE_Y{150};
 
+constexpr float SCROLLBAR_WIDTH{15};
+
+constexpr float RESIZESTRIP_WIDTH{15};
+constexpr float RESIZESTRIP_HEIGHT{15};
+
 namespace spss {
 
 	////////////////////////////////////////////////////////////
@@ -38,9 +43,6 @@ namespace spss {
 	////////////////////////////////////////////////////////////
 	void InfoBox::appendMessage(const Message _msg) {
 		InfoBoxMessage newMessage{_msg, m_font, m_charSize};
-
-		newMessage.fitWidth(getUsableWidth());
-
 		m_messages.push_back(newMessage);
 		positionMessage(m_messages.size() - 1);
 		adjustScrollbar();
@@ -206,23 +208,31 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	void InfoBox::positionMessage(int _index) {
-		if (!m_messages.empty() && _index > 0) {
+		if (!m_messages.empty()) {
 			float lineSpacing{m_font.getLineSpacing(m_charSize)};
 
 			InfoBoxMessage& msg{m_messages[_index]};
-			InfoBoxMessage& lastMsg{m_messages[_index - 1]};
+			msg.fitWidth(getUsableWidth());
 
-			auto lastMessageLines{lastMsg.getNumberOfLines()};
-			auto newPosition{lastMsg.getPosition()};
+			float lastMessageLines{0};
+			sf::Vector2f newPosition{0, 0};
+
+			if(_index > 0) {
+				const InfoBoxMessage& lastMsg{m_messages[_index - 1]};
+				lastMessageLines = lastMsg.getNumberOfLines();
+				newPosition = lastMsg.getPosition();
+			}
 
 			newPosition.y += (lastMessageLines * lineSpacing);
-
 			msg.setPosition(newPosition);
 		}
 	}
 
 	////////////////////////////////////////////////////////////
-	void InfoBox::reset() {
+	void InfoBox::reset(bool _resized) {
+		//First, we'll initialise the views and the shaded
+		//rectangle
+		//////////////////////////////////////////////////
 		setPosition(m_position);
 		setSize(m_size);
 
@@ -242,26 +252,36 @@ namespace spss {
 
 		m_shadedRectangle.setSize(m_shadedRectangleView.getSize());
 
-		for (size_t i{0}; i < m_messages.size(); i++) {
-			InfoBoxMessage& message = m_messages[i];
-			message.fitWidth(getUsableWidth());
-			positionMessage(i);
-		}
 
-		adjustScrollbar();
+		//Next, we'll initialise the resizing strip
+		//////////////////////////////////////////////////
 
 		sf::Vector2f bottomRight{m_shadedRectangle.getGlobalBounds().width,
 								 m_shadedRectangle.getGlobalBounds().height};
 
-		// define the position of the triangle's points
-		m_resizeStrip[0].position = bottomRight;
-		m_resizeStrip[1].position = {bottomRight.x, bottomRight.y - 15};
-		m_resizeStrip[2].position = {bottomRight.x - 15, bottomRight.y};
 
-		// define the color of the triangle's points
+		m_resizeStrip[0].position = bottomRight;
+		m_resizeStrip[1].position = {bottomRight.x, bottomRight.y - RESIZESTRIP_HEIGHT};
+		m_resizeStrip[2].position = {bottomRight.x - RESIZESTRIP_WIDTH, bottomRight.y};
+
+
 		m_resizeStrip[0].color = sf::Color::White;
 		m_resizeStrip[1].color = sf::Color::Black;
 		m_resizeStrip[2].color = sf::Color::Black;
+
+		//The remaining portion of this function isn't
+		//needed unless the window was resized
+		//////////////////////////////////////////////////
+		if (!_resized) {
+			return;
+		}
+
+		for (size_t i{0}; i < m_messages.size(); i++) {
+			InfoBoxMessage& message = m_messages[i];
+			positionMessage(i);
+		}
+
+		adjustScrollbar();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -294,11 +314,7 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	float InfoBox::getUsableWidth() const {
-		float scrollbarWidth{0};
-		if (m_scrollbarActive) {
-			scrollbarWidth = m_scrollbarOuter.getGlobalBounds().width;
-		}
-		return m_view.getSize().x - scrollbarWidth;
+		return m_view.getSize().x - SCROLLBAR_WIDTH;
 	}
 
 	////////////////////////////////////////////////////////////
@@ -349,7 +365,7 @@ namespace spss {
 		//scrollbar won't take up all vertical space; there will be
 		//a little extra space at the bottom to be used for resizing.
 		float visibleHeight{m_size.y};
-		float trueHeight{m_size.y - 15};
+		float trueHeight{m_size.y - RESIZESTRIP_HEIGHT};
 
 		//Adjust the ranges so that they don't leave excess empty space.
 		//We'll add a little extra space (linespacing / 2) at the end to
@@ -361,7 +377,7 @@ namespace spss {
 		m_scrollbarOuter.setFillColor(sf::Color::Transparent);
 		m_scrollbarOuter.setOutlineColor(m_scrollbarColor);
 		m_scrollbarOuter.setOutlineThickness(-1);
-		m_scrollbarOuter.setSize({15, trueHeight});
+		m_scrollbarOuter.setSize({SCROLLBAR_WIDTH, trueHeight});
 
 		float scrollbarX{m_shadedRectangleView.getCenter().x};
 		scrollbarX += m_shadedRectangleView.getSize().x / 2;
@@ -378,7 +394,7 @@ namespace spss {
 		//amount of visible content
 		float ratio{trueHeight / getMenuHeight()};
 		m_scrollbarInner.setFillColor(m_scrollbarColor);
-		m_scrollbarInner.setSize({15, trueHeight * ratio});
+		m_scrollbarInner.setSize({SCROLLBAR_WIDTH, trueHeight * ratio});
 
 		//In order to avoid resetting the inner Y when unneccessary, we'll
 		//keep it and adjust it only if it goes out of range.
@@ -446,7 +462,7 @@ namespace spss {
 		newPos.y += diff.y;
 		setPosition(newPos);
 
-		reset();
+		reset(false);
 	}
 
 	////////////////////////////////////////////////////////////
