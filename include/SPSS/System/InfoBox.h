@@ -2,10 +2,9 @@
 #define INFOBOX_H_INCLUDED
 
 ////////////////////////////////////////////////////////////////////
-/// spss::InfoBox is a resizable and movable box to which text entries
-/// can be added. If the text is too wide, line breaks will be automa-
-/// tically inserted, and if the text is too tall, a scrollbar will be
-/// automatically activated. Useful for tooltip-style boxes.
+/// spss::InfoBox is a resizable and movable box to which InfoBoxMessages
+/// can be added. If the text is too tall, a scrollbar will be automatic-
+/// ally activated. Useful for tooltip-style/informational boxes.
 ////////////////////////////////////////////////////////////////////
 
 #include <SPSS/Graphics/MulticolorText.h>
@@ -92,6 +91,14 @@ namespace spss {
 		///
 		////////////////////////////////////////////////////////////
 		void setPosition(const sf::Vector2f& _pos);
+
+		////////////////////////////////////////////////////////////
+		/// \brief Set whether the InfoBox is resizable
+		///
+		/// \param _r The boolean value
+		///
+		////////////////////////////////////////////////////////////
+		void setResizable(bool _r);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Set whether the InfoBox is draggable
@@ -231,6 +238,7 @@ namespace spss {
 		sf::Vector2f                m_position;            ///< The position of the box
 		const sf::Font&             m_font;                ///< Font used to draw text
 		unsigned                    m_charSize;            ///< The character size
+		bool                        m_resizable;           ///< Is the box resizable?
 		bool 		                m_resizing;            ///< Is the box being resized?
 		bool                        m_draggable;           ///< Is the box draggable?
 		bool                        m_dragging;            ///< Is the box being dragged?

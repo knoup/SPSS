@@ -11,30 +11,50 @@ namespace spss {
 	class InfoBoxMessage : public sf::Drawable {
 	  public:
 		InfoBoxMessage(const Message&  _msg,
-		                const sf::Font& _font,
-		                unsigned int    _charSize);
-
-		void removeNewlines(std::string& _str);
+					   const sf::Font& _font,
+					   unsigned int    _charSize);
 
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 		void fitWidth(float _width);
 
-		void setString(const std::string& _str);
-		void setPosition(sf::Vector2f _pos);
-		void setTransparency(int _a);
+		void setMessage(const Message& _msg, float _width = 0);
+		void setTitle(const std::string& _title, float _width = 0);
+		void setContent(const std::string& _content, float _width = 0);
 
-		sf::Vector2f  getPosition() const;
-		sf::FloatRect getGlobalBounds() const;
-		sf::FloatRect getLocalBounds() const;
-		int           getTransparency() const;
-		unsigned int  getNumberOfLines(size_t _startPos = 0,
-		                               size_t _endPos   = 0) const;
+		void setTitleColor(sf::Color _color);
+		void setContentColor(sf::Color _color);
+
+		void setTitleAffixes(const std::string& _prefix,
+							 const std::string& _suffix,
+							 float              _width = 0,
+							 sf::Color _prefixColor = sf::Color::White,
+							 sf::Color _suffixColor = sf::Color::White);
+
+		void setPosition(sf::Vector2f _pos);
+		void setPosition(float _x, float _y);
+
+		const spss::MulticolorText& getText() const;
+
+		unsigned int getNumberOfLines() const;
 
 	  private:
+	  	unsigned int getNumberOfLines(size_t _startPos,
+									  size_t _endPos) const;
+	  	const std::string getRawString();
+
+	  	void setTextString(const std::string& _str);
+
 		//Data members --------------------------------
 		spss::MulticolorText m_text;
 		Message              m_message;
+		sf::Color            m_titleColor;
+		sf::Color            m_contentColor;
+
+		std::string          m_prefix;
+		std::string          m_suffix;
+		sf::Color            m_prefixColor;
+		sf::Color            m_suffixColor;
 		//---------------------------------------------
 	};
 } // namespace spss

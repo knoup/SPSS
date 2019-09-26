@@ -22,6 +22,7 @@ namespace spss {
 	              m_position{_position},
 	              m_font{_font},
 	              m_charSize{_charSize},
+	              m_resizable{false},
 	              m_resizing{false},
 	              m_draggable{false},
 	              m_dragging{false},
@@ -87,7 +88,10 @@ namespace spss {
 
 		m_window->setView(m_shadedRectangleView);
 		m_window->draw(m_shadedRectangle, states);
-		m_window->draw(m_resizeStrip, states);
+
+		if(m_resizable) {
+			m_window->draw(m_resizeStrip, states);
+		}
 
 		if (m_scrollbarActive) {
 			m_window->draw(m_scrollbarOuter);
@@ -158,6 +162,11 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
+	void InfoBox::setResizable(bool _r) {
+		m_resizable = _r;
+	}
+
+	////////////////////////////////////////////////////////////
 	void InfoBox::setDraggable(bool _d) {
 		m_draggable = _d;
 	}
@@ -220,7 +229,7 @@ namespace spss {
 			if(_index > 0) {
 				const InfoBoxMessage& lastMsg{m_messages[_index - 1]};
 				lastMessageLines = lastMsg.getNumberOfLines();
-				newPosition = lastMsg.getPosition();
+				newPosition = lastMsg.getText().getPosition();
 			}
 
 			newPosition.y += (lastMessageLines * lineSpacing);
@@ -323,11 +332,11 @@ namespace spss {
 			return 0;
 		}
 
-		auto firstTextPos{m_messages[0].getPosition()};
-		auto lastTextPos{m_messages.back().getPosition()};
+		auto firstTextPos{m_messages[0].getText().getPosition()};
+		auto lastTextPos{m_messages.back().getText().getPosition()};
 
-		auto firstTextBounds{m_messages[0].getGlobalBounds()};
-		auto lastTextBounds{m_messages.back().getGlobalBounds()};
+		auto firstTextBounds{m_messages[0].getText().getGlobalBounds()};
+		auto lastTextBounds{m_messages.back().getText().getGlobalBounds()};
 
 		//Since messages have a Y origin of 0, we'll add the last text's height
 
@@ -531,6 +540,10 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	void  InfoBox::detectResizeStripInteractions(sf::Event& _event) {
+		if (!m_resizable) {
+			return;
+		}
+
 		if (Util::Input::lmbPressed(_event) && resizeStripMousedOver()) {
 			m_resizing = true;
 		}
