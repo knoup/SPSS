@@ -30,6 +30,7 @@ namespace spss {
 	              m_view{},
 	              m_shadedRectangleView{},
 	              m_shadedRectangle{},
+	              m_shadedRectangleColor{0, 0, 0, 100},
 	              m_resizeStrip{sf::Triangles, 3},
 	              m_messages{},
 	              m_scrollbarColor{sf::Color::White},
@@ -37,8 +38,9 @@ namespace spss {
 	              m_scrollbarDragging{false},
 	              m_scrollbarMinRange{0},
 	              m_scrollbarMaxRange{0} {
-		m_shadedRectangle.setOutlineColor(sf::Color(255, 165, 0));
-		m_shadedRectangle.setFillColor(sf::Color(0, 0, 0, 100));
+		m_scrollbarOuter.setFillColor(sf::Color::Transparent);
+		setColor(m_shadedRectangleColor);
+		setScrollbarColor(m_scrollbarColor);
 	}
 
 	////////////////////////////////////////////////////////////
@@ -113,6 +115,17 @@ namespace spss {
 		}
 
 		draw(*w, states);
+	}
+
+	////////////////////////////////////////////////////////////
+	void InfoBox::setColor(sf::Color _color) {
+		m_shadedRectangle.setFillColor(m_shadedRectangleColor);
+	}
+
+	////////////////////////////////////////////////////////////
+	void InfoBox::setScrollbarColor(sf::Color _color) {
+		m_scrollbarOuter.setOutlineColor(m_scrollbarColor);
+		m_scrollbarInner.setFillColor(m_scrollbarColor);
 	}
 
 	////////////////////////////////////////////////////////////
@@ -383,8 +396,6 @@ namespace spss {
 		m_scrollbarMaxRange = getMenuHeight() - (visibleHeight / 2) + m_font.getLineSpacing(m_charSize) / 2;
 
 		//Initialize the outer scrollbar
-		m_scrollbarOuter.setFillColor(sf::Color::Transparent);
-		m_scrollbarOuter.setOutlineColor(m_scrollbarColor);
 		m_scrollbarOuter.setOutlineThickness(-1);
 		m_scrollbarOuter.setSize({SCROLLBAR_WIDTH, trueHeight});
 
@@ -402,7 +413,6 @@ namespace spss {
 		//so that the inner scrollbar's height scales linearly with the
 		//amount of visible content
 		float ratio{trueHeight / getMenuHeight()};
-		m_scrollbarInner.setFillColor(m_scrollbarColor);
 		m_scrollbarInner.setSize({SCROLLBAR_WIDTH, trueHeight * ratio});
 
 		//In order to avoid resetting the inner Y when unneccessary, we'll

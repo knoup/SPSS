@@ -77,6 +77,22 @@ namespace spss {
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 		////////////////////////////////////////////////////////////
+		/// \brief Set the box's color
+		///
+		/// \param _color The color
+		///
+		////////////////////////////////////////////////////////////
+		void setColor(sf::Color _color);
+
+		////////////////////////////////////////////////////////////
+		/// \brief Set the scrollbar's color
+		///
+		/// \param _color The color
+		///
+		////////////////////////////////////////////////////////////
+		void setScrollbarColor(sf::Color _color);
+
+		////////////////////////////////////////////////////////////
 		/// \brief Set the size
 		///
 		/// \param _size The size
@@ -232,30 +248,31 @@ namespace spss {
 		///////////////////////////////////////////////////////////
 		//Data members --------------------------------------------
 		///////////////////////////////////////////////////////////
-		mutable sf::RenderWindow*   m_window;              ///< The last window draw() is called on
-		sf::Vector2u                m_lastWindowSize;      ///< The last known window size
-		sf::Vector2f                m_size;                ///< The size of the box
-		sf::Vector2f                m_position;            ///< The position of the box
-		const sf::Font&             m_font;                ///< Font used to draw text
-		unsigned                    m_charSize;            ///< The character size
-		bool                        m_resizable;           ///< Is the box resizable?
-		bool 		                m_resizing;            ///< Is the box being resized?
-		bool                        m_draggable;           ///< Is the box draggable?
-		bool                        m_dragging;            ///< Is the box being dragged?
-		sf::Vector2i                m_lastMousePosition;   ///< The last known mouse position
-		sf::View                    m_view;                ///< The scrollable view
-		sf::View                    m_shadedRectangleView; ///< The background shaded rectangle view
-		sf::RectangleShape          m_shadedRectangle;     ///< The background shaded rectangle
-		sf::VertexArray             m_resizeStrip;         ///< The triangle you click to resize the box
-		std::vector<InfoBoxMessage> m_messages;            ///< The messages contained within the box
-		sf::Color                   m_scrollbarColor;      ///< The color of the scrollbar
-		bool                        m_scrollbarActive;     ///< Is the scrollbar active?
-		mutable bool                m_scrollbarDragging;   ///< Is the scrollbar being dragged?
-		sf::RectangleShape          m_scrollbarOuter;      ///< The outer part of the scrollbar
-		sf::RectangleShape          m_scrollbarInner;      ///< The inner part of the scrollbar
-		float                       m_scrollbarMinRange;   ///< The minimum value for the scrollable view's center
-		float                       m_scrollbarMaxRange;   ///< The maximum value for the scrollable view's center
-														   //---------------------------------------------
+		mutable sf::RenderWindow*   m_window;               ///< The last window draw() is called on
+		sf::Vector2u                m_lastWindowSize;       ///< The last known window size
+		sf::Vector2f                m_size;                 ///< The size of the box
+		sf::Vector2f                m_position;             ///< The position of the box
+		const sf::Font&             m_font;                 ///< Font used to draw text
+		unsigned                    m_charSize;             ///< The character size
+		bool                        m_resizable;            ///< Is the box resizable?
+		bool 		                m_resizing;             ///< Is the box being resized?
+		bool                        m_draggable;            ///< Is the box draggable?
+		bool                        m_dragging;             ///< Is the box being dragged?
+		sf::Vector2i                m_lastMousePosition;    ///< The last known mouse position
+		sf::View                    m_view;                 ///< The scrollable view
+		sf::View                    m_shadedRectangleView;  ///< The background shaded rectangle view
+		sf::RectangleShape          m_shadedRectangle;      ///< The background shaded rectangle
+		sf::Color                   m_shadedRectangleColor; ///< The color of the shaded rectangle
+		sf::VertexArray             m_resizeStrip;          ///< The triangle you click to resize the box
+		std::vector<InfoBoxMessage> m_messages;             ///< The messages contained within the box
+		sf::Color                   m_scrollbarColor;       ///< The color of the scrollbar
+		bool                        m_scrollbarActive;      ///< Is the scrollbar active?
+		mutable bool                m_scrollbarDragging;    ///< Is the scrollbar being dragged?
+		sf::RectangleShape          m_scrollbarOuter;       ///< The outer part of the scrollbar
+		sf::RectangleShape          m_scrollbarInner;       ///< The inner part of the scrollbar
+		float                       m_scrollbarMinRange;    ///< The minimum value for the scrollable view's center
+		float                       m_scrollbarMaxRange;    ///< The maximum value for the scrollable view's center
+														    //---------------------------------------------
 	};
 } // namespace spss
 
