@@ -287,9 +287,9 @@ namespace spss {
 		m_resizeStrip[2].position = {bottomRight.x - RESIZESTRIP_WIDTH, bottomRight.y};
 
 
-		m_resizeStrip[0].color = sf::Color::White;
-		m_resizeStrip[1].color = sf::Color::Black;
-		m_resizeStrip[2].color = sf::Color::Black;
+		m_resizeStrip[0].color = {255, 255, 255, 140};
+		m_resizeStrip[1].color = {0, 0, 0, 140};
+		m_resizeStrip[2].color = {0, 0, 0, 140};
 
 		//The remaining portion of this function isn't
 		//needed unless the window was resized

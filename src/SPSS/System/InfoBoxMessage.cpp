@@ -1,7 +1,5 @@
 #include <SPSS/System/InfoBoxMessage.h>
 
-#include <iostream>
-
 namespace spss {
 
 	void removeNewlines(std::string& _str) {
@@ -33,6 +31,9 @@ namespace spss {
 		target.draw(m_text, states);
 	}
 
+	//TODO:
+	//This could use some optimization. Or maybe in InfoBox,
+	//where it's called on every object upon resizing?
 	void InfoBoxMessage::fitWidth(float _width) {
 		bool tooWide{m_text.getGlobalBounds().width >= _width};
 		bool tooNarrow{m_text.getGlobalBounds().width < _width &&
@@ -112,9 +113,9 @@ namespace spss {
 
 	void InfoBoxMessage::setTitleAffixes(const std::string& _prefix,
 						                 const std::string& _suffix,
-						                 float              _width,
 						                 sf::Color          _prefixColor,
-						                 sf::Color          _suffixColor) {
+						                 sf::Color          _suffixColor,
+						                 float              _width) {
 		m_prefix      = _prefix;
 		m_suffix      = _suffix;
 		m_prefixColor = _prefixColor;
@@ -134,13 +135,13 @@ namespace spss {
 		return m_text;
 	}
 
-	unsigned int InfoBoxMessage::getNumberOfLines() const {
+	const unsigned int InfoBoxMessage::getNumberOfLines() const {
 		const std::string& s{m_text.getString()};
 		return getNumberOfLines(0, s.length() - 1);
 	}
 
-	unsigned int InfoBoxMessage::getNumberOfLines(size_t _startPos,
-												  size_t _endPos) const {
+	const unsigned int InfoBoxMessage::getNumberOfLines(size_t _startPos,
+												        size_t _endPos) const {
 		const std::string& s{m_text.getString()};
 		int count{1};
 
@@ -173,13 +174,11 @@ namespace spss {
 		return count;
 	}
 
-	const std::string InfoBoxMessage::getRawString() {
-		std::string finalStr{""};
-		if (m_message.title != "") {
-			finalStr = (m_prefix + m_message.title + m_suffix + " ");
-		}
-		finalStr += m_message.content;
-		return finalStr;
+	const std::string InfoBoxMessage::getRawString() const {
+		std::string s{""};
+		s = (m_prefix + m_message.title + m_suffix + " ");
+		s += m_message.content;
+		return s;
 	}
 
 	void InfoBoxMessage::setTextString(const std::string& _str) {
