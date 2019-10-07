@@ -1,6 +1,8 @@
 #include <SPSS/System/InfoBox.h>
 #include <SPSS/Util/Input.h>
 
+#include <iostream>
+
 constexpr float MIN_SIZE_X{100};
 constexpr float MIN_SIZE_Y{150};
 
@@ -33,14 +35,9 @@ namespace spss {
 	              m_shadedRectangleColor{0, 0, 0, 100},
 	              m_resizeStrip{sf::Triangles, 3},
 	              m_messages{},
-	              m_scrollbarColor{sf::Color::White},
-	              m_scrollbarActive{false},
-	              m_scrollbarDragging{false},
-	              m_scrollbarMinRange{0},
-	              m_scrollbarMaxRange{0} {
-		m_scrollbarOuter.setFillColor(sf::Color::Transparent);
+	              m_scrollbar{m_window, m_shadedRectangleView, m_view} {
 		setColor(m_shadedRectangleColor);
-		setScrollbarColor(m_scrollbarColor);
+		setScrollbarColor(sf::Color::White);
 	}
 
 	////////////////////////////////////////////////////////////
@@ -48,7 +45,7 @@ namespace spss {
 		InfoBoxMessage newMessage{_msg, m_font, m_charSize};
 		m_messages.push_back(newMessage);
 		positionMessage(m_messages.size() - 1);
-		adjustScrollbar();
+		setupScrollbar();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -58,7 +55,7 @@ namespace spss {
 		}
 
 		detectResizeStripInteractions(_event);
-		detectScrollbarInteractions(_event);
+		m_scrollbar.getInput(_event);
 		detectBoxInteractions(_event);
 	}
 
@@ -80,7 +77,7 @@ namespace spss {
 
 		resizeBox();
 		dragBox();
-		updateScrollbar();
+		m_scrollbar.update();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -95,10 +92,7 @@ namespace spss {
 			m_window->draw(m_resizeStrip, states);
 		}
 
-		if (m_scrollbarActive) {
-			m_window->draw(m_scrollbarOuter);
-			m_window->draw(m_scrollbarInner);
-		}
+		m_window->draw(m_scrollbar, states);
 
 		m_window->setView(m_view);
 		for (const auto& message : m_messages) {
@@ -124,8 +118,7 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	void InfoBox::setScrollbarColor(sf::Color _color) {
-		m_scrollbarOuter.setOutlineColor(m_scrollbarColor);
-		m_scrollbarInner.setFillColor(m_scrollbarColor);
+		m_scrollbar.setColor(_color);
 	}
 
 	////////////////////////////////////////////////////////////
@@ -189,19 +182,10 @@ namespace spss {
 		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 		sf::Vector2f pixelPos{m_window->mapPixelToCoords(mousePos, m_shadedRectangleView)};
 
-		if (m_shadedRectangle.getGlobalBounds().contains(pixelPos.x, pixelPos.y)) {
-			return true;
-		}
+		auto bounds{m_shadedRectangle.getGlobalBounds()};
+		bounds.width -= SCROLLBAR_WIDTH;
 
-		return false;
-	}
-
-	////////////////////////////////////////////////////////////
-	bool InfoBox::scrollbarMousedOver() const {
-		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
-		sf::Vector2f pixelPos{m_window->mapPixelToCoords(mousePos, m_shadedRectangleView)};
-
-		if (m_scrollbarOuter.getGlobalBounds().contains(pixelPos.x, pixelPos.y)) {
+		if (bounds.contains(pixelPos.x, pixelPos.y)) {
 			return true;
 		}
 
@@ -303,35 +287,7 @@ namespace spss {
 			positionMessage(i);
 		}
 
-		adjustScrollbar();
-	}
-
-	////////////////////////////////////////////////////////////
-	void InfoBox::scroll(bool _up) {
-		if (!m_scrollbarActive) {
-			return;
-		}
-
-		auto  pos{m_scrollbarInner.getPosition()};
-		float min{m_scrollbarOuter.getPosition().y};
-		float max{m_scrollbarOuter.getPosition().y + m_scrollbarOuter.getGlobalBounds().height};
-		max -= m_scrollbarInner.getGlobalBounds().height;
-
-		if (_up) {
-			pos.y -= m_scrollbarInner.getGlobalBounds().height / 2;
-		}
-		else {
-			pos.y += m_scrollbarInner.getGlobalBounds().height / 2;
-		}
-
-		if (pos.y <= min) {
-			pos.y = min;
-		}
-		else if (pos.y >= max) {
-			pos.y = max;
-		}
-
-		m_scrollbarInner.setPosition(pos);
+		setupScrollbar();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -357,27 +313,19 @@ namespace spss {
 		       firstTextPos.y;
 	}
 
-	////////////////////////////////////////////////////////////
-	void InfoBox::updateScrollbar() {
-		if (!m_scrollbarActive) {
-			return;
-		}
-		dragScrollbar();
-		calculateNewScrollbarCenter();
-	}
 
 	////////////////////////////////////////////////////////////
-	void InfoBox::adjustScrollbar() {
+	void InfoBox::setupScrollbar() {
 		if (m_messages.empty()) {
 			return;
 		}
 
 		if (getMenuHeight() < m_size.y) {
-			m_scrollbarActive = false;
+			m_scrollbar.setActive(false);
 			return;
 		}
 
-		m_scrollbarActive = true;
+		m_scrollbar.setActive(true);
 
 		//visibleHeight is essentially the height of the menu. However,
 		//trueHeight will be used for all scrollbar size related
@@ -387,77 +335,22 @@ namespace spss {
 		//scrollbar won't take up all vertical space; there will be
 		//a little extra space at the bottom to be used for resizing.
 		float visibleHeight{m_size.y};
-		float trueHeight{m_size.y - RESIZESTRIP_HEIGHT};
+		float trueHeight{visibleHeight - RESIZESTRIP_HEIGHT};
+
+		float scrollbarX{m_shadedRectangleView.getCenter().x};
+		scrollbarX += m_shadedRectangleView.getSize().x / 2;
+		scrollbarX -= SCROLLBAR_WIDTH;
+
+		sf::Vector2f scrollbarSize{SCROLLBAR_WIDTH, trueHeight};
+		sf::Vector2f scrollbarPosition{scrollbarX, 0};
 
 		//Adjust the ranges so that they don't leave excess empty space.
 		//We'll add a little extra space (linespacing / 2) at the end to
 		//ensure no text is cut off.
-		m_scrollbarMinRange = m_size.y / 2;
-		m_scrollbarMaxRange = getMenuHeight() - (visibleHeight / 2) + m_font.getLineSpacing(m_charSize) / 2;
+		float minRange{m_size.y / 2};
+		float maxRange{getMenuHeight() - (visibleHeight / 2) + m_font.getLineSpacing(m_charSize) / 2};
 
-		//Initialize the outer scrollbar
-		m_scrollbarOuter.setOutlineThickness(-1);
-		m_scrollbarOuter.setSize({SCROLLBAR_WIDTH, trueHeight});
-
-		float scrollbarX{m_shadedRectangleView.getCenter().x};
-		scrollbarX += m_shadedRectangleView.getSize().x / 2;
-		scrollbarX -= m_scrollbarOuter.getGlobalBounds().width;
-
-		m_scrollbarOuter.setPosition({scrollbarX, 0});
-
-		//Initialize the inner scrollbar
-
-		//The ratio of inner height  :  outer height (i.e. trueHeight)
-		//should equal
-		//the ratio of trueHeight :  total menu height
-		//so that the inner scrollbar's height scales linearly with the
-		//amount of visible content
-		float ratio{trueHeight / getMenuHeight()};
-		m_scrollbarInner.setSize({SCROLLBAR_WIDTH, trueHeight * ratio});
-
-		//In order to avoid resetting the inner Y when unneccessary, we'll
-		//keep it and adjust it only if it goes out of range.
-		float innerY{m_scrollbarInner.getPosition().y};
-		float maxY{m_scrollbarOuter.getPosition().y};
-		maxY += m_scrollbarOuter.getGlobalBounds().height;
-		maxY -= m_scrollbarInner.getGlobalBounds().height;
-		if (innerY > maxY) {
-			innerY = maxY;
-		}
-
-		m_scrollbarInner.setPosition({scrollbarX, innerY});
-	}
-
-	////////////////////////////////////////////////////////////
-	void InfoBox::dragScrollbar() {
-		if (!m_scrollbarDragging) {
-			return;
-		}
-
-		auto pos{sf::Mouse::getPosition(*m_window)};
-		auto mousePos{m_window->mapPixelToCoords(pos, m_shadedRectangleView)};
-
-		//Just some aliases for readability
-		auto outerPos{m_scrollbarOuter.getPosition()};
-		auto outerBounds{m_scrollbarOuter.getGlobalBounds()};
-		auto innerPos{m_scrollbarInner.getPosition()};
-		auto innerBounds{m_scrollbarInner.getGlobalBounds()};
-
-		float lowerLimit{outerPos.y};
-		float upperLimit{outerPos.y + outerBounds.height - innerBounds.height};
-
-		//We'll add half the inner height so that our cursor
-		//is associated with the middle and not the top
-		innerPos.y = mousePos.y - innerBounds.height / 2;
-
-		if (innerPos.y <= lowerLimit) {
-			innerPos.y = lowerLimit;
-		}
-		else if (innerPos.y >= upperLimit) {
-			innerPos.y = upperLimit;
-		}
-
-		m_scrollbarInner.setPosition(innerPos);
+		m_scrollbar.reset(scrollbarSize, scrollbarPosition, minRange, maxRange);
 	}
 
 	////////////////////////////////////////////////////////////
@@ -482,9 +375,15 @@ namespace spss {
 		setPosition(newPos);
 
 		reset(false);
+
+		std::cout << "dragged" << std::endl;
 	}
 
 	////////////////////////////////////////////////////////////
+	/*
+	TODO TOFIX BUG
+	Something is wrong when resizing.
+	*/
 	void InfoBox::resizeBox() {
 		if (!m_resizing || m_window == nullptr) {
 			return;
@@ -507,11 +406,15 @@ namespace spss {
 		setSize(newSize);
 
 		reset();
+
+		std::cout << "resized by " << diff.x << ", " << diff.y << std::endl;
 	}
 
 	////////////////////////////////////////////////////////////
 	void InfoBox::detectBoxInteractions(sf::Event& _event) {
-		if (!m_draggable || m_scrollbarDragging) {
+		// || m_scrollbarDragging?
+		//todo get back to this
+		if (!m_draggable) {
 			return;
 		}
 
@@ -530,25 +433,6 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
-	void InfoBox::detectScrollbarInteractions(sf::Event& _event) {
-		if (Util::Input::lmbPressed(_event) && scrollbarMousedOver()) {
-			m_scrollbarDragging = true;
-		}
-		else if (Util::Input::lmbReleased(_event)) {
-			m_scrollbarDragging = false;
-		}
-
-		if (_event.type == sf::Event::MouseWheelMoved && boxMousedOver()) {
-			if (_event.mouseWheel.delta > 0) {
-				scroll(true);
-			}
-			else if (_event.mouseWheel.delta < 0) {
-				scroll(false);
-			}
-		}
-	}
-
-	////////////////////////////////////////////////////////////
 	void  InfoBox::detectResizeStripInteractions(sf::Event& _event) {
 		if (!m_resizable) {
 			return;
@@ -562,36 +446,4 @@ namespace spss {
 		}
 	}
 
-	////////////////////////////////////////////////////////////
-	void InfoBox::calculateNewScrollbarCenter() {
-		if (!m_scrollbarActive) {
-			return;
-		}
-
-		float innerY{m_scrollbarInner.getPosition().y};
-
-		//First, we'll calculate the decimal percentage (between 0 and 1)
-		//of the progress of innerY from its minimum visible value, the
-		//value of outer scrollbar's Y position, to its maximum visible
-		//value, that plus the height of the outer scrollbar, minus the
-		//height of the inner.
-		float minY{m_scrollbarOuter.getPosition().y};
-		float maxY{minY + m_scrollbarOuter.getGlobalBounds().height};
-		maxY -= m_scrollbarInner.getGlobalBounds().height;
-
-		//The formula is: percentage = (value - min) / (max - min)
-		float p{(innerY - minY) / (maxY - minY)};
-
-		//Now, we'll calculate the value of that percentage in terms
-		//of the center value ranges.
-		//0 corresponds to the m_scrollbarMinRange, and
-		//1 corresponds to the m_scrollbarMaxRange
-		//
-		//The formula is: value = ((max - min) * percentage) + min
-		float newCenterY{((m_scrollbarMaxRange - m_scrollbarMinRange) * p) + m_scrollbarMinRange};
-
-		auto c{m_view.getCenter()};
-		c.y = newCenterY;
-		m_view.setCenter(c);
-	}
 } // namespace spss

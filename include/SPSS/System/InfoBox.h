@@ -9,6 +9,7 @@
 
 #include <SPSS/Graphics/MulticolorText.h>
 #include <SPSS/System/InfoBoxMessage.h>
+#include <SPSS/System/Scrollbar.h>
 
 #include <SFML/Graphics.hpp>
 
@@ -135,7 +136,7 @@ namespace spss {
 		/// \brief Is the scrollbar being moused over?
 		///
 		////////////////////////////////////////////////////////////
-		bool scrollbarMousedOver() const;
+		//bool scrollbarMousedOver() const;
 
 		////////////////////////////////////////////////////////////
 		/// \brief Is the resizing strip being moused over?
@@ -175,7 +176,7 @@ namespace spss {
 		/// \param _up Up?
 		///
 		////////////////////////////////////////////////////////////
-		void scroll(bool _up);
+		//void scroll(bool _up);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Get the effective width of the InfoBox
@@ -195,19 +196,19 @@ namespace spss {
 		/// \brief Update the scrollbar
 		///
 		////////////////////////////////////////////////////////////
-		void updateScrollbar();
+		//void updateScrollbar();
 
 		////////////////////////////////////////////////////////////
 		/// \brief (Re)initialise scrollbar parameters as appropriate
 		///
 		////////////////////////////////////////////////////////////
-		void adjustScrollbar();
+		void setupScrollbar();
 
 		////////////////////////////////////////////////////////////
 		/// \brief Move the scrollbar if it's being dragged
 		///
 		////////////////////////////////////////////////////////////
-		void dragScrollbar();
+		//void dragScrollbar();
 
 		////////////////////////////////////////////////////////////
 		/// \brief Move the InfoBox if it's being dragged
@@ -231,7 +232,7 @@ namespace spss {
 		/// \brief Handle scrollbar-related user input
 		///
 		////////////////////////////////////////////////////////////
-		void detectScrollbarInteractions(sf::Event& _event);
+		//void detectScrollbarInteractions(sf::Event& _event);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Handle resize strip-related user input
@@ -243,7 +244,7 @@ namespace spss {
 		/// \brief Calculate the view's center based on the scrollbar
 		///
 		////////////////////////////////////////////////////////////
-		void calculateNewScrollbarCenter();
+		//void calculateNewScrollbarCenter();
 
 		///////////////////////////////////////////////////////////
 		//Data members --------------------------------------------
@@ -265,13 +266,15 @@ namespace spss {
 		sf::Color                   m_shadedRectangleColor; ///< The color of the shaded rectangle
 		sf::VertexArray             m_resizeStrip;          ///< The triangle you click to resize the box
 		std::vector<InfoBoxMessage> m_messages;             ///< The messages contained within the box
-		sf::Color                   m_scrollbarColor;       ///< The color of the scrollbar
-		bool                        m_scrollbarActive;      ///< Is the scrollbar active?
-		mutable bool                m_scrollbarDragging;    ///< Is the scrollbar being dragged?
-		sf::RectangleShape          m_scrollbarOuter;       ///< The outer part of the scrollbar
-		sf::RectangleShape          m_scrollbarInner;       ///< The inner part of the scrollbar
-		float                       m_scrollbarMinRange;    ///< The minimum value for the scrollable view's center
-		float                       m_scrollbarMaxRange;    ///< The maximum value for the scrollable view's center
+
+		spss::Scrollbar             m_scrollbar;
+		//sf::Color                   m_scrollbarColor;       ///< The color of the scrollbar
+		//bool                        m_scrollbarActive;      ///< Is the scrollbar active?
+		//mutable bool                m_scrollbarDragging;    ///< Is the scrollbar being dragged?
+		//sf::RectangleShape          m_scrollbarOuter;       ///< The outer part of the scrollbar
+		//sf::RectangleShape          m_scrollbarInner;       ///< The inner part of the scrollbar
+		//float                       m_scrollbarMinRange;    ///< The minimum value for the scrollable view's center
+		//float                       m_scrollbarMaxRange;    ///< The maximum value for the scrollable view's center
 														    //---------------------------------------------
 	};
 } // namespace spss

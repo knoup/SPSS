@@ -11,7 +11,7 @@ namespace spss::Util::Input {
 	/// \param _event A reference to a captured event
 	///
 	////////////////////////////////////////////////////////////
-	bool lmbPressed(sf::Event& _event) {
+	inline bool lmbPressed(sf::Event& _event) {
 		if (_event.type == sf::Event::MouseButtonPressed &&
 		    _event.mouseButton.button == sf::Mouse::Left) {
 			return true;
@@ -27,7 +27,7 @@ namespace spss::Util::Input {
 	/// \param _event A reference to a captured event
 	///
 	////////////////////////////////////////////////////////////
-	bool lmbReleased(sf::Event& _event) {
+	inline bool lmbReleased(sf::Event& _event) {
 		if (_event.type == sf::Event::MouseButtonReleased &&
 		    _event.mouseButton.button == sf::Mouse::Left) {
 			return true;
