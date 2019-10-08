@@ -4,14 +4,14 @@
 namespace spss {
 
 	Scrollbar::Scrollbar(sf::RenderWindow*   _window,
-						 const sf::View&     _backgroundView,
+						 const sf::View&     _bgView,
 						 sf::View&           _scrollView,
 						 const sf::Vector2f& _size,
-						 const sf::Vector2f& _position,
+						 const sf::Vector2f& _pos,
 						 float               _min,
 						 float               _max) :
 		m_window{_window},
-		m_backgroundView{_backgroundView},
+		m_backgroundView{_bgView},
 		m_scrollView{_scrollView},
 		m_color{sf::Color::White},
 		m_active{false},
@@ -23,13 +23,13 @@ namespace spss {
 			m_outer.setOutlineThickness(-1);
 			m_outer.setFillColor(sf::Color::Transparent);
 			setColor(m_color);
-			reset(_size, _position, _min, _max);
+			reset(_size, _pos, _min, _max);
 	}
 
 
 
 	void Scrollbar::reset(const sf::Vector2f& _size,
-						  const sf::Vector2f& _position,
+						  const sf::Vector2f& _pos,
 						  float               _min,
 						  float               _max) {
 
@@ -37,7 +37,7 @@ namespace spss {
 		m_maxRange = _max;
 
 		m_outer.setSize(_size);
-		m_outer.setPosition(_position);
+		m_outer.setPosition(_pos);
 
 		//Initialize the inner scrollbar
 		float scrollbarHeight{_size.y};
@@ -75,7 +75,7 @@ namespace spss {
 			innerY = minY;
 		}
 
-		m_inner.setPosition({_position.x, innerY});
+		m_inner.setPosition({_pos.x, innerY});
 	}
 
 	void Scrollbar::setActive(bool _b) {
