@@ -18,6 +18,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include <SPSS/System/State.h>
+#include <SPSS/System/Scrollbar.h>
 #include <SPSS/Util/Function.h>
 #include <SPSS/Util/Math.h>
 
@@ -358,42 +359,10 @@ namespace spss {
 		float getMenuHeight() const;
 
 		////////////////////////////////////////////////////////////
-		/// \brief Update the scrollbar
-		///
-		////////////////////////////////////////////////////////////
-		void updateScrollbar();
-
-		////////////////////////////////////////////////////////////
 		/// \brief (Re)initialize scrollbar parameters as appropriate
 		///
 		////////////////////////////////////////////////////////////
-		void adjustScrollbar();
-
-		////////////////////////////////////////////////////////////
-		/// \brief Move the scrollbar if it's being dragged
-		///
-		////////////////////////////////////////////////////////////
-		void dragScrollbar();
-
-		////////////////////////////////////////////////////////////
-		/// \brief Handle scrollbar related user input
-		///
-		////////////////////////////////////////////////////////////
-		void detectScrollbarInteractions(sf::Event& _event);
-
-		////////////////////////////////////////////////////////////
-		/// \brief Calculate the view's center based on the scrollbar
-		///
-		////////////////////////////////////////////////////////////
-		void calculateNewScrollbarCenter();
-
-		////////////////////////////////////////////////////////////
-		/// \brief Scroll a step up or down
-		///
-		/// \param _up The desired direction
-		///
-		////////////////////////////////////////////////////////////
-		void scroll(bool _up);
+		void setupScrollbar();
 
 		///////////////////////////////////////////////////////////
 		//Data members --------------------------------------------
@@ -405,6 +374,7 @@ namespace spss {
 		sf::View              m_view;                  ///< The view used to draw the menu items
 		sf::View              m_backgroundView;        ///< The view used to draw the title text
 		sf::Text              m_titleText;             ///< The title text
+		spss::Scrollbar       m_scrollbar;             ///< The scrollbar
 		bool                  m_randomiseTextColor;    ///< Is the title's color randomised?
 		int                   m_randomColorDurationMS; ///< How many MS the title's color persists for before it is randomised again
 		bool                  m_scaleText;             ///< Is the title being scaled up and down?
@@ -414,13 +384,6 @@ namespace spss {
 		float                 m_rotationDegrees;       ///< The title text's maximum rotation in degrees
 		sf::Color             m_highlightColor;        ///< The color of highlighted menu items
 		float                 m_highlightScale;        ///< The scaling value for highlighted menu items
-		sf::Color             m_scrollbarColor;        ///< The scrollbar's color
-		bool                  m_scrollbarActive;       ///< Is the scrollbar being used?
-		mutable bool          m_scrollbarDragging;     ///< Is the user holding LMB and dragging the scrollbar?
-		sf::RectangleShape    m_scrollbarOuter;        ///< The outer scrollbar shape
-		sf::RectangleShape    m_scrollbarInner;        ///< The inner scrollbar shape
-		float                 m_scrollbarMinRange;     ///< The scrollbar's smallest possible value for the view center
-		float                 m_scrollbarMaxRange;     ///< The scrollbar's largest possible value for the view center
 		                                               //---------------------------------------------
 	};
 

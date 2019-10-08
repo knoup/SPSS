@@ -76,7 +76,7 @@ namespace spss {
 		////////////////////////////////////////////////////////////
 		/// \brief Draw the text to a render target
 		///
-		/// Since we only want InfoBoxes to be drawable on sf::Render-
+		/// Since we only want Scrollbar to be drawable to sf::Render-
 		/// Windows, and since sf::Drawable requires this function to
 		/// be overloaded, we'll dynamically cast target to a sf::Render-
 		/// Window. If that's not possible, then draw() will do nothing.
@@ -135,7 +135,6 @@ namespace spss {
 		sf::RectangleShape        m_inner;          ///< The inner part of the scrollbar
 		float                     m_minRange;       ///< The minimum value for the scrollable view's center
 		float                     m_maxRange;       ///< The maximum value for the scrollable view's center
-
 	};
 
 }

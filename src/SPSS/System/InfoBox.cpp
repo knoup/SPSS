@@ -314,6 +314,7 @@ namespace spss {
 	////////////////////////////////////////////////////////////
 	void InfoBox::setupScrollbar() {
 		if (m_messages.empty()) {
+			m_scrollbar.setActive(false);
 			return;
 		}
 
@@ -375,10 +376,6 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
-	/*
-	TODO TOFIX BUG
-	Something is wrong when resizing.
-	*/
 	void InfoBox::resizeBox() {
 		if (!m_resizing || m_window == nullptr) {
 			return;
@@ -405,8 +402,6 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	void InfoBox::detectBoxInteractions(sf::Event& _event) {
-		// || m_scrollbarDragging?
-		//todo get back to this
 		if (!m_draggable) {
 			return;
 		}

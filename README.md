@@ -13,7 +13,11 @@ SPSS also contains some other useful modules, such as:
 
 **MulticolorText**: a modified version of sf::Text that removes the limitation of only being able to set one colour for the entire text object. You can not only specify different colours for different index ranges, but also outline colours and thicknesses.
 
-With time, more useful features will be added.
+**Scrollbar** (examples/documentation coming soon)
+
+**InfoBox** (examples/documentation coming soon)
+
+With time, more useful features will be added and expanded upon.
 
 A compiler that supports at least C++17 is required to compile SPSS.
 
