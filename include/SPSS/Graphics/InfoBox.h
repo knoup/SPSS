@@ -8,8 +8,8 @@
 ////////////////////////////////////////////////////////////////////
 
 #include <SPSS/Graphics/MulticolorText.h>
-#include <SPSS/System/InfoBoxMessage.h>
-#include <SPSS/System/Scrollbar.h>
+#include <SPSS/Graphics/InfoBoxMessage.h>
+#include <SPSS/Graphics/Scrollbar.h>
 
 #include <SFML/Graphics.hpp>
 

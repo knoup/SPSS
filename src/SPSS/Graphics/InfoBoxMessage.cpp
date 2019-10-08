@@ -1,4 +1,4 @@
-#include <SPSS/System/InfoBoxMessage.h>
+#include <SPSS/Graphics/InfoBoxMessage.h>
 
 namespace spss {
 

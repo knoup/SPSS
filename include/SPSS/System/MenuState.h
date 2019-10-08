@@ -18,7 +18,7 @@
 ////////////////////////////////////////////////////////////////////
 
 #include <SPSS/System/State.h>
-#include <SPSS/System/Scrollbar.h>
+#include <SPSS/Graphics/Scrollbar.h>
 #include <SPSS/Util/Function.h>
 #include <SPSS/Util/Math.h>
 

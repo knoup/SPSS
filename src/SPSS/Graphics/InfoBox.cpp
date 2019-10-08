@@ -1,4 +1,4 @@
-#include <SPSS/System/InfoBox.h>
+#include <SPSS/Graphics/InfoBox.h>
 #include <SPSS/Util/Input.h>
 
 constexpr float MIN_SIZE_X{100};
@@ -35,7 +35,7 @@ namespace spss {
 	              m_scrollbar{m_window, m_shadedRectangleView, m_view} {
 		setColor({0, 0, 0, 100});
 		setScrollbarColor(sf::Color::White);
-		setResizeStripGradients({255, 255, 255, 140}, {0, 0, 0, 140});
+		setResizeStripGradients({0, 0, 0, 140}, {255, 255, 255, 140});
 	}
 
 	////////////////////////////////////////////////////////////

@@ -1,4 +1,4 @@
-#include <SPSS/System/Scrollbar.h>
+#include <SPSS/Graphics/Scrollbar.h>
 #include <SPSS/Util/Input.h>
 
 namespace spss {
