@@ -94,6 +94,27 @@ namespace spss {
 		void setScrollbarColor(sf::Color _color);
 
 		////////////////////////////////////////////////////////////
+		/// \brief Set the resize strips's gradient colors
+		///
+		/// \param _c1 The left and upper corner's colors
+		/// \param _c2 The lower right corner's color
+		///
+		////////////////////////////////////////////////////////////
+		void setResizeStripGradients(sf::Color _c1, sf::Color _c2);
+
+		////////////////////////////////////////////////////////////
+		/// \brief Get the box's fill color
+		///
+		////////////////////////////////////////////////////////////
+		const sf::Color& getColor() const;
+
+		////////////////////////////////////////////////////////////
+		/// \brief Get the scrollbar's color
+		///
+		////////////////////////////////////////////////////////////
+		const sf::Color& getScrollbarColor() const;
+
+		////////////////////////////////////////////////////////////
 		/// \brief Set the size
 		///
 		/// \param _size The size
@@ -225,18 +246,9 @@ namespace spss {
 		sf::View                    m_view;                 ///< The scrollable view
 		sf::View                    m_shadedRectangleView;  ///< The background shaded rectangle view
 		sf::RectangleShape          m_shadedRectangle;      ///< The background shaded rectangle
-		sf::Color                   m_shadedRectangleColor; ///< The color of the shaded rectangle
 		sf::VertexArray             m_resizeStrip;          ///< The triangle you click to resize the box
 		std::vector<InfoBoxMessage> m_messages;             ///< The messages contained within the box
-
-		spss::Scrollbar             m_scrollbar;
-		//sf::Color                   m_scrollbarColor;       ///< The color of the scrollbar
-		//bool                        m_scrollbarActive;      ///< Is the scrollbar active?
-		//mutable bool                m_scrollbarDragging;    ///< Is the scrollbar being dragged?
-		//sf::RectangleShape          m_scrollbarOuter;       ///< The outer part of the scrollbar
-		//sf::RectangleShape          m_scrollbarInner;       ///< The inner part of the scrollbar
-		//float                       m_scrollbarMinRange;    ///< The minimum value for the scrollable view's center
-		//float                       m_scrollbarMaxRange;    ///< The maximum value for the scrollable view's center
+		spss::Scrollbar             m_scrollbar;            ///< The scrollbar
 														    //---------------------------------------------
 	};
 } // namespace spss

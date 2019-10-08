@@ -148,6 +148,11 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
+	const sf::Color& Scrollbar::getColor() const {
+		return m_inner.getFillColor();
+	}
+
+	////////////////////////////////////////////////////////////
 	bool Scrollbar::mousedOver() const {
 		if (m_window == nullptr) {
 			return false;

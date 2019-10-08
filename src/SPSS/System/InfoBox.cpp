@@ -30,12 +30,12 @@ namespace spss {
 	              m_view{},
 	              m_shadedRectangleView{},
 	              m_shadedRectangle{},
-	              m_shadedRectangleColor{0, 0, 0, 100},
 	              m_resizeStrip{sf::Triangles, 3},
 	              m_messages{},
 	              m_scrollbar{m_window, m_shadedRectangleView, m_view} {
-		setColor(m_shadedRectangleColor);
+		setColor({0, 0, 0, 100});
 		setScrollbarColor(sf::Color::White);
+		setResizeStripGradients({255, 255, 255, 140}, {0, 0, 0, 140});
 	}
 
 	////////////////////////////////////////////////////////////
@@ -111,12 +111,29 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	void InfoBox::setColor(sf::Color _color) {
-		m_shadedRectangle.setFillColor(m_shadedRectangleColor);
+		m_shadedRectangle.setFillColor(_color);
 	}
 
 	////////////////////////////////////////////////////////////
 	void InfoBox::setScrollbarColor(sf::Color _color) {
 		m_scrollbar.setColor(_color);
+	}
+
+	////////////////////////////////////////////////////////////
+	void InfoBox::setResizeStripGradients(sf::Color _c1, sf::Color _c2) {
+		m_resizeStrip[0].color = _c2;
+		m_resizeStrip[1].color = _c1;
+		m_resizeStrip[2].color = _c1;
+	}
+
+	////////////////////////////////////////////////////////////
+	const sf::Color& InfoBox::getColor() const {
+		return m_shadedRectangle.getFillColor();
+	}
+
+	////////////////////////////////////////////////////////////
+	const sf::Color& InfoBox::getScrollbarColor() const {
+		return m_scrollbar.getColor();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -266,11 +283,6 @@ namespace spss {
 		m_resizeStrip[0].position = bottomRight;
 		m_resizeStrip[1].position = {bottomRight.x, bottomRight.y - RESIZESTRIP_HEIGHT};
 		m_resizeStrip[2].position = {bottomRight.x - RESIZESTRIP_WIDTH, bottomRight.y};
-
-
-		m_resizeStrip[0].color = {255, 255, 255, 140};
-		m_resizeStrip[1].color = {0, 0, 0, 140};
-		m_resizeStrip[2].color = {0, 0, 0, 140};
 
 		//The remaining portion of this function isn't
 		//needed unless the window was resized
