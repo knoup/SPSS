@@ -47,17 +47,32 @@ namespace spss {
 		//the ratio of scrollbarHeight :  total menu height
 		//so that the inner scrollbar's height scales linearly with the
 		//amount of visible content
-		float ratio{scrollbarHeight / (m_maxRange - m_minRange)};
+
+		//The total height will always be greater than the distance
+		//between the min and the max ranges, because those ranges
+		//cover the view's CENTER and not its top/bottom. To get the
+		//"true" min/max values we need to calculate the total height,
+		//we'll simply do the following:
+		float min{m_minRange - (_size.y / 2)};
+		float max{m_maxRange + (_size.y / 2)};
+
+		float totalHeight {max-min};
+
+		float ratio{scrollbarHeight / totalHeight};
 		m_inner.setSize({_size.x, scrollbarHeight * ratio});
 
 		//In order to avoid resetting the inner Y when unneccessary, we'll
 		//keep it and adjust it only if it goes out of range.
 		float innerY{m_inner.getPosition().y};
-		float maxY{m_outer.getPosition().y};
+		float minY{m_outer.getPosition().y};
+		float maxY{minY};
 		maxY += m_outer.getGlobalBounds().height;
 		maxY -= m_inner.getGlobalBounds().height;
 		if (innerY > maxY) {
 			innerY = maxY;
+		}
+		if (innerY < minY) {
+			innerY = minY;
 		}
 
 		m_inner.setPosition({_position.x, innerY});

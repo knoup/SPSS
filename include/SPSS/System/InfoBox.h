@@ -78,7 +78,7 @@ namespace spss {
 		void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 		////////////////////////////////////////////////////////////
-		/// \brief Set the box's color
+		/// \brief Set the box's fill color
 		///
 		/// \param _color The color
 		///

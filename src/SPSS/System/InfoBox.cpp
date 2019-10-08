@@ -1,8 +1,6 @@
 #include <SPSS/System/InfoBox.h>
 #include <SPSS/Util/Input.h>
 
-#include <iostream>
-
 constexpr float MIN_SIZE_X{100};
 constexpr float MIN_SIZE_Y{150};
 
@@ -183,7 +181,6 @@ namespace spss {
 		sf::Vector2f pixelPos{m_window->mapPixelToCoords(mousePos, m_shadedRectangleView)};
 
 		auto bounds{m_shadedRectangle.getGlobalBounds()};
-		bounds.width -= SCROLLBAR_WIDTH;
 
 		if (bounds.contains(pixelPos.x, pixelPos.y)) {
 			return true;
@@ -375,8 +372,6 @@ namespace spss {
 		setPosition(newPos);
 
 		reset(false);
-
-		std::cout << "dragged" << std::endl;
 	}
 
 	////////////////////////////////////////////////////////////
@@ -406,8 +401,6 @@ namespace spss {
 		setSize(newSize);
 
 		reset();
-
-		std::cout << "resized by " << diff.x << ", " << diff.y << std::endl;
 	}
 
 	////////////////////////////////////////////////////////////
@@ -422,8 +415,21 @@ namespace spss {
 			sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 
 			if (boxMousedOver()) {
+				//boxMousedOver() returns whether the mouse is anywhere
+				//in the box - including the scrollbar and resizing strip.
+				//We need to update m_lastMousePosition if LMB was clicked
+				//anywhere within the box; however, we'll only set m_dragging
+				//to true if the area that was clicked was in the box only,
+				//excluding the scrollbar/resizing strip
 				m_lastMousePosition = mousePos;
-				m_dragging          = true;
+
+				auto pixelPos{m_window->mapPixelToCoords(mousePos, m_shadedRectangleView)};
+				auto bounds{m_shadedRectangle.getGlobalBounds()};
+				bounds.width -= SCROLLBAR_WIDTH;
+
+				if (bounds.contains(pixelPos.x, pixelPos.y)) {
+					m_dragging = true;
+				}
 			}
 		}
 
