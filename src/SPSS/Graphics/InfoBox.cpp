@@ -70,7 +70,7 @@ namespace spss {
 
 		if (m_window->getSize() != m_lastWindowSize) {
 			m_lastWindowSize = m_window->getSize();
-			reset();
+			reset(true);
 		}
 
 		resizeBox();
@@ -420,7 +420,14 @@ namespace spss {
 		newSize.y += diff.y;
 		setSize(newSize);
 
-		reset();
+		//Note that we're passing false to reset even though we
+		//are in fact resizing. This is so that we don't call
+		//the expensive repositioning function on every frame
+		//while we're resizing the window. We'll instead call
+		//that, and setupScrollbar(), after we've released LMB.
+		//
+		//See detectResizeStripInteractions()
+		reset(false);
 	}
 
 	////////////////////////////////////////////////////////////
@@ -464,8 +471,26 @@ namespace spss {
 
 		if (Util::Input::lmbPressed(_event) && resizeStripMousedOver()) {
 			m_resizing = true;
+			//While resizing, we'll disable the scrollbar.
+			m_scrollbar.setActive(false);
 		}
+
+		//When we're done resizing, we'll position all messages and
+		//call setupScrollbar(). This is because positionMessage() is
+		//expensive to call; instead of calling it every frame while
+		//resizing and needlessly hogging performance, it'll just be
+		//called once [per message] after the user has finished res-
+		//izing the InfoBox.
+
 		else if (Util::Input::lmbReleased(_event)) {
+			if (m_resizing) {
+				for (size_t i{0}; i < m_messages.size(); i++) {
+					InfoBoxMessage& message = m_messages[i];
+					positionMessage(i);
+				}
+				setupScrollbar();
+			}
+
 			m_resizing = false;
 		}
 	}

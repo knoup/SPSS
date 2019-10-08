@@ -35,9 +35,6 @@ namespace spss {
 
 
 	////////////////////////////////////////////////////////////
-	//TODO:
-	//This could use some optimization. Or maybe in InfoBox,
-	//where it's called on every object upon resizing?
 	void InfoBoxMessage::fitWidth(float _width) {
 		bool tooWide{m_text.getGlobalBounds().width >= _width};
 		bool tooNarrow{m_text.getGlobalBounds().width < _width &&

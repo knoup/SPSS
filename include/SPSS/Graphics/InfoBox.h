@@ -189,14 +189,14 @@ namespace spss {
 		///
 		/// Ensures the views, positions, sizes, etc. of everything
 		/// are properly initialised according to the InfoBox's size
-		/// and position, and the window's size. It also takes in an
-		/// optional parameter that - if set to false - can make it run
-		/// significantly faster by skipping logic related to resizing.
+		/// and position, and the window's size. It also takes in a
+		/// parameter that - if set to false - can make it run sign-
+		/// ificantly faster by skipping logic related to resizing.
 		///
 		/// \param _resized Whether the window was resized
 		///
 		////////////////////////////////////////////////////////////
-		void reset(bool _resized = true);
+		void reset(bool _resized);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Get the effective width of the InfoBox
