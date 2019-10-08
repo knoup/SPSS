@@ -142,7 +142,7 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
-	void Scrollbar::setColor(sf::Color _c) {
+	void Scrollbar::setColor(const sf::Color& _c) {
 		m_outer.setOutlineColor(_c);
 		m_inner.setFillColor(_c);
 	}

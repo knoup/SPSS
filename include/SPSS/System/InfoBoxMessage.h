@@ -96,7 +96,7 @@ namespace spss {
 		/// \param _color The color
 		///
 		////////////////////////////////////////////////////////////
-		void setTitleColor(sf::Color _color);
+		void setTitleColor(const sf::Color& _color);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Set's the content's fill color
@@ -104,7 +104,7 @@ namespace spss {
 		/// \param _color The color
 		///
 		////////////////////////////////////////////////////////////
-		void setContentColor(sf::Color _color);
+		void setContentColor(const sf::Color& _color);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Set's the title's affix values and colors
@@ -126,8 +126,8 @@ namespace spss {
 		////////////////////////////////////////////////////////////
 		void setTitleAffixes(const std::string& _prefix,
 							 const std::string& _suffix,
-							 sf::Color          _prefixColor = sf::Color::White,
-							 sf::Color          _suffixColor = sf::Color::White,
+							 const sf::Color&   _prefixColor = sf::Color::White,
+							 const sf::Color&   _suffixColor = sf::Color::White,
 							 float              _width = 0);
 
 		////////////////////////////////////////////////////////////
@@ -136,7 +136,7 @@ namespace spss {
 		/// \param _pos The position
 		///
 		////////////////////////////////////////////////////////////
-		void setPosition(sf::Vector2f _pos);
+		void setPosition(const sf::Vector2f& _pos);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Set the text's position

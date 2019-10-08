@@ -110,17 +110,18 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
-	void InfoBox::setColor(sf::Color _color) {
+	void InfoBox::setColor(const sf::Color& _color) {
 		m_shadedRectangle.setFillColor(_color);
 	}
 
 	////////////////////////////////////////////////////////////
-	void InfoBox::setScrollbarColor(sf::Color _color) {
+	void InfoBox::setScrollbarColor(const sf::Color& _color) {
 		m_scrollbar.setColor(_color);
 	}
 
 	////////////////////////////////////////////////////////////
-	void InfoBox::setResizeStripGradients(sf::Color _c1, sf::Color _c2) {
+	void InfoBox::setResizeStripGradients(const sf::Color& _c1,
+										  const sf::Color& _c2) {
 		m_resizeStrip[0].color = _c2;
 		m_resizeStrip[1].color = _c1;
 		m_resizeStrip[2].color = _c1;
@@ -180,6 +181,16 @@ namespace spss {
 		else if (m_position.y + m_size.y > m_window->getSize().y) {
 			m_position.y = m_window->getSize().y - m_size.y;
 		}
+	}
+
+	////////////////////////////////////////////////////////////
+	const sf::Vector2f& InfoBox::getSize() const {
+		return m_size;
+	}
+
+	////////////////////////////////////////////////////////////
+	const sf::Vector2f& InfoBox::getPosition() const {
+		return m_position;
 	}
 
 	////////////////////////////////////////////////////////////

@@ -11,6 +11,7 @@ namespace spss {
 		}
 	}
 
+	////////////////////////////////////////////////////////////
 	InfoBoxMessage::InfoBoxMessage(const Message&  _msg,
 								   const sf::Font& _font,
 								   unsigned int    _charSize)
@@ -26,11 +27,14 @@ namespace spss {
 		setMessage(_msg);
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBoxMessage::draw(sf::RenderTarget& target,
-	                           sf::RenderStates  states) const {
+							  sf::RenderStates  states) const {
 		target.draw(m_text, states);
 	}
 
+
+	////////////////////////////////////////////////////////////
 	//TODO:
 	//This could use some optimization. Or maybe in InfoBox,
 	//where it's called on every object upon resizing?
@@ -70,6 +74,7 @@ namespace spss {
 		setTextString(textStr);
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBoxMessage::setMessage(const Message& _msg, float _width) {
 		m_message = _msg;
 		removeNewlines(m_message.title);
@@ -81,17 +86,20 @@ namespace spss {
 		setTextString(getRawString());
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBoxMessage::setTitle(const std::string& _title, float _width) {
 		m_message.title = _title;
 		setMessage(m_message, _width);
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBoxMessage::setContent(const std::string& _content, float _width) {
 		m_message.content = _content;
 		setMessage(m_message, _width);
 	}
 
-	void InfoBoxMessage::setTitleColor(sf::Color _color) {
+	////////////////////////////////////////////////////////////
+	void InfoBoxMessage::setTitleColor(const sf::Color& _color) {
 		m_titleColor = _color;
 		//Since changing the color changes nothing about
 		//the geometry of the text object, we'll call
@@ -101,7 +109,8 @@ namespace spss {
 		setTextString(m_text.getString());
 	}
 
-	void InfoBoxMessage::setContentColor(sf::Color _color) {
+	////////////////////////////////////////////////////////////
+	void InfoBoxMessage::setContentColor(const sf::Color& _color) {
 		m_contentColor = _color;
 		//Since changing the color changes nothing about
 		//the geometry of the text object, we'll call
@@ -111,10 +120,11 @@ namespace spss {
 		setTextString(m_text.getString());
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBoxMessage::setTitleAffixes(const std::string& _prefix,
 						                 const std::string& _suffix,
-						                 sf::Color          _prefixColor,
-						                 sf::Color          _suffixColor,
+						                 const sf::Color&   _prefixColor,
+						                 const sf::Color&   _suffixColor,
 						                 float              _width) {
 		m_prefix      = _prefix;
 		m_suffix      = _suffix;
@@ -123,23 +133,28 @@ namespace spss {
 		setMessage(m_message, _width);
 	}
 
-	void InfoBoxMessage::setPosition(sf::Vector2f _pos) {
+	////////////////////////////////////////////////////////////
+	void InfoBoxMessage::setPosition(const sf::Vector2f& _pos) {
 		m_text.setPosition(_pos);
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBoxMessage::setPosition(float _x, float _y) {
 		setPosition({_x, _y});
 	}
 
+	////////////////////////////////////////////////////////////
 	const spss::MulticolorText& InfoBoxMessage::getText() const {
 		return m_text;
 	}
 
+	////////////////////////////////////////////////////////////
 	const unsigned int InfoBoxMessage::getNumberOfLines() const {
 		const std::string& s{m_text.getString()};
 		return getNumberOfLines(0, s.length() - 1);
 	}
 
+	////////////////////////////////////////////////////////////
 	const unsigned int InfoBoxMessage::getNumberOfLines(size_t _startPos,
 												        size_t _endPos) const {
 		const std::string& s{m_text.getString()};
@@ -174,6 +189,7 @@ namespace spss {
 		return count;
 	}
 
+	////////////////////////////////////////////////////////////
 	const std::string InfoBoxMessage::getRawString() const {
 		std::string s{""};
 		s = (m_prefix + m_message.title + m_suffix + " ");
@@ -181,6 +197,7 @@ namespace spss {
 		return s;
 	}
 
+	////////////////////////////////////////////////////////////
 	void InfoBoxMessage::setTextString(const std::string& _str) {
 		m_text.setString(_str);
 		//After changing the string, our fill/outline colours
