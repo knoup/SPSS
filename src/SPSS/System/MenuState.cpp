@@ -464,11 +464,11 @@ namespace spss {
 
 		sf::Vector2f scrollbarSize{SCROLLBAR_WIDTH, visibleHeight};
 		sf::Vector2f scrollbarPosition{20 + widestText.getPosition().x + widestText.getGlobalBounds().width / 2,
-		                              getMenuOffset() - 10};
+		                               getMenuOffset() - 10};
 
 		//Adjust the ranges so that they don't leave excess empty space
-		float minRange {float(m_window.getSize().y) / 2};
-		float maxRange {getMenuHeight() + getMenuOffset() - (visibleHeight / 2)};
+		float minRange{float(m_window.getSize().y) / 2};
+		float maxRange{getMenuHeight() + getMenuOffset() - (visibleHeight / 2)};
 
 		m_scrollbar.reset(scrollbarSize, scrollbarPosition, minRange, maxRange);
 	}

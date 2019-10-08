@@ -16,9 +16,8 @@
 namespace spss {
 
 	class InfoBox : public sf::Drawable {
-
 	  public:
-	  	////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////
 		/// \brief Construct the InfoBox
 		///
 		/// \param _size     The size (in pixels)
@@ -28,8 +27,8 @@ namespace spss {
 		///
 		////////////////////////////////////////////////////////////
 		InfoBox(const sf::Vector2f& _size,
-				const sf::Vector2f& _position,
-				const sf::Font&     _font,
+		        const sf::Vector2f& _position,
+		        const sf::Font&     _font,
 		        unsigned            _charSize = 20);
 
 		////////////////////////////////////////////////////////////
@@ -101,7 +100,7 @@ namespace spss {
 		///
 		////////////////////////////////////////////////////////////
 		void setResizeStripGradients(const sf::Color& _c1,
-									 const sf::Color& _c2);
+		                             const sf::Color& _c2);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Get the box's fill color
@@ -245,24 +244,24 @@ namespace spss {
 		///////////////////////////////////////////////////////////
 		//Data members --------------------------------------------
 		///////////////////////////////////////////////////////////
-		mutable sf::RenderWindow*   m_window;               ///< The last window draw() is called on
-		sf::Vector2u                m_lastWindowSize;       ///< The last known window size
-		sf::Vector2f                m_size;                 ///< The size of the box
-		sf::Vector2f                m_position;             ///< The position of the box
-		const sf::Font&             m_font;                 ///< Font used to draw text
-		unsigned                    m_charSize;             ///< The character size
-		bool                        m_resizable;            ///< Is the box resizable?
-		bool 		                m_resizing;             ///< Is the box being resized?
-		bool                        m_draggable;            ///< Is the box draggable?
-		bool                        m_dragging;             ///< Is the box being dragged?
-		sf::Vector2i                m_lastMousePosition;    ///< The last known mouse position
-		sf::View                    m_view;                 ///< The scrollable view
-		sf::View                    m_shadedRectangleView;  ///< The background shaded rectangle view
-		sf::RectangleShape          m_shadedRectangle;      ///< The background shaded rectangle
-		sf::VertexArray             m_resizeStrip;          ///< The triangle you click to resize the box
-		std::vector<InfoBoxMessage> m_messages;             ///< The messages contained within the box
-		spss::Scrollbar             m_scrollbar;            ///< The scrollbar
-														    //---------------------------------------------
+		mutable sf::RenderWindow*   m_window;              ///< The last window draw() is called on
+		sf::Vector2u                m_lastWindowSize;      ///< The last known window size
+		sf::Vector2f                m_size;                ///< The size of the box
+		sf::Vector2f                m_position;            ///< The position of the box
+		const sf::Font&             m_font;                ///< Font used to draw text
+		unsigned                    m_charSize;            ///< The character size
+		bool                        m_resizable;           ///< Is the box resizable?
+		bool                        m_resizing;            ///< Is the box being resized?
+		bool                        m_draggable;           ///< Is the box draggable?
+		bool                        m_dragging;            ///< Is the box being dragged?
+		sf::Vector2i                m_lastMousePosition;   ///< The last known mouse position
+		sf::View                    m_view;                ///< The scrollable view
+		sf::View                    m_shadedRectangleView; ///< The background shaded rectangle view
+		sf::RectangleShape          m_shadedRectangle;     ///< The background shaded rectangle
+		sf::VertexArray             m_resizeStrip;         ///< The triangle you click to resize the box
+		std::vector<InfoBoxMessage> m_messages;            ///< The messages contained within the box
+		spss::Scrollbar             m_scrollbar;           ///< The scrollbar
+		                                                   //---------------------------------------------
 	};
 } // namespace spss
 

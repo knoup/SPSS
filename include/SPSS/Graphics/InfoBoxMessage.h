@@ -16,9 +16,8 @@
 namespace spss {
 
 	class InfoBoxMessage : public sf::Drawable {
-
 	  public:
-	  	////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////
 		/// \brief Construct the InfoBoxMessage
 		///
 		/// \param _msg      The message
@@ -27,8 +26,8 @@ namespace spss {
 		///
 		////////////////////////////////////////////////////////////
 		InfoBoxMessage(const Message&  _msg,
-					   const sf::Font& _font,
-					   unsigned int    _charSize);
+		               const sf::Font& _font,
+		               unsigned int    _charSize);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Draw the text to a render target
@@ -125,10 +124,10 @@ namespace spss {
 		///
 		////////////////////////////////////////////////////////////
 		void setTitleAffixes(const std::string& _prefix,
-							 const std::string& _suffix,
-							 const sf::Color&   _prefixColor = sf::Color::White,
-							 const sf::Color&   _suffixColor = sf::Color::White,
-							 float              _width = 0);
+		                     const std::string& _suffix,
+		                     const sf::Color&   _prefixColor = sf::Color::White,
+		                     const sf::Color&   _suffixColor = sf::Color::White,
+		                     float              _width       = 0);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Set the text's position
@@ -163,7 +162,7 @@ namespace spss {
 		const unsigned int getNumberOfLines() const;
 
 	  private:
-	  	////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////
 		/// \brief Get the number of lines the text spans
 		///
 		/// Note that the start and end positions don't include any
@@ -184,9 +183,8 @@ namespace spss {
 		/// \param _endPos   The ending index
 		///
 		////////////////////////////////////////////////////////////
-	  	const unsigned int getNumberOfLines(size_t _startPos,
-									        size_t _endPos) const;
-
+		const unsigned int getNumberOfLines(size_t _startPos,
+		                                    size_t _endPos) const;
 
 		////////////////////////////////////////////////////////////
 		/// \brief Get the plain, unaltered string
@@ -195,9 +193,9 @@ namespace spss {
 		/// newlines.
 		///
 		////////////////////////////////////////////////////////////
-	  	const std::string getRawString() const;
+		const std::string getRawString() const;
 
-	  	////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////
 		/// \brief Sets m_text's string
 		///
 		/// Sets m_text's string to the given argument, and then
@@ -206,7 +204,7 @@ namespace spss {
 		///
 		/// \param _str The final (with newlines) string to be set
 		////////////////////////////////////////////////////////////
-	  	void setTextString(const std::string& _str);
+		void setTextString(const std::string& _str);
 
 		///////////////////////////////////////////////////////////
 		//Data members --------------------------------------------
@@ -219,7 +217,7 @@ namespace spss {
 		std::string          m_suffix;       ///< The title suffix
 		sf::Color            m_prefixColor;  ///< The title prefix's color
 		sf::Color            m_suffixColor;  ///< The title suffix's color
-											 //---------------------------------------------
+		                                     //---------------------------------------------
 	};
 } // namespace spss
 

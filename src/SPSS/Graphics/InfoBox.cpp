@@ -13,9 +13,9 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	InfoBox::InfoBox(const sf::Vector2f& _size,
-	                   const sf::Vector2f& _position,
-	                   const sf::Font&     _font,
-	                   unsigned            _charSize)
+	                 const sf::Vector2f& _position,
+	                 const sf::Font&     _font,
+	                 unsigned            _charSize)
 	            : m_window{nullptr},
 	              m_lastWindowSize{},
 	              m_size{_size},
@@ -86,7 +86,7 @@ namespace spss {
 		m_window->setView(m_shadedRectangleView);
 		m_window->draw(m_shadedRectangle, states);
 
-		if(m_resizable) {
+		if (m_resizable) {
 			m_window->draw(m_resizeStrip, states);
 		}
 
@@ -121,7 +121,7 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	void InfoBox::setResizeStripGradients(const sf::Color& _c1,
-										  const sf::Color& _c2) {
+	                                      const sf::Color& _c2) {
 		m_resizeStrip[0].color = _c2;
 		m_resizeStrip[1].color = _c1;
 		m_resizeStrip[2].color = _c1;
@@ -245,13 +245,13 @@ namespace spss {
 			InfoBoxMessage& msg{m_messages[_index]};
 			msg.fitWidth(getUsableWidth());
 
-			float lastMessageLines{0};
+			float        lastMessageLines{0};
 			sf::Vector2f newPosition{0, 0};
 
-			if(_index > 0) {
+			if (_index > 0) {
 				const InfoBoxMessage& lastMsg{m_messages[_index - 1]};
 				lastMessageLines = lastMsg.getNumberOfLines();
-				newPosition = lastMsg.getText().getPosition();
+				newPosition      = lastMsg.getText().getPosition();
 			}
 
 			newPosition.y += (lastMessageLines * lineSpacing);
@@ -283,13 +283,11 @@ namespace spss {
 
 		m_shadedRectangle.setSize(m_shadedRectangleView.getSize());
 
-
 		//Next, we'll initialise the resizing strip
 		//////////////////////////////////////////////////
 
 		sf::Vector2f bottomRight{m_shadedRectangle.getGlobalBounds().width,
-								 m_shadedRectangle.getGlobalBounds().height};
-
+		                         m_shadedRectangle.getGlobalBounds().height};
 
 		m_resizeStrip[0].position = bottomRight;
 		m_resizeStrip[1].position = {bottomRight.x, bottomRight.y - RESIZESTRIP_HEIGHT};
@@ -332,7 +330,6 @@ namespace spss {
 		return (lastTextPos.y + lastTextBounds.height) -
 		       firstTextPos.y;
 	}
-
 
 	////////////////////////////////////////////////////////////
 	void InfoBox::setupScrollbar() {
@@ -464,7 +461,7 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
-	void  InfoBox::detectResizeStripInteractions(sf::Event& _event) {
+	void InfoBox::detectResizeStripInteractions(sf::Event& _event) {
 		if (!m_resizable) {
 			return;
 		}

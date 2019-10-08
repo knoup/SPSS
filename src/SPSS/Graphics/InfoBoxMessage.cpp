@@ -13,26 +13,24 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	InfoBoxMessage::InfoBoxMessage(const Message&  _msg,
-								   const sf::Font& _font,
-								   unsigned int    _charSize)
+	                               const sf::Font& _font,
+	                               unsigned int    _charSize)
 	            : m_text{"", _font, _charSize},
-                  m_message{_msg},
-                  m_titleColor{sf::Color(100,100,100,255)},
-                  m_contentColor{sf::Color::White},
-                  m_prefix{""},
-                  m_suffix{":"},
-                  m_prefixColor{sf::Color::White},
-                  m_suffixColor{sf::Color::White} {
-
+	              m_message{_msg},
+	              m_titleColor{sf::Color(100, 100, 100, 255)},
+	              m_contentColor{sf::Color::White},
+	              m_prefix{""},
+	              m_suffix{":"},
+	              m_prefixColor{sf::Color::White},
+	              m_suffixColor{sf::Color::White} {
 		setMessage(_msg);
 	}
 
 	////////////////////////////////////////////////////////////
 	void InfoBoxMessage::draw(sf::RenderTarget& target,
-							  sf::RenderStates  states) const {
+	                          sf::RenderStates  states) const {
 		target.draw(m_text, states);
 	}
-
 
 	////////////////////////////////////////////////////////////
 	void InfoBoxMessage::fitWidth(float _width) {
@@ -119,10 +117,10 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	void InfoBoxMessage::setTitleAffixes(const std::string& _prefix,
-						                 const std::string& _suffix,
-						                 const sf::Color&   _prefixColor,
-						                 const sf::Color&   _suffixColor,
-						                 float              _width) {
+	                                     const std::string& _suffix,
+	                                     const sf::Color&   _prefixColor,
+	                                     const sf::Color&   _suffixColor,
+	                                     float              _width) {
 		m_prefix      = _prefix;
 		m_suffix      = _suffix;
 		m_prefixColor = _prefixColor;
@@ -153,9 +151,9 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	const unsigned int InfoBoxMessage::getNumberOfLines(size_t _startPos,
-												        size_t _endPos) const {
+	                                                    size_t _endPos) const {
 		const std::string& s{m_text.getString()};
-		int count{1};
+		int                count{1};
 
 		//trueIndex will represent the actual index we're checking;
 		//it will be incremented with each iteration.
@@ -172,7 +170,7 @@ namespace spss {
 		size_t trueIndex{_startPos};
 		size_t index{_startPos};
 
-		while(index <= _endPos && trueIndex < s.length()) {
+		while (index <= _endPos && trueIndex < s.length()) {
 			if (s.at(trueIndex) == '\n') {
 				++count;
 			}
@@ -227,8 +225,8 @@ namespace spss {
 		if (prefixLength > 1) {
 			prefixEnd += (prefixLength - 1);
 		}
-		auto   prefixOffset{getNumberOfLines(prefixBegin, prefixEnd) - 1};
-		prefixEnd +=  prefixOffset;
+		auto prefixOffset{getNumberOfLines(prefixBegin, prefixEnd) - 1};
+		prefixEnd += prefixOffset;
 
 		//title
 		//-------------------------------
@@ -240,7 +238,7 @@ namespace spss {
 		if (titleLength > 1) {
 			titleEnd += (titleLength - 1);
 		}
-		auto   titleOffset{getNumberOfLines(titleBegin, titleEnd) - 1};
+		auto titleOffset{getNumberOfLines(titleBegin, titleEnd) - 1};
 		titleEnd += titleOffset;
 
 		//suffix
@@ -253,7 +251,7 @@ namespace spss {
 		if (suffixLength > 1) {
 			suffixEnd += (suffixLength - 1);
 		}
-		auto   suffixOffset{getNumberOfLines(suffixBegin, suffixEnd) - 1};
+		auto suffixOffset{getNumberOfLines(suffixBegin, suffixEnd) - 1};
 		suffixEnd += suffixOffset;
 
 		//content
@@ -268,7 +266,7 @@ namespace spss {
 		if (contentLength > 1) {
 			contentEnd += (contentLength - 1);
 		}
-		auto   contentOffset{getNumberOfLines(contentBegin, contentEnd) - 1};
+		auto contentOffset{getNumberOfLines(contentBegin, contentEnd) - 1};
 		contentEnd += contentOffset;
 
 		m_text.setFillColor(m_prefixColor, prefixBegin, prefixEnd);

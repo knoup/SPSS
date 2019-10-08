@@ -13,7 +13,6 @@
 namespace spss {
 
 	class Scrollbar : public sf::Drawable {
-
 	  public:
 		////////////////////////////////////////////////////////////
 		/// \brief Construct the Scrollbar
@@ -28,12 +27,12 @@ namespace spss {
 		///
 		////////////////////////////////////////////////////////////
 		Scrollbar(sf::RenderWindow*   _window,
-			      const sf::View&     _bgView,
-			      sf::View&           _scrollView,
-			      const sf::Vector2f& _size = {},
-			      const sf::Vector2f& _pos = {},
-				  float               _min = 0,
-				  float               _max = 0);
+		          const sf::View&     _bgView,
+		          sf::View&           _scrollView,
+		          const sf::Vector2f& _size = {},
+		          const sf::Vector2f& _pos  = {},
+		          float               _min  = 0,
+		          float               _max  = 0);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Reset the scrollbar's init parameters
@@ -45,9 +44,9 @@ namespace spss {
 		///
 		////////////////////////////////////////////////////////////
 		void reset(const sf::Vector2f& _size,
-			       const sf::Vector2f& _pos,
-				   float               _min,
-				   float               _max);
+		           const sf::Vector2f& _pos,
+		           float               _min,
+		           float               _max);
 
 		////////////////////////////////////////////////////////////
 		/// \brief  Sets whether the mouse wheel can be used as input
@@ -117,36 +116,36 @@ namespace spss {
 		const sf::Color& getColor() const;
 
 	  private:
-	  	////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////
 		/// \brief Is the scrollbar being moused over?
 		///
 		////////////////////////////////////////////////////////////
-	  	bool mousedOver() const;
+		bool mousedOver() const;
 
-	  	////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////
 		/// \brief Scroll up or down a notch
 		///
 		/// \param _up Up or down?
 		///
 		////////////////////////////////////////////////////////////
-	  	void scroll(bool _up);
+		void scroll(bool _up);
 
-	  	////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////
 		/// \brief Move the scrollbar if it's being dragged
 		///
 		////////////////////////////////////////////////////////////
-	  	void drag();
+		void drag();
 
-	  	////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////
 		/// \brief Calculate the view's center based on the scrollbar
 		///
 		////////////////////////////////////////////////////////////
-	  	void calculateNewViewCenter();
+		void calculateNewViewCenter();
 
-	  	///////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////
 		//Data members --------------------------------------------
 		///////////////////////////////////////////////////////////
-	  	mutable sf::RenderWindow* m_window;          ///< The window to draw the scrollbar in
+		mutable sf::RenderWindow* m_window;          ///< The window to draw the scrollbar in
 		const sf::View&           m_backgroundView;  ///< The background view to which the scrollbar will be drawn
 		sf::View&                 m_scrollView;      ///< The view to which the scrollbar applies
 		sf::Color                 m_color;           ///< The color of the scrollbar
@@ -159,6 +158,6 @@ namespace spss {
 		float                     m_maxCenterY;      ///< The maximum value for the scrollable view's center Y
 	};
 
-}
+} // namespace spss
 
 #endif // SCROLLBAR_H_INCLUDED

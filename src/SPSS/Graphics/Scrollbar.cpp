@@ -5,35 +5,34 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	Scrollbar::Scrollbar(sf::RenderWindow*   _window,
-						 const sf::View&     _bgView,
-						 sf::View&           _scrollView,
-						 const sf::Vector2f& _size,
-						 const sf::Vector2f& _pos,
-						 float               _min,
-						 float               _max) :
-		m_window{_window},
-		m_backgroundView{_bgView},
-		m_scrollView{_scrollView},
-		m_color{sf::Color::White},
-		m_scrollWithWheel{true},
-		m_active{false},
-		m_dragging{false},
-		m_outer{},
-		m_inner{},
-		m_minCenterY{_min},
-		m_maxCenterY{_max} {
-			m_outer.setOutlineThickness(-1);
-			m_outer.setFillColor(sf::Color::Transparent);
-			setColor(m_color);
-			reset(_size, _pos, _min, _max);
+	                     const sf::View&     _bgView,
+	                     sf::View&           _scrollView,
+	                     const sf::Vector2f& _size,
+	                     const sf::Vector2f& _pos,
+	                     float               _min,
+	                     float               _max)
+	            : m_window{_window},
+	              m_backgroundView{_bgView},
+	              m_scrollView{_scrollView},
+	              m_color{sf::Color::White},
+	              m_scrollWithWheel{true},
+	              m_active{false},
+	              m_dragging{false},
+	              m_outer{},
+	              m_inner{},
+	              m_minCenterY{_min},
+	              m_maxCenterY{_max} {
+		m_outer.setOutlineThickness(-1);
+		m_outer.setFillColor(sf::Color::Transparent);
+		setColor(m_color);
+		reset(_size, _pos, _min, _max);
 	}
 
 	////////////////////////////////////////////////////////////
 	void Scrollbar::reset(const sf::Vector2f& _size,
-						  const sf::Vector2f& _pos,
-						  float               _min,
-						  float               _max) {
-
+	                      const sf::Vector2f& _pos,
+	                      float               _min,
+	                      float               _max) {
 		m_minCenterY = _min;
 		m_maxCenterY = _max;
 
@@ -57,7 +56,7 @@ namespace spss {
 		float min{m_minCenterY - (_size.y / 2)};
 		float max{m_maxCenterY + (_size.y / 2)};
 
-		float totalHeight {max-min};
+		float totalHeight{max - min};
 
 		float ratio{scrollbarHeight / totalHeight};
 		m_inner.setSize({_size.x, scrollbarHeight * ratio});
@@ -261,4 +260,4 @@ namespace spss {
 		c.y = newCenterY;
 		m_scrollView.setCenter(c);
 	}
-}
+} // namespace spss
