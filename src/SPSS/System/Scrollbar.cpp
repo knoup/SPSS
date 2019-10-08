@@ -3,6 +3,7 @@
 
 namespace spss {
 
+	////////////////////////////////////////////////////////////
 	Scrollbar::Scrollbar(sf::RenderWindow*   _window,
 						 const sf::View&     _bgView,
 						 sf::View&           _scrollView,
@@ -14,27 +15,27 @@ namespace spss {
 		m_backgroundView{_bgView},
 		m_scrollView{_scrollView},
 		m_color{sf::Color::White},
+		m_scrollWithWheel{true},
 		m_active{false},
 		m_dragging{false},
 		m_outer{},
 		m_inner{},
-		m_minRange{_min},
-		m_maxRange{_max} {
+		m_minCenterY{_min},
+		m_maxCenterY{_max} {
 			m_outer.setOutlineThickness(-1);
 			m_outer.setFillColor(sf::Color::Transparent);
 			setColor(m_color);
 			reset(_size, _pos, _min, _max);
 	}
 
-
-
+	////////////////////////////////////////////////////////////
 	void Scrollbar::reset(const sf::Vector2f& _size,
 						  const sf::Vector2f& _pos,
 						  float               _min,
 						  float               _max) {
 
-		m_minRange = _min;
-		m_maxRange = _max;
+		m_minCenterY = _min;
+		m_maxCenterY = _max;
 
 		m_outer.setSize(_size);
 		m_outer.setPosition(_pos);
@@ -53,8 +54,8 @@ namespace spss {
 		//cover the view's CENTER and not its top/bottom. To get the
 		//"true" min/max values we need to calculate the total height,
 		//we'll simply do the following:
-		float min{m_minRange - (_size.y / 2)};
-		float max{m_maxRange + (_size.y / 2)};
+		float min{m_minCenterY - (_size.y / 2)};
+		float max{m_maxCenterY + (_size.y / 2)};
 
 		float totalHeight {max-min};
 
@@ -78,16 +79,27 @@ namespace spss {
 		m_inner.setPosition({_pos.x, innerY});
 	}
 
+	////////////////////////////////////////////////////////////
+	void Scrollbar::setScrollWithWheel(bool _b) {
+		m_scrollWithWheel = _b;
+	}
+
+	////////////////////////////////////////////////////////////
 	void Scrollbar::setActive(bool _b) {
 		m_active = _b;
 	}
 
+	////////////////////////////////////////////////////////////
 	void Scrollbar::getInput(sf::Event& _event) {
 		if (Util::Input::lmbPressed(_event) && mousedOver()) {
 			m_dragging = true;
 		}
 		else if (Util::Input::lmbReleased(_event)) {
 			m_dragging = false;
+		}
+
+		if (!m_scrollWithWheel) {
+			return;
 		}
 
 		if (_event.type == sf::Event::MouseWheelMoved) {
@@ -100,6 +112,7 @@ namespace spss {
 		}
 	}
 
+	////////////////////////////////////////////////////////////
 	void Scrollbar::update() {
 		if (!m_active) {
 			return;
@@ -108,6 +121,7 @@ namespace spss {
 		calculateNewViewCenter();
 	}
 
+	////////////////////////////////////////////////////////////
 	void Scrollbar::draw(sf::RenderWindow& window, sf::RenderStates states) const {
 		m_window = &window;
 		if (!m_active) {
@@ -117,6 +131,7 @@ namespace spss {
 		m_window->draw(m_inner, states);
 	}
 
+	////////////////////////////////////////////////////////////
 	void Scrollbar::draw(sf::RenderTarget& target, sf::RenderStates states) const {
 		sf::RenderWindow* w{dynamic_cast<sf::RenderWindow*>(&target)};
 		if (w == nullptr) {
@@ -126,11 +141,13 @@ namespace spss {
 		draw(*w, states);
 	}
 
+	////////////////////////////////////////////////////////////
 	void Scrollbar::setColor(sf::Color _c) {
 		m_outer.setOutlineColor(_c);
 		m_inner.setFillColor(_c);
 	}
 
+	////////////////////////////////////////////////////////////
 	bool Scrollbar::mousedOver() const {
 		if (m_window == nullptr) {
 			return false;
@@ -146,6 +163,7 @@ namespace spss {
 		return false;
 	}
 
+	////////////////////////////////////////////////////////////
 	void Scrollbar::scroll(bool _up) {
 		if (!m_active) {
 			return;
@@ -173,6 +191,7 @@ namespace spss {
 		m_inner.setPosition(pos);
 	}
 
+	////////////////////////////////////////////////////////////
 	void Scrollbar::drag() {
 		if (m_window == nullptr || !m_dragging) {
 			return;
@@ -204,6 +223,7 @@ namespace spss {
 		m_inner.setPosition(innerPos);
 	}
 
+	////////////////////////////////////////////////////////////
 	void Scrollbar::calculateNewViewCenter() {
 		if (!m_active) {
 			return;
@@ -225,12 +245,13 @@ namespace spss {
 
 		//Now, we'll calculate the value of that percentage in terms
 		//of the center value ranges.
-		//0 corresponds to the m_minRange, and
-		//1 corresponds to the m_maxRange
+		//0 corresponds to the m_minCenterY, and
+		//1 corresponds to the m_maxCenterY
 		//
 		//The formula is: value = ((max - min) * percentage) + min
-		float newCenterY{((m_maxRange - m_minRange) * p) + m_minRange};
+		float newCenterY{((m_maxCenterY - m_minCenterY) * p) + m_minCenterY};
 
+		//And now we finally set the center to the newly calculated value
 		auto c{m_scrollView.getCenter()};
 		c.y = newCenterY;
 		m_scrollView.setCenter(c);

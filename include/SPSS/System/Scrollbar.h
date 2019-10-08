@@ -1,6 +1,13 @@
 #ifndef SCROLLBAR_H_INCLUDED
 #define SCROLLBAR_H_INCLUDED
 
+////////////////////////////////////////////////////////////////////
+/// spss::Scrollbar represents and functions as a conventional scro-
+/// llbar. It will automatically size its inner section as needed,
+/// according to the ratio of visible : total content, and will re-
+/// center the associated view according to its position.
+////////////////////////////////////////////////////////////////////
+
 #include <SFML/Graphics.hpp>
 
 namespace spss {
@@ -16,8 +23,8 @@ namespace spss {
 		/// \param _scrollView The view the scrollbar will be applied to
 		/// \param _size       The size (in pixels)
 		/// \param _pos        The position (in pixels)
-		/// \param _min        The min value for the scrollview's center
-		/// \param _max        The max value for the scrollview's center
+		/// \param _min        The min Y value for the scrollview's center
+		/// \param _max        The max Y value for the scrollview's center
 		///
 		////////////////////////////////////////////////////////////
 		Scrollbar(sf::RenderWindow*   _window,
@@ -33,14 +40,22 @@ namespace spss {
 		///
 		/// \param _size       The size (in pixels)
 		/// \param _pos        The position (in pixels)
-		/// \param _min        The min value for the scrollview's center
-		/// \param _max        The max value for the scrollview's center
+		/// \param _min        The min Y value for the scrollview's center
+		/// \param _max        The max Y value for the scrollview's center
 		///
 		////////////////////////////////////////////////////////////
 		void reset(const sf::Vector2f& _size,
 			       const sf::Vector2f& _pos,
 				   float               _min,
 				   float               _max);
+
+		////////////////////////////////////////////////////////////
+		/// \brief  Sets whether the mouse wheel can be used as input
+		///
+		/// \param _b The boolean value
+		///
+		////////////////////////////////////////////////////////////
+		void setScrollWithWheel(bool _b);
 
 		////////////////////////////////////////////////////////////
 		/// \brief  Sets the scrollbar's active status
@@ -125,16 +140,17 @@ namespace spss {
 	  	///////////////////////////////////////////////////////////
 		//Data members --------------------------------------------
 		///////////////////////////////////////////////////////////
-	  	mutable sf::RenderWindow* m_window;         ///< The window to draw the scrollbar in
-		const sf::View&           m_backgroundView; ///< The background view to which the scrollbar will be drawn
-		sf::View&                 m_scrollView;     ///< The view to which the scrollbar applies
-		sf::Color                 m_color;          ///< The color of the scrollbar
-		bool                      m_active;         ///< Is the scrollbar active?
-		mutable bool              m_dragging;       ///< Is the scrollbar being dragged?
-		sf::RectangleShape        m_outer;          ///< The outer part of the scrollbar
-		sf::RectangleShape        m_inner;          ///< The inner part of the scrollbar
-		float                     m_minRange;       ///< The minimum value for the scrollable view's center
-		float                     m_maxRange;       ///< The maximum value for the scrollable view's center
+	  	mutable sf::RenderWindow* m_window;          ///< The window to draw the scrollbar in
+		const sf::View&           m_backgroundView;  ///< The background view to which the scrollbar will be drawn
+		sf::View&                 m_scrollView;      ///< The view to which the scrollbar applies
+		sf::Color                 m_color;           ///< The color of the scrollbar
+		bool                      m_scrollWithWheel; ///< Can it be scrolled with the mouse wheel?
+		bool                      m_active;          ///< Is the scrollbar active?
+		mutable bool              m_dragging;        ///< Is the scrollbar being dragged?
+		sf::RectangleShape        m_outer;           ///< The outer part of the scrollbar
+		sf::RectangleShape        m_inner;           ///< The inner part of the scrollbar
+		float                     m_minCenterY;      ///< The minimum value for the scrollable view's center Y
+		float                     m_maxCenterY;      ///< The maximum value for the scrollable view's center Y
 	};
 
 }
