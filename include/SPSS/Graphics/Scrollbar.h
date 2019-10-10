@@ -67,10 +67,15 @@ namespace spss {
 		////////////////////////////////////////////////////////////
 		/// \brief Get input
 		///
-		/// \param A reference to a captured event
+		/// The optional _mouseBounds parameter specifies the bounds
+		/// in which mouse wheel scrolling works. Leave blank to be
+		/// able to scroll with the mouse in any position.
+		///
+		/// \param _event       A reference to a captured event
+		/// \param _mouseBounds Scroll only if MMB is moved within these bounds
 		///
 		////////////////////////////////////////////////////////////
-		void getInput(sf::Event& _event);
+		void getInput(sf::Event& _event, const sf::FloatRect& _mouseBounds = {});
 
 		////////////////////////////////////////////////////////////
 		/// \brief Update

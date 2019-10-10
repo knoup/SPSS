@@ -37,7 +37,7 @@ namespace spss {
 		/// \param _msg The message to add
 		///
 		////////////////////////////////////////////////////////////
-		void appendMessage(const Message _msg);
+		void appendMessage(const Message& _msg);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Get input

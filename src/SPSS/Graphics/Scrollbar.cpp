@@ -89,7 +89,7 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
-	void Scrollbar::getInput(sf::Event& _event) {
+	void Scrollbar::getInput(sf::Event& _event, const sf::FloatRect& _mouseBounds) {
 		if (Util::Input::lmbPressed(_event) && mousedOver()) {
 			m_dragging = true;
 		}
@@ -102,6 +102,17 @@ namespace spss {
 		}
 
 		if (_event.type == sf::Event::MouseWheelMoved) {
+			sf::FloatRect blankBounds{};
+
+			if(_mouseBounds != blankBounds) {
+				sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
+				sf::Vector2f pixelPos{m_window->mapPixelToCoords(mousePos, m_backgroundView)};
+
+				if (!_mouseBounds.contains(pixelPos.x, pixelPos.y)) {
+					return;
+				}
+			}
+
 			if (_event.mouseWheel.delta > 0) {
 				scroll(true);
 			}

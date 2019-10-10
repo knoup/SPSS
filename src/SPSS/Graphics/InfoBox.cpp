@@ -1,8 +1,8 @@
 #include <SPSS/Graphics/InfoBox.h>
 #include <SPSS/Util/Input.h>
 
-constexpr float MIN_SIZE_X{100};
-constexpr float MIN_SIZE_Y{150};
+constexpr float MIN_SIZE_X{10};
+constexpr float MIN_SIZE_Y{10};
 
 constexpr float SCROLLBAR_WIDTH{15};
 
@@ -39,7 +39,7 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
-	void InfoBox::appendMessage(const Message _msg) {
+	void InfoBox::appendMessage(const Message& _msg) {
 		InfoBoxMessage newMessage{_msg, m_font, m_charSize};
 		m_messages.push_back(newMessage);
 		positionMessage(m_messages.size() - 1);
@@ -53,7 +53,7 @@ namespace spss {
 		}
 
 		detectResizeStripInteractions(_event);
-		m_scrollbar.getInput(_event);
+		m_scrollbar.getInput(_event, m_shadedRectangle.getGlobalBounds());
 		detectBoxInteractions(_event);
 	}
 
