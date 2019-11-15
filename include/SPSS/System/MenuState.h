@@ -47,25 +47,45 @@ namespace spss {
 		/// The third element, an sf::Text object, is what the user
 		/// sees on the menu screen
 		///
-		/// The fourth and final element will be an integer representing
-		/// a key (sf::Keyboard). This is optional and can be used as a
+		/// The fourth element will be an integer representing a key
+		/// (sf::Keyboard). This is optional and can be used as a
 		/// shortcut to simulate a click on this MenuItem
+		///
+		/// The fifth element is a bool specifying whether this
+		/// MenuItem has been specifically positioned by the user.
+		/// If so, it won't be included in the scroll view.
+		///
+		/// The sixth and final element is only used if the fifth
+		/// is true. ratioPos's valid value ranges are from
+		/// 0-1, as it is defined not in pixels, but rather as a ratio
+		/// of the window size, much like sf::ViewPort. For example,
+		/// {0.5, 0} would  horizontally center the text at the highest
+		/// vertical point.
+		///
+		/// Positions are specified this way so that they can be auto-
+		/// matically repositioned as needed upon window resizing.
 		///
 		////////////////////////////////////////////////////////////
 		struct MenuItem {
-			MenuItem(bool               _mousedOver,
-			         Function<std::any> _boundFunction,
-			         sf::Text&          _text,
-			         int                _keyCode)
+			MenuItem(bool                _mousedOver,
+			         Function<std::any>  _boundFunction,
+			         sf::Text&           _text,
+			         int                 _keyCode,
+			         bool                _manualPos,
+			         const sf::Vector2f& _ratioPos = {})
 			            : mousedOver{_mousedOver},
 			              boundFunction{_boundFunction},
 			              text{_text},
-			              keyCode{_keyCode} {};
+			              keyCode{_keyCode},
+			              manualPos{_manualPos},
+			              ratioPos{_ratioPos} {};
 
 			bool               mousedOver;
 			Function<std::any> boundFunction;
 			sf::Text           text;
 			int                keyCode;
+			bool               manualPos;
+			sf::Vector2f       ratioPos;
 		};
 
 	  public:
@@ -128,6 +148,33 @@ namespace spss {
 		////////////////////////////////////////////////////////////
 
 		virtual void addMenuItem(const std::string&       _string,
+		                         spss::Function<std::any> f        = nullptr,
+		                         int                      _keyCode = sf::Keyboard::Unknown);
+
+		////////////////////////////////////////////////////////////
+		/// \brief Add a clickable menu item
+		///
+		/// This function does the exact same thing as the function
+		/// above, but also takes in a relative position. This pos-
+		/// ition's x and y values can range from 0-1, and it is de-
+		/// fined not in pixels, but rather as a ratio of the window
+		/// size, much like sf::ViewPort.
+		///
+		/// Positions are specified this way so that they can be auto-
+		/// matically repositioned as needed upon window resizing.
+		///
+		/// Note that MenuItems added with a position specified will not
+		/// be a part of the centered view to which the scrollbar applies.
+		///
+		///
+		/// \param _string  The menu item's description
+		/// \param _pos     The menu item's position as a ratio
+		/// \param f        The callable function scope
+		/// \param _keyCode The keyboard shortcut to emulate a mouse click
+		///
+		////////////////////////////////////////////////////////////
+		virtual void addMenuItem(const std::string&       _string,
+								 const sf::Vector2f&      _pos,
 		                         spss::Function<std::any> f        = nullptr,
 		                         int                      _keyCode = sf::Keyboard::Unknown);
 

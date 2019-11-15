@@ -77,10 +77,18 @@ namespace spss {
 	void MenuState::draw() {
 		m_window.setView(m_view);
 		for (const auto& menuItem : m_menuItems) {
-			m_window.draw(menuItem.text);
+			if (!menuItem.manualPos) {
+				m_window.draw(menuItem.text);
+			}
 		}
 
 		m_window.setView(m_backgroundView);
+		for (const auto& menuItem : m_menuItems) {
+			if (menuItem.manualPos) {
+				m_window.draw(menuItem.text);
+			}
+		}
+
 		m_window.draw(m_scrollbar);
 		m_window.draw(m_titleText);
 	}
@@ -97,8 +105,43 @@ namespace spss {
 		text.setString(_string);
 		text.setOrigin(text.getLocalBounds().width / 2, 0);
 
-		m_menuItems.push_back({false, f, text, _keyCode});
+		m_menuItems.push_back({false, f, text, _keyCode, false});
 
+		onResize(m_window.getSize());
+	}
+
+	////////////////////////////////////////////////////////////
+	void MenuState::addMenuItem(const std::string&       _string,
+								const sf::Vector2f&      _pos,
+	                            spss::Function<std::any> f,
+	                            int                      _keyCode) {
+		sf::Text text;
+
+		text.setFont(m_font);
+		text.setOutlineThickness(1);
+		text.setCharacterSize(34);
+		text.setString(_string);
+		text.setOrigin(text.getLocalBounds().width  / 2, 0);
+
+		sf::Vector2f ratioPos{_pos};
+
+		if (ratioPos.x < 0) {
+			ratioPos.x = 0;
+		}
+		else if (ratioPos.x > 1) {
+			ratioPos.x = 1;
+		}
+		if (ratioPos.y < 0) {
+			ratioPos.y = 0;
+		}
+		else if (ratioPos.y > 1) {
+			ratioPos.y = 1;
+		}
+
+		//We don't need to set the text's actual position right away, since
+		//that will be handled later by adjustMenuItems()
+
+		m_menuItems.push_back({false, f, text, _keyCode, true, ratioPos});
 		onResize(m_window.getSize());
 	}
 
@@ -143,6 +186,18 @@ namespace spss {
 
 		auto it = m_menuItems.begin();
 		while (it != m_menuItems.end()) {
+			if ((*it).manualPos) {
+				//Manually positioned MenuItems will be handled
+				//seperately, and repositioned according to the
+				//ratio of the window size.
+				sf::Vector2f truePos{(*it).ratioPos};
+				truePos.x *= float(m_window.getSize().x);
+				truePos.y *= float(m_window.getSize().y);
+				(*it).text.setPosition(truePos);
+				++it;
+				continue;
+			}
+
 			(*it).text.setPosition(pos);
 			pos.y += 1.25F * m_font.getLineSpacing((*it).text.getCharacterSize());
 			++it;
@@ -310,7 +365,18 @@ namespace spss {
 	////////////////////////////////////////////////////////////
 	bool MenuState::isMousedOver(const MenuItem& _menuItem) const {
 		sf::Vector2i mousePos = sf::Mouse::getPosition(m_window);
-		sf::Vector2f pixelPos{m_window.mapPixelToCoords(mousePos, m_view)};
+
+		//For manually positioned MenuItems, we're going to check them
+		//against the background view, whereas we'll use the scroll view
+		//for all other MenuItems.
+
+		sf::Vector2f pixelPos{};
+		if (_menuItem.manualPos) {
+			pixelPos = {m_window.mapPixelToCoords(mousePos, m_backgroundView)};
+		}
+		else {
+			pixelPos = {m_window.mapPixelToCoords(mousePos, m_view)};
+		}
 		return _menuItem.text.getGlobalBounds().contains(pixelPos);
 	}
 
