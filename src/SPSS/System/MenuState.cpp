@@ -7,7 +7,8 @@ namespace spss {
 	////////////////////////////////////////////////////////////
 	MenuState::MenuState(sf::RenderWindow&  _w,
 	                     const sf::Font&    _f,
-	                     const std::string& _titleStr)
+	                     const std::string& _titleStr,
+	                     bool               _titleAutoPos)
 
 	            : State{_w},
 	              m_font{_f},
@@ -17,6 +18,7 @@ namespace spss {
 	                                   float(m_window.getSize().y))},
 	              m_backgroundView{m_view},
 	              m_titleText{},
+	              m_titleAutoPos{_titleAutoPos},
 	              m_scrollbar{&m_window, m_backgroundView, m_view},
 	              m_randomiseTextColor{false},
 	              m_randomColorDurationMS{500},
@@ -206,7 +208,7 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	void MenuState::adjustBoundaries() {
-		if (m_menuItems.empty()) {
+		if (m_menuItems.empty() || !m_titleAutoPos) {
 			return;
 		}
 

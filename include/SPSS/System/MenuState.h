@@ -97,15 +97,17 @@ namespace spss {
 		/// supplied. This is the second argument.
 		///
 		///
-		/// \param _w        RenderWindow used to draw the state
-		/// \param _o        The callable function scope
-		/// \param _f        Font used to draw text
-		/// \param _titleStr The default title string
+		/// \param _w            RenderWindow used to draw the state
+		/// \param _o            The callable function scope
+		/// \param _f            Font used to draw text
+		/// \param _titleStr     The default title string
+		/// \param _titleAutoPos If false, title will always be at the very top
 		///
 		////////////////////////////////////////////////////////////
 		MenuState(sf::RenderWindow&  _w,
 		          const sf::Font&    _f,
-		          const std::string& _titleStr = "");
+		          const std::string& _titleStr = "",
+		          bool               _titleAutoPos = true);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Get input
@@ -240,6 +242,9 @@ namespace spss {
 		/// of the window and the top of the title text is roughly
 		/// equivalent to the distance between the bottom of the
 		/// window and the bottom of the last menu item.
+		///
+		/// Note that if m_titleAutoPos is set to false, this function
+		/// won't be called.
 		///
 		////////////////////////////////////////////////////////////
 		void adjustBoundaries();
@@ -421,6 +426,7 @@ namespace spss {
 		sf::View              m_view;                  ///< The view used to draw the menu items
 		sf::View              m_backgroundView;        ///< The view used to draw the title text
 		sf::Text              m_titleText;             ///< The title text
+		bool                  m_titleAutoPos;          ///< If false, the title will always be at the very top to save space
 		spss::Scrollbar       m_scrollbar;             ///< The scrollbar
 		bool                  m_randomiseTextColor;    ///< Is the title's color randomised?
 		int                   m_randomColorDurationMS; ///< How many MS the title's color persists for before it is randomised again
