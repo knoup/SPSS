@@ -2,7 +2,16 @@
 #define SLIDER_H_INCLUDED
 
 ////////////////////////////////////////////////////////////////////
-///add comments
+/// spss::Slider can be used to present the user with multiple sele-
+/// ctable values. The slider's inner bar will automatically adjust
+/// its size depending on the number of options, and by dragging the
+/// inner part of the slider, users can change the currently select-
+/// ed option.
+///
+/// Slider can be used with any type. Each of the possible selectable
+/// values has a string associated with it so that the user can see
+/// what they're selecting (see SliderPair further below).
+///
 ////////////////////////////////////////////////////////////////////
 
 #include <SFML/Graphics.hpp>
@@ -15,7 +24,6 @@ namespace spss {
 	  public:
 		////////////////////////////////////////////////////////////
 		/// \brief Construct the Slider
-		///
 		///
 		////////////////////////////////////////////////////////////
 		Slider(const sf::Vector2f& _size,
@@ -30,11 +38,11 @@ namespace spss {
 				   m_title{_titleStr, _font, _fontSize},
 				   m_outer{},
 				   m_inner{},
-				   m_values{},
-				   m_selectedIndex{0} {
+				   m_options{},
+				   m_selected{0} {
 
 			auto textBounds{m_title.getGlobalBounds()};
-			m_title.setOrigin(textBounds.left, textBounds.top + textBounds.height);
+			m_title.setOrigin(textBounds.left, textBounds.top);
 
 			m_outer.setOutlineThickness(-1);
 			m_outer.setFillColor(sf::Color::Transparent);
@@ -120,9 +128,11 @@ namespace spss {
 		///
 		////////////////////////////////////////////////////////////
 		inline void setPosition(const sf::Vector2f& _pos) {
+			float textHeight{m_title.getGlobalBounds().height};
+
 			m_title.setPosition(_pos);
-			m_inner.setPosition(_pos.x, _pos.y + 5);
-			m_outer.setPosition(_pos.x, _pos.y + 5);
+			m_inner.setPosition(_pos.x, _pos.y + textHeight + 5);
+			m_outer.setPosition(_pos.x, _pos.y + textHeight + 5);
 
 		};
 
@@ -146,32 +156,58 @@ namespace spss {
 			return m_inner.getFillColor();
 		};
 
-		//Add comments
+		////////////////////////////////////////////////////////////
+		/// \brief Adds a selection option
+		///
+		/// \param _val    The value associated with this option
+		/// \param _val    The string associated with this option
+		/// \param _select Is this selected by default?
+		///
+		////////////////////////////////////////////////////////////
 		inline void addValue(const ValueType& _val,
 							 const std::string& _str,
 							 bool _select = false) {
-			m_values.push_back({_val, _str});
+			m_options.push_back({_val, _str});
+
+			//After adding a new value, the size of the inner bar
+			//will have to be modified.
 			const float width{m_outer.getSize().x};
 
 			sf::Vector2f newSize{m_inner.getSize()};
-			newSize.x = width / m_values.size();
+			newSize.x = width / m_options.size();
 			m_inner.setSize(newSize);
 
+			//Say we call something like this:
+			//addValue(1, "1");
+			//addValue(2, "2", true);
+			//addValue(3, "3");
+
+			//When the second line is called and 2 is set as
+			//the default selected value, by the time 3 is
+			//added, the inner bar's size (and thus position)
+			//will have changed. Therefore, we'll be sure to
+			//call select() every time a new value is added,
+			//to ensure that the bar's position is always
+			//correct.
+
 			if (_select) {
-				select(m_values.size() - 1);
+				select(m_options.size() - 1);
 			}
 			else {
-				select(m_selectedIndex);
+				select(m_selected);
 			}
 		}
 
-		//Add comments
+		////////////////////////////////////////////////////////////
+		/// \brief Get the slider's selected value
+		///
+		////////////////////////////////////////////////////////////
 		inline const ValueType* getSelected() const {
-			if (m_values.empty()) {
+			if (m_options.empty()) {
 				return nullptr;
 			}
 
-			return &m_values[m_selectedIndex].m_value;
+			return &m_options[m_selected].m_value;
 		}
 
 
@@ -230,7 +266,7 @@ namespace spss {
 			}
 
 			//Now that we have the slider's "true" position, we'll compare it
-			//to the number of steps (i.e. elements in m_values) and snap it
+			//to the number of steps (i.e. elements in m_options) and snap it
 			//into the appropriate position.
 
 			int index{(int(innerPos.x) - int(outerPos.x)) / getStepValue()};
@@ -238,39 +274,59 @@ namespace spss {
 			select(size_t(index));
 		}
 
+		////////////////////////////////////////////////////////////
+		/// \brief Get the step value
+		///
+		/// The step value is the outer bar's total width divided by
+		/// the number of selection options we have. It represents
+		/// the distance the inner bar travels from one selection
+		/// to another. For example, if our slider has a width of 100
+		/// and 2 selection options, this will return 50.
+		///
+		////////////////////////////////////////////////////////////
 		inline int getStepValue() const {
 			const float width{m_outer.getSize().x};
 
+			//If there are no options, we'll return the width of the
+			//slider to avoid dividing by zero
 			int vectorSize{1};
-			if(m_values.size() > 1) {
-				vectorSize = int(m_values.size());
+			if(m_options.size() > 1) {
+				vectorSize = int(m_options.size());
 			}
 
 			return {int(width) / vectorSize};
 		}
 
-		//Add comments
+		////////////////////////////////////////////////////////////
+		/// \brief Selects the option at the given index
+		///
+		/// Handles not only snapping the inner bar into the approp-
+		/// riate position, but also updating the title text.
+		///
+		/// \param _i The desired index to select
+		///
+		////////////////////////////////////////////////////////////
 		inline void select(size_t _i) {
-			m_selectedIndex = _i;
+			m_selected = _i;
 
 			auto outerPos{m_outer.getPosition()};
 			auto innerPos{m_inner.getPosition()};
 
-			innerPos.x = outerPos.x + (getStepValue() * int(m_selectedIndex));
+			innerPos.x = outerPos.x + (getStepValue() * int(m_selected));
 			m_inner.setPosition(innerPos);
 
-			if(m_values.size() >= 1) {
-				m_title.setString(m_titleStr + " " + m_values[m_selectedIndex].m_str);
+			if(m_options.size() >= 1) {
+				m_title.setString(m_titleStr + " " + m_options[m_selected].m_str);
 			}
 		}
 
-		//Add comments
+		//A simple struct we'll use to represent slider selection options.
 		struct SliderPair {
 			SliderPair(const ValueType& _v, const std::string& _str) :
 				m_value{_v}, m_str{_str} {};
 
-			ValueType    m_value;
-			std::string  m_str;
+			ValueType    m_value; ///< The value this option represents
+			std::string  m_str;   ///< The associated string
 		};
 
 		///////////////////////////////////////////////////////////
@@ -283,8 +339,8 @@ namespace spss {
 		sf::Text                  m_title;           ///< The slider's title text
 		sf::RectangleShape        m_outer;           ///< The outer part of the slider
 		sf::RectangleShape        m_inner;           ///< The inner part of the slider
-		size_t                    m_selectedIndex;   ///< The index (of m_values) that's currently selected
-		std::vector<SliderPair>   m_values;          ///< The vector that stores all the possible values and their display texts
+		size_t                    m_selected;        ///< The index (of m_options) that's currently selected
+		std::vector<SliderPair>   m_options;         ///< The vector that stores all the SliderPairs
 	};
 
 } // namespace spss
