@@ -18,27 +18,28 @@ namespace spss {
 		///
 		///
 		////////////////////////////////////////////////////////////
-		Slider(float               _width,
+		Slider(const sf::Vector2f& _size,
 			   const sf::Vector2f& _pos,
 			   const std::string& _titleStr,
-			   const sf::Font&    _font) :
+			   const sf::Font&    _font,
+			   const unsigned int _fontSize = 17) :
 				   m_color{sf::Color::White},
 				   m_window{nullptr},
 				   m_dragging{false},
 				   m_titleStr{_titleStr},
-				   m_title{_titleStr, _font, 17},
+				   m_title{_titleStr, _font, _fontSize},
 				   m_outer{},
 				   m_inner{},
 				   m_values{},
 				   m_selectedIndex{0} {
 
 			auto textBounds{m_title.getGlobalBounds()};
-			m_title.setOrigin(textBounds.left, textBounds.top);
+			m_title.setOrigin(textBounds.left, textBounds.top + textBounds.height);
 
 			m_outer.setOutlineThickness(-1);
 			m_outer.setFillColor(sf::Color::Transparent);
 
-			setWidth(_width);
+			setSize(_size);
 			setPosition(_pos);
 			setColor(m_color);
 		};
@@ -102,14 +103,14 @@ namespace spss {
 		};
 
 		////////////////////////////////////////////////////////////
-		/// \brief Set the slider's width
+		/// \brief Set the slider's size
 		///
-		/// \param _width The width
+		/// \param _size The size
 		///
 		////////////////////////////////////////////////////////////
-		inline void setWidth(const float _width) {
-			m_outer.setSize({_width, 25});
-			m_inner.setSize({_width, 25});
+		inline void setSize(const sf::Vector2f& _size) {
+			m_outer.setSize(_size);
+			m_inner.setSize(_size);
 		};
 
 		////////////////////////////////////////////////////////////
@@ -120,8 +121,8 @@ namespace spss {
 		////////////////////////////////////////////////////////////
 		inline void setPosition(const sf::Vector2f& _pos) {
 			m_title.setPosition(_pos);
-			m_inner.setPosition(_pos.x, _pos.y + 25);
-			m_outer.setPosition(_pos.x, _pos.y + 25);
+			m_inner.setPosition(_pos.x, _pos.y + 5);
+			m_outer.setPosition(_pos.x, _pos.y + 5);
 
 		};
 
@@ -150,21 +151,22 @@ namespace spss {
 							 const std::string& _str,
 							 bool _select = false) {
 			m_values.push_back({_val, _str});
-			if (_select) {
-				m_selectedIndex = m_values.size() - 1;
-			}
-
 			const float width{m_outer.getSize().x};
 
 			sf::Vector2f newSize{m_inner.getSize()};
 			newSize.x = width / m_values.size();
 			m_inner.setSize(newSize);
 
-			updateString();
+			if (_select) {
+				select(m_values.size() - 1);
+			}
+			else {
+				select(m_selectedIndex);
+			}
 		}
 
 		//Add comments
-		inline const ValueType* getSelectedValue() const {
+		inline const ValueType* getSelected() const {
 			if (m_values.empty()) {
 				return nullptr;
 			}
@@ -231,6 +233,12 @@ namespace spss {
 			//to the number of steps (i.e. elements in m_values) and snap it
 			//into the appropriate position.
 
+			int index{(int(innerPos.x) - int(outerPos.x)) / getStepValue()};
+
+			select(size_t(index));
+		}
+
+		inline int getStepValue() const {
 			const float width{m_outer.getSize().x};
 
 			int vectorSize{1};
@@ -238,18 +246,19 @@ namespace spss {
 				vectorSize = int(m_values.size());
 			}
 
-			int steps{int(width) / vectorSize};
-			int index{(int(innerPos.x) - int(outerPos.x)) / steps};
-
-			m_selectedIndex = size_t(index);
-			innerPos.x = outerPos.x + (steps * index);
-			m_inner.setPosition(innerPos);
-
-			updateString();
+			return {int(width) / vectorSize};
 		}
 
 		//Add comments
-		inline void updateString() {
+		inline void select(size_t _i) {
+			m_selectedIndex = _i;
+
+			auto outerPos{m_outer.getPosition()};
+			auto innerPos{m_inner.getPosition()};
+
+			innerPos.x = outerPos.x + (getStepValue() * int(m_selectedIndex));
+			m_inner.setPosition(innerPos);
+
 			if(m_values.size() >= 1) {
 				m_title.setString(m_titleStr + " " + m_values[m_selectedIndex].m_str);
 			}
