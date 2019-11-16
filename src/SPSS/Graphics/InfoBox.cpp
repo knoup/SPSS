@@ -204,6 +204,16 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
+	void InfoBox::snapToTop() {
+		m_scrollbar.snapToTop();
+	}
+
+	////////////////////////////////////////////////////////////
+	void InfoBox::snapToBottom() {
+		m_scrollbar.snapToBottom();
+	}
+
+	////////////////////////////////////////////////////////////
 	bool InfoBox::boxMousedOver() const {
 		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 		sf::Vector2f pixelPos{m_window->mapPixelToCoords(mousePos, m_shadedRectangleView)};

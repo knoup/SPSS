@@ -158,6 +158,11 @@ namespace spss {
 		////////////////////////////////////////////////////////////
 		void setDraggable(bool _d);
 
+		//add comments
+		void snapToTop();
+		//add comments
+		void snapToBottom();
+
 	  private:
 		////////////////////////////////////////////////////////////
 		/// \brief Is the box being moused over?

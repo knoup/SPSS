@@ -163,6 +163,26 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
+	void Scrollbar::snapToTop() {
+		auto innerPos{m_inner.getPosition()};
+		auto outerPos{m_outer.getPosition()};
+		float lowerLimit{outerPos.y};
+		innerPos.y = lowerLimit;
+		m_inner.setPosition(innerPos);
+	}
+
+	////////////////////////////////////////////////////////////
+	void Scrollbar::snapToBottom() {
+		auto outerPos{m_outer.getPosition()};
+		auto outerBounds{m_outer.getGlobalBounds()};
+		auto innerPos{m_inner.getPosition()};
+		auto innerBounds{m_inner.getGlobalBounds()};
+		float upperLimit{outerPos.y + outerBounds.height - innerBounds.height};
+		innerPos.y = upperLimit;
+		m_inner.setPosition(innerPos);
+	}
+
+	////////////////////////////////////////////////////////////
 	bool Scrollbar::mousedOver() const {
 		if (m_window == nullptr) {
 			return false;

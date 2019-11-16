@@ -120,6 +120,11 @@ namespace spss {
 		////////////////////////////////////////////////////////////
 		const sf::Color& getColor() const;
 
+		//add comments
+		void snapToTop();
+		//add comments
+		void snapToBottom();
+
 	  private:
 		////////////////////////////////////////////////////////////
 		/// \brief Is the scrollbar being moused over?
