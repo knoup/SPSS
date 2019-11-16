@@ -1,5 +1,6 @@
 #include <SPSS/Graphics/Scrollbar.h>
 #include <SPSS/Util/Input.h>
+#include <SPSS/Util/Math.h>
 
 namespace spss {
 
@@ -21,7 +22,8 @@ namespace spss {
 	              m_outer{},
 	              m_inner{},
 	              m_minCenterY{_min},
-	              m_maxCenterY{_max} {
+	              m_maxCenterY{_max},
+	              m_anchor{Scrollbar::Anchor::NONE} {
 		m_outer.setOutlineThickness(-1);
 		m_outer.setFillColor(sf::Color::Transparent);
 		setColor(m_color);
@@ -33,6 +35,19 @@ namespace spss {
 	                      const sf::Vector2f& _pos,
 	                      float               _min,
 	                      float               _max) {
+
+		//If we have a soft anchor, we'll need to check if the
+		//scrollbar is at the bottommost position before we
+		//resize it. We'll also check if the scrollbar just
+		//became active.
+		bool softAnchorNeeded{false};
+
+		if (m_anchor == Anchor::SOFT
+			&&
+			(atBottom() || !m_active)) {
+			softAnchorNeeded = true;
+		}
+
 		m_minCenterY = _min;
 		m_maxCenterY = _max;
 
@@ -61,11 +76,19 @@ namespace spss {
 		float ratio{scrollbarHeight / totalHeight};
 		m_inner.setSize({_size.x, scrollbarHeight * ratio});
 
+		//If we have a hard/soft anchor, we can skip the rest
+		if (m_anchor == Anchor::HARD
+			|| softAnchorNeeded) {
+			snapToBottom();
+			return;
+		}
+
 		//In order to avoid resetting the inner Y when unneccessary, we'll
 		//keep it and adjust it only if it goes out of range.
 		float innerY{m_inner.getPosition().y};
 		float minY{m_outer.getPosition().y};
 		float maxY{minY};
+
 		maxY += m_outer.getGlobalBounds().height;
 		maxY -= m_inner.getGlobalBounds().height;
 		if (innerY > maxY) {
@@ -163,12 +186,22 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
+	void Scrollbar::setAnchor(Scrollbar::Anchor _a) {
+		m_anchor = _a;
+	}
+
+	////////////////////////////////////////////////////////////
+	Scrollbar::Anchor Scrollbar::getAnchor() const {
+		return m_anchor;
+	}
+
+	////////////////////////////////////////////////////////////
 	void Scrollbar::snapToTop() {
 		auto innerPos{m_inner.getPosition()};
 		auto outerPos{m_outer.getPosition()};
 		float lowerLimit{outerPos.y};
 		innerPos.y = lowerLimit;
-		m_inner.setPosition(innerPos);
+		m_inner.setPosition({outerPos.x, innerPos.y});
 	}
 
 	////////////////////////////////////////////////////////////
@@ -179,9 +212,41 @@ namespace spss {
 		auto innerBounds{m_inner.getGlobalBounds()};
 		float upperLimit{outerPos.y + outerBounds.height - innerBounds.height};
 		innerPos.y = upperLimit;
-		m_inner.setPosition(innerPos);
+		m_inner.setPosition({outerPos.x, innerPos.y});
 	}
 
+	////////////////////////////////////////////////////////////
+	bool Scrollbar::atTop() const {
+		if (!m_active) {
+			return false;
+		}
+
+		auto  pos{m_inner.getPosition()};
+		float min{m_outer.getPosition().y};
+
+		if (spss::Util::Math::almostEqual(pos.y, min) ||  pos.y < min) {
+			return true;
+		}
+
+		return false;
+	}
+
+	////////////////////////////////////////////////////////////
+	bool Scrollbar::atBottom() const {
+		if (!m_active) {
+			return false;
+		}
+
+		auto  pos{m_inner.getPosition()};
+		float max{m_outer.getPosition().y + m_outer.getGlobalBounds().height};
+		max -= m_inner.getGlobalBounds().height;
+
+		if (spss::Util::Math::almostEqual(pos.y, max) || pos.y > max) {
+			return true;
+		}
+
+		return false;
+	}
 	////////////////////////////////////////////////////////////
 	bool Scrollbar::mousedOver() const {
 		if (m_window == nullptr) {
@@ -216,7 +281,9 @@ namespace spss {
 			pos.y += m_inner.getGlobalBounds().height / 2;
 		}
 
-		if (pos.y <= min) {
+		m_inner.setPosition(pos);
+
+		if (atTop()) {
 			pos.y = min;
 		}
 		else if (pos.y >= max) {
@@ -247,15 +314,14 @@ namespace spss {
 		//We'll add half the inner height so that our cursor
 		//is associated with the middle and not the top
 		innerPos.y = mousePos.y - innerBounds.height / 2;
-
-		if (innerPos.y <= lowerLimit) {
-			innerPos.y = lowerLimit;
-		}
-		else if (innerPos.y >= upperLimit) {
-			innerPos.y = upperLimit;
-		}
-
 		m_inner.setPosition(innerPos);
+
+		if (atTop()) {
+			snapToTop();
+		}
+		else if (atBottom()) {
+			snapToBottom();
+		}
 	}
 
 	////////////////////////////////////////////////////////////

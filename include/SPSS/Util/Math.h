@@ -13,7 +13,7 @@ namespace spss::Util::Math {
 	/// \param _magnitude The accuracy cutoff value
 	///
 	////////////////////////////////////////////////////////////
-	inline bool almostEqual(float _a, float _b, float _magnitude = 0.001) {
+	inline bool almostEqual(float _a, float _b, float _magnitude = 0.01) {
 		return (fabs(_a - _b) < _a * _magnitude);
 	}
 

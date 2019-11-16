@@ -204,13 +204,13 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
-	void InfoBox::snapToTop() {
-		m_scrollbar.snapToTop();
+	void InfoBox::setAnchor(Scrollbar::Anchor _a) {
+		m_scrollbar.setAnchor(_a);
 	}
 
 	////////////////////////////////////////////////////////////
-	void InfoBox::snapToBottom() {
-		m_scrollbar.snapToBottom();
+	Scrollbar::Anchor InfoBox::getAnchor() const {
+		return m_scrollbar.getAnchor();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -353,8 +353,6 @@ namespace spss {
 			return;
 		}
 
-		m_scrollbar.setActive(true);
-
 		//visibleHeight is essentially the height of the menu. However,
 		//trueHeight will be used for all scrollbar size related
 		//calculations.
@@ -379,6 +377,7 @@ namespace spss {
 		float maxRange{getMenuHeight() - (visibleHeight / 2) + m_font.getLineSpacing(m_charSize) / 2};
 
 		m_scrollbar.reset(scrollbarSize, scrollbarPosition, minRange, maxRange);
+		m_scrollbar.setActive(true);
 	}
 
 	////////////////////////////////////////////////////////////
