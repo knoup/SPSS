@@ -14,7 +14,12 @@ namespace spss::Util::Math {
 	///
 	////////////////////////////////////////////////////////////
 	inline bool almostEqual(float _a, float _b, float _magnitude = 0.01) {
-		return (fabs(_a - _b) < _a * _magnitude);
+		auto f{fabs(_a - _b)};
+		auto z{_a * _magnitude};
+		if (_a == 0 || _b == 0) {
+			z = _magnitude;
+		}
+		return (f < z);
 	}
 
 } // namespace spss::Util::Math
