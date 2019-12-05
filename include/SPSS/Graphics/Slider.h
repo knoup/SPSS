@@ -27,20 +27,19 @@ namespace spss {
 		///
 		////////////////////////////////////////////////////////////
 		Slider(const sf::Vector2f& _size,
-			   const sf::Vector2f& _pos,
-			   const std::string& _titleStr,
-			   const sf::Font&    _font,
-			   const unsigned int _fontSize = 17) :
-				   m_color{sf::Color::White},
-				   m_window{nullptr},
-				   m_dragging{false},
-				   m_titleStr{_titleStr},
-				   m_title{_titleStr, _font, _fontSize},
-				   m_outer{},
-				   m_inner{},
-				   m_options{},
-				   m_selected{0} {
-
+		       const sf::Vector2f& _pos,
+		       const std::string&  _titleStr,
+		       const sf::Font&     _font,
+		       const unsigned int  _fontSize = 17)
+		            : m_color{sf::Color::White},
+		              m_window{nullptr},
+		              m_dragging{false},
+		              m_titleStr{_titleStr},
+		              m_title{_titleStr, _font, _fontSize},
+		              m_outer{},
+		              m_inner{},
+		              m_options{},
+		              m_selected{0} {
 			auto textBounds{m_title.getGlobalBounds()};
 			m_title.setOrigin(textBounds.left, textBounds.top);
 
@@ -134,6 +133,7 @@ namespace spss {
 			m_inner.setPosition(_pos.x, _pos.y + textHeight + 5);
 			m_outer.setPosition(_pos.x, _pos.y + textHeight + 5);
 
+			select(m_selected);
 		};
 
 		////////////////////////////////////////////////////////////
@@ -149,11 +149,55 @@ namespace spss {
 		};
 
 		////////////////////////////////////////////////////////////
+		/// \brief Set the slider's origin
+		///
+		/// \param _o The origin
+		///
+		////////////////////////////////////////////////////////////
+		inline void setOrigin(const sf::Vector2f& _o) {
+			m_title.setOrigin(_o);
+			m_outer.setOrigin(_o);
+			m_inner.setOrigin(_o);
+		}
+
+		////////////////////////////////////////////////////////////
 		/// \brief Get the slider's color
 		///
 		////////////////////////////////////////////////////////////
 		inline const sf::Color& getColor() const {
 			return m_inner.getFillColor();
+		};
+
+		////////////////////////////////////////////////////////////
+		/// \brief Get the slider's size (the rectangle shape)
+		///
+		////////////////////////////////////////////////////////////
+		inline const sf::Vector2f getSize() const {
+			return m_outer.getSize();
+		};
+
+		////////////////////////////////////////////////////////////
+		/// \brief Get the slider's position (the rectangle shape)
+		///
+		////////////////////////////////////////////////////////////
+		inline const sf::Vector2f getPosition() const {
+			return m_outer.getPosition();
+		};
+
+		////////////////////////////////////////////////////////////
+		/// \brief Get the slider's local bounds (the rectangle shape)
+		///
+		////////////////////////////////////////////////////////////
+		inline const sf::FloatRect getLocalBounds() const {
+			return m_outer.getLocalBounds();
+		};
+
+		////////////////////////////////////////////////////////////
+		/// \brief Get the slider's global bounds (the rectangle shape)
+		///
+		////////////////////////////////////////////////////////////
+		inline const sf::FloatRect getGlobalBounds() const {
+			return m_outer.getGlobalBounds();
 		};
 
 		////////////////////////////////////////////////////////////
@@ -164,9 +208,9 @@ namespace spss {
 		/// \param _select Is this selected by default?
 		///
 		////////////////////////////////////////////////////////////
-		inline void addValue(const ValueType& _val,
-							 const std::string& _str,
-							 bool _select = false) {
+		inline void addValue(const ValueType&   _val,
+		                     const std::string& _str,
+		                     bool               _select = false) {
 			m_options.push_back({_val, _str});
 
 			//After adding a new value, the size of the inner bar
@@ -210,7 +254,6 @@ namespace spss {
 			return &m_options[m_selected].m_value;
 		}
 
-
 	  private:
 		////////////////////////////////////////////////////////////
 		/// \brief Is the slider being moused over?
@@ -248,13 +291,13 @@ namespace spss {
 			auto mousePos{m_window->mapPixelToCoords(pos, backgroundView)};
 
 			//Just some aliases for readability
-			auto outerPos{m_outer.getPosition()};
 			auto outerBounds{m_outer.getGlobalBounds()};
+
 			auto innerPos{m_inner.getPosition()};
 			auto innerBounds{m_inner.getGlobalBounds()};
 
-			float lowerLimit{outerPos.x};
-			float upperLimit{outerPos.x + outerBounds.width - innerBounds.width};
+			float lowerLimit{outerBounds.left};
+			float upperLimit{outerBounds.left + outerBounds.width - innerBounds.width};
 
 			innerPos.x = mousePos.x;
 
@@ -269,7 +312,7 @@ namespace spss {
 			//to the number of steps (i.e. elements in m_options) and snap it
 			//into the appropriate position.
 
-			int index{(int(innerPos.x) - int(outerPos.x)) / getStepValue()};
+			int index{(int(innerPos.x) - int(lowerLimit)) / getStepValue()};
 
 			select(size_t(index));
 		}
@@ -290,7 +333,7 @@ namespace spss {
 			//If there are no options, we'll return the width of the
 			//slider to avoid dividing by zero
 			int vectorSize{1};
-			if(m_options.size() > 1) {
+			if (m_options.size() > 1) {
 				vectorSize = int(m_options.size());
 			}
 
@@ -315,32 +358,32 @@ namespace spss {
 			innerPos.x = outerPos.x + (getStepValue() * int(m_selected));
 			m_inner.setPosition(innerPos);
 
-			if(m_options.size() >= 1) {
+			if (m_options.size() >= 1) {
 				m_title.setString(m_titleStr + " " + m_options[m_selected].m_str);
 			}
 		}
 
 		//A simple struct we'll use to represent slider selection options.
 		struct SliderPair {
-			SliderPair(const ValueType& _v, const std::string& _str) :
-				m_value{_v}, m_str{_str} {};
+			SliderPair(const ValueType& _v, const std::string& _str)
+			            : m_value{_v}, m_str{_str} {};
 
-			ValueType    m_value; ///< The value this option represents
-			std::string  m_str;   ///< The associated string
+			ValueType   m_value; ///< The value this option represents
+			std::string m_str;   ///< The associated string
 		};
 
 		///////////////////////////////////////////////////////////
 		//Data members --------------------------------------------
 		///////////////////////////////////////////////////////////
-		mutable sf::RenderWindow* m_window;          ///< The window to draw the slider in
-		sf::Color                 m_color;           ///< The color of the slider
-		mutable bool              m_dragging;        ///< Is the slider being dragged?
-		std::string               m_titleStr;        ///< The original slider title text string
-		sf::Text                  m_title;           ///< The slider's title text
-		sf::RectangleShape        m_outer;           ///< The outer part of the slider
-		sf::RectangleShape        m_inner;           ///< The inner part of the slider
-		size_t                    m_selected;        ///< The index (of m_options) that's currently selected
-		std::vector<SliderPair>   m_options;         ///< The vector that stores all the SliderPairs
+		mutable sf::RenderWindow* m_window;   ///< The window to draw the slider in
+		sf::Color                 m_color;    ///< The color of the slider
+		mutable bool              m_dragging; ///< Is the slider being dragged?
+		std::string               m_titleStr; ///< The original slider title text string
+		sf::Text                  m_title;    ///< The slider's title text
+		sf::RectangleShape        m_outer;    ///< The outer part of the slider
+		sf::RectangleShape        m_inner;    ///< The inner part of the slider
+		size_t                    m_selected; ///< The index (of m_options) that's currently selected
+		std::vector<SliderPair>   m_options;  ///< The vector that stores all the SliderPairs
 	};
 
 } // namespace spss
