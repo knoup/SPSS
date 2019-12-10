@@ -77,6 +77,9 @@ namespace spss {
 	void TextEntryBox::setPosition(const sf::Vector2f& _position) {
 		m_rectangle.setPosition(_position);
 		setTextPosition(_position);
+		//Repositioning may require that we shift the text back
+		//to the left if the string is long enough.
+		shiftTextToLeft();
 	}
 
 	////////////////////////////////////////////////////////////
