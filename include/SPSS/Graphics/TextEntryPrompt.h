@@ -25,7 +25,6 @@ namespace spss {
 		TextEntryBox       m_textEntry;
 		sf::RectangleShape m_confirmButton;
 		sf::RectangleShape m_cancelButton;
-		sf::Vector2f       m_lastPosition;
 	};
 } // namespace spss
 

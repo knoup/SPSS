@@ -1,7 +1,5 @@
 #include <SPSS/Graphics/TextEntryBox.h>
 
-#include <iostream>
-
 constexpr sf::Keyboard::Key LCTRL            = sf::Keyboard::LControl;
 constexpr sf::Keyboard::Key LSHIFT           = sf::Keyboard::LShift;
 constexpr sf::Keyboard::Key TEXT_SELECTALL   = sf::Keyboard::A;
@@ -18,7 +16,7 @@ const bool keyPressed(sf::Keyboard::Key _key) {
 	return sf::Keyboard::isKeyPressed(_key);
 }
 
-const bool keysPressedTogether(std::vector<sf::Keyboard::Key> _keys) {
+const bool keysPressedTogether(const std::vector<sf::Keyboard::Key>& _keys) {
 	bool allPressed{true};
 	for (const auto& key : _keys) {
 		if (!keyPressed(key)) {
@@ -52,7 +50,8 @@ namespace spss {
 	              m_fillColor{sf::Color::White},
 	              m_outlineColor{sf::Color::Black},
 	              m_outlineThickness{0},
-	              m_alphaUpdateNeeded{true} {
+	              m_alphaUpdateNeeded{false},
+	              m_xOffset{0.F} {
 		setTextString(_str);
 
 		m_rectangle.setFillColor(sf::Color(0, 0, 0, 120));
@@ -61,8 +60,7 @@ namespace spss {
 		m_text.setFont(m_font);
 		m_caret.setFont(m_font);
 		m_caret.setFillColor(sf::Color(230, 230, 230));
-		m_caret.setString("|");
-		m_caret.setOrigin(m_caret.getGlobalBounds().width / 2, 0);
+		m_caret.setString("I");
 
 		setWidth(_width);
 		setCharSize(m_charSize);
@@ -79,7 +77,11 @@ namespace spss {
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::setPosition(const sf::Vector2f& _position) {
 		m_rectangle.setPosition(_position);
-		setTextPosition(_position);
+
+		sf::Vector2f textPos{_position.x + m_xOffset,
+		                     _position.y};
+
+		setTextPosition(textPos);
 	}
 
 	////////////////////////////////////////////////////////////
@@ -239,12 +241,6 @@ namespace spss {
 			break;
 		}
 
-		case sf::Event::Resized: {
-			m_alphaUpdateNeeded = true;
-			updateTransparency();
-			break;
-		}
-
 		default:
 			break;
 		}
@@ -342,17 +338,14 @@ namespace spss {
 	void TextEntryBox::setTextString(const std::string& _str) {
 		m_text.setString(_str);
 		m_text.setOutlineThickness(m_outlineThickness);
-		m_alphaUpdateNeeded = shiftTextToRight();
-		updateTransparency();
+		updateCaret();
 	}
 
 	////////////////////////////////////////////////////////////
-	void TextEntryBox::updateTransparency() {
-		if (!m_alphaUpdateNeeded) {
+	void TextEntryBox::updateTransparency(bool _force) {
+		if (!m_alphaUpdateNeeded && !_force) {
 			return;
 		}
-
-		std::cout << "updatin'" << std::endl;
 
 		m_alphaUpdateNeeded = false;
 
@@ -494,7 +487,7 @@ namespace spss {
 			}
 		}
 
-		m_alphaUpdateNeeded = shiftTextToRight();
+		updateTransparency(shiftTextToRight());
 	}
 
 	////////////////////////////////////////////////////////////
@@ -522,19 +515,30 @@ namespace spss {
 			}
 		}
 
-		m_alphaUpdateNeeded = shiftTextToLeft();
+		updateTransparency(shiftTextToLeft());
 	}
 
 	////////////////////////////////////////////////////////////
 	bool TextEntryBox::shiftTextToLeft() {
-		float extraSpace{(m_caret.getPosition().x + m_caret.getGlobalBounds().width) -
-		                 (m_rectangle.getPosition().x + m_rectangle.getGlobalBounds().width)};
+		auto caretPos{m_caret.getPosition()};
+		auto caretBounds{m_caret.getGlobalBounds()};
+		auto boxPos{m_rectangle.getPosition()};
+		auto boxBounds{m_rectangle.getGlobalBounds()};
 
-		if (extraSpace > -1 * m_caret.getGlobalBounds().width) {
-			auto pos{m_text.getPosition()};
-			pos.x -= extraSpace;
-			pos.x -= 2 * m_caret.getGlobalBounds().width;
-			setTextPosition(pos);
+		float extraSpace{(caretPos.x + caretBounds.width) -
+		                 (boxPos.x + boxBounds.width)};
+
+		if (extraSpace > -1 * caretBounds.width) {
+			auto newTextPos{m_text.getPosition()};
+
+			newTextPos.x -= extraSpace;
+			newTextPos.x -= 2 * m_caret.getGlobalBounds().width;
+
+			m_xOffset -= extraSpace;
+			m_xOffset -= 2 * m_caret.getGlobalBounds().width;
+
+			setTextPosition(newTextPos);
+
 			return true;
 		}
 
@@ -543,19 +547,30 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	bool TextEntryBox::shiftTextToRight() {
-		if (m_caret.getPosition().x <= m_text.getPosition().x) {
+		auto caretPos{m_caret.getPosition()};
+		auto caretBounds{m_caret.getGlobalBounds()};
+		auto boxPos{m_rectangle.getPosition()};
+		auto textPos{m_text.getPosition()};
+
+		if (caretPos.x <= textPos.x) {
 			resetTextPosition();
 			return true;
 		}
 
-		float extraSpace{(m_caret.getPosition().x + m_caret.getGlobalBounds().width) -
-		                 (m_rectangle.getPosition().x)};
+		float extraSpace{(caretPos.x + caretBounds.width) -
+		                 (boxPos.x)};
 
-		if (extraSpace < m_caret.getGlobalBounds().width) {
-			auto pos{m_text.getPosition()};
-			pos.x -= extraSpace;
-			pos.x += 2 * m_caret.getGlobalBounds().width;
-			setTextPosition(pos);
+		if (extraSpace < caretBounds.width) {
+			auto newTextPos{m_text.getPosition()};
+
+			newTextPos.x -= extraSpace;
+			newTextPos.x += 2 * m_caret.getGlobalBounds().width;
+
+			m_xOffset -= extraSpace;
+			m_xOffset += 2 * m_caret.getGlobalBounds().width;
+
+			setTextPosition(newTextPos);
+
 			return true;
 		}
 
@@ -566,6 +581,7 @@ namespace spss {
 	void TextEntryBox::resetTextPosition() {
 		auto textPos{m_text.getPosition()};
 		textPos.x = m_rectangle.getPosition().x;
+		m_xOffset = 0.F;
 		setTextPosition(textPos);
 	}
 
@@ -582,7 +598,7 @@ namespace spss {
 		m_selectionDirection = SELDIR::NEUTRAL;
 
 		updateCaret();
-		m_alphaUpdateNeeded = shiftTextToRight();
+		updateTransparency(shiftTextToRight() || textTooWide());
 	}
 
 	////////////////////////////////////////////////////////////
@@ -591,19 +607,19 @@ namespace spss {
 			m_selectionBegin = posAtNextWord(m_selectionBegin);
 			m_selectionEnd   = m_selectionBegin;
 		}
-		else if (!sequenceSelected() &&
-		         m_selectionBegin < m_text.getString().getSize()) {
-			moveSelectionBegin(1);
-			m_selectionEnd = m_selectionBegin;
-		}
 		else if (sequenceSelected()) {
 			m_selectionBegin = m_selectionEnd;
+		}
+		else if (m_selectionBegin < m_text.getString().getSize()) {
+			moveSelectionBegin(1);
+			m_selectionEnd = m_selectionBegin;
 		}
 
 		m_selectionDirection = SELDIR::NEUTRAL;
 
 		updateCaret();
-		m_alphaUpdateNeeded = shiftTextToLeft();
+
+		updateTransparency(shiftTextToLeft() || textTooWide());
 	}
 
 	////////////////////////////////////////////////////////////
@@ -678,8 +694,7 @@ namespace spss {
 		updateCaret();
 		shiftTextToRight();
 
-		m_alphaUpdateNeeded = textTooWide();
-		updateTransparency();
+		updateTransparency(textTooWide());
 	}
 
 	////////////////////////////////////////////////////////////
@@ -700,8 +715,20 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::insert(std::string& _str) {
+		_str.erase(std::remove_if(_str.begin(),
+		                          _str.end(),
+		                          [](char c) {
+			                          return (c == '\n' || c == '\t' || c == '\r');
+		                          }),
+		           _str.end());
+
+		if (_str.empty()) {
+			return;
+		}
+
 		size_t currentLength{m_text.getString().getSize()};
 		size_t combinedLength{_str.length() + currentLength};
+
 		if (combinedLength > m_maxChars) {
 			_str = _str.substr(0, m_maxChars - currentLength);
 		}
@@ -711,30 +738,36 @@ namespace spss {
 
 		setTextString(newString);
 
-		m_selectionEnd       = m_selectionBegin + _str.length();
+		m_selectionEnd       = m_selectionBegin + _str.length() - 1;
 		m_selectionBegin     = m_selectionEnd;
 		m_selectionDirection = SELDIR::NEUTRAL;
 
-		updateCaret();
-
-		m_alphaUpdateNeeded = textTooWide();
-		updateTransparency();
+		moveRight();
 	}
 
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::insert(char _char) {
-		std::string newString{m_text.getString()};
-		newString.insert(m_selectionBegin, 1, _char);
+		size_t newLength{m_text.getString().getSize() + 1};
 
-		if (newString.length() > m_maxChars) {
-			newString = newString.substr(0, m_maxChars);
+		if (newLength > m_maxChars) {
+			return;
 		}
 
-		setTextString(newString);
-		moveRight();
+		std::string newString{m_text.getString()};
+		newString.insert(m_selectionBegin, {_char});
 
-		m_alphaUpdateNeeded = textTooWide();
-		updateTransparency();
+		setTextString(newString);
+		//In some cases, like after selecting all and inputting
+		//a character, our caret will be too far off to the left.
+		//
+		//shiftTextToRight() will take care of that if so, and
+		//do nothing if not.
+		shiftTextToRight();
+
+		m_selectionEnd       = m_selectionBegin;
+		m_selectionDirection = SELDIR::NEUTRAL;
+
+		moveRight();
 	}
 
 	////////////////////////////////////////////////////////////

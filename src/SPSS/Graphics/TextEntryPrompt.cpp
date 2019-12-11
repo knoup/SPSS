@@ -7,8 +7,7 @@ namespace spss {
 	                                 const std::string&  _defaultStr,
 	                                 unsigned            _charSize)
 	            : m_infoBox{_size, _position, _font, _charSize},
-	              m_textEntry{_font, _charSize, _size.x * 0.9F, _defaultStr},
-	              m_lastPosition{_position} {
+	              m_textEntry{_font, _charSize, _size.x * 0.9F, _defaultStr} {
 		m_infoBox.setDraggable(true);
 		m_textEntry.setAlwaysActive(true);
 
@@ -35,11 +34,7 @@ namespace spss {
 	void TextEntryPrompt::update() {
 		m_infoBox.update();
 		m_textEntry.update();
-
-		//if (m_lastPosition != m_infoBox.getPosition()) {
-			alignElements();
-		//	m_lastPosition = m_infoBox.getPosition();
-		//}
+		alignElements();
 	}
 
 	void TextEntryPrompt::draw(sf::RenderWindow& window, sf::RenderStates states) const {

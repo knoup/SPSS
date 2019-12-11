@@ -345,10 +345,14 @@ namespace spss {
 		/// \brief Updates the transparency of overflowing text
 		///
 		/// Checks for letters that are outside of the bounds of
-		/// the box and makes them transparent.
+		/// the box and makes them transparent. Note that this
+		/// function only actually does something if m_alphaUp-
+		/// dateNeeded or _force is set to true
+		///
+		/// \param _force If true, will be called regardless of m_alphaUpdateNeeded's value
 		///
 		////////////////////////////////////////////////////////////
-		void updateTransparency();
+		void updateTransparency(bool _force = false);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Updates caret's position and transparency value
@@ -577,8 +581,8 @@ namespace spss {
 		sf::Color            m_fillColor;            ///< m_text's fill color
 		sf::Color            m_outlineColor;         ///< m_text's outline color
 		float                m_outlineThickness;     ///< m_text's outline thickness
-
-		bool                 m_alphaUpdateNeeded;
+		bool                 m_alphaUpdateNeeded;    ///< Does the transparency need to be rechecked when next possible?
+		float                m_xOffset;              ///< The delta offset that's been applied to the text's position via the shifting left/right functions
 	};
 
 } //namespace spss
