@@ -426,10 +426,12 @@ namespace spss {
 		/// Note that text out of bounds of the box will become trans-
 		/// parent.
 		///
+		/// Returns true if the text was shifted
+		///
 		/// \see updateTransparency
 		///
 		///////////////////////////////////////////////////////////
-		void shiftTextToLeft();
+		bool shiftTextToLeft();
 
 		////////////////////////////////////////////////////////////
 		/// \brief Shifts text to the right if neccessary
@@ -440,10 +442,12 @@ namespace spss {
 		/// Note that text out of bounds of the box will become trans-
 		/// parent.
 		///
+		/// Returns true if the text was shifted
+		///
 		/// \see updateTransparency
 		///
 		///////////////////////////////////////////////////////////
-		void shiftTextToRight();
+		bool shiftTextToRight();
 
 		////////////////////////////////////////////////////////////
 		/// \brief Resets the text's position
@@ -545,6 +549,12 @@ namespace spss {
 		///////////////////////////////////////////////////////////
 		void swapBeginAndEnd();
 
+		////////////////////////////////////////////////////////////
+		/// \brief Returns whether the text is wider than the box
+		///
+		///////////////////////////////////////////////////////////
+		bool textTooWide() const;
+
 		///////////////////////////////////////////////////////////
 		//Data members --------------------------------------------
 		///////////////////////////////////////////////////////////
@@ -567,6 +577,8 @@ namespace spss {
 		sf::Color            m_fillColor;            ///< m_text's fill color
 		sf::Color            m_outlineColor;         ///< m_text's outline color
 		float                m_outlineThickness;     ///< m_text's outline thickness
+
+		bool                 m_alphaUpdateNeeded;
 	};
 
 } //namespace spss

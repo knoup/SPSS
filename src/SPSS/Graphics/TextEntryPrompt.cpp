@@ -25,22 +25,23 @@ namespace spss {
 		m_cancelButton.setFillColor(sf::Color::Red);
 
 		alignElements();
-	};
+	}
 
 	void TextEntryPrompt::getInput(sf::Event& _e) {
 		m_infoBox.getInput(_e);
 		m_textEntry.getInput(_e);
-	};
+	}
 
 	void TextEntryPrompt::update() {
 		m_infoBox.update();
 		m_textEntry.update();
 
-		if (m_lastPosition != m_infoBox.getPosition()) {
+		//if (m_lastPosition != m_infoBox.getPosition()) {
 			alignElements();
-			m_lastPosition = m_infoBox.getPosition();
-		}
-	};
+		//	m_lastPosition = m_infoBox.getPosition();
+		//}
+	}
+
 	void TextEntryPrompt::draw(sf::RenderWindow& window, sf::RenderStates states) const {
 		window.draw(m_infoBox, states);
 		window.draw(m_textEntry, states);

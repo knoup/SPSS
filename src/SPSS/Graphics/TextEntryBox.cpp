@@ -1,5 +1,7 @@
 #include <SPSS/Graphics/TextEntryBox.h>
 
+#include <iostream>
+
 constexpr sf::Keyboard::Key LCTRL            = sf::Keyboard::LControl;
 constexpr sf::Keyboard::Key LSHIFT           = sf::Keyboard::LShift;
 constexpr sf::Keyboard::Key TEXT_SELECTALL   = sf::Keyboard::A;
@@ -49,7 +51,8 @@ namespace spss {
 	              m_maxChars{255},
 	              m_fillColor{sf::Color::White},
 	              m_outlineColor{sf::Color::Black},
-	              m_outlineThickness{0} {
+	              m_outlineThickness{0},
+	              m_alphaUpdateNeeded{true} {
 		setTextString(_str);
 
 		m_rectangle.setFillColor(sf::Color(0, 0, 0, 120));
@@ -77,9 +80,6 @@ namespace spss {
 	void TextEntryBox::setPosition(const sf::Vector2f& _position) {
 		m_rectangle.setPosition(_position);
 		setTextPosition(_position);
-		//Repositioning may require that we shift the text back
-		//to the left if the string is long enough.
-		shiftTextToLeft();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -240,6 +240,7 @@ namespace spss {
 		}
 
 		case sf::Event::Resized: {
+			m_alphaUpdateNeeded = true;
 			updateTransparency();
 			break;
 		}
@@ -257,6 +258,7 @@ namespace spss {
 		if (m_enteringText) {
 			updateHighlight();
 			updateCaret();
+			updateTransparency();
 		}
 	}
 
@@ -330,6 +332,7 @@ namespace spss {
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::setTextPosition(const sf::Vector2f& _pos) {
 		m_text.setPosition(_pos);
+
 		updateCaret();
 		updateHighlight();
 		updateTransparency();
@@ -339,11 +342,20 @@ namespace spss {
 	void TextEntryBox::setTextString(const std::string& _str) {
 		m_text.setString(_str);
 		m_text.setOutlineThickness(m_outlineThickness);
-		shiftTextToRight();
+		m_alphaUpdateNeeded = shiftTextToRight();
+		updateTransparency();
 	}
 
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::updateTransparency() {
+		if (!m_alphaUpdateNeeded) {
+			return;
+		}
+
+		std::cout << "updatin'" << std::endl;
+
+		m_alphaUpdateNeeded = false;
+
 		auto        rectPos{m_rectangle.getPosition()};
 		auto        rectBounds{m_rectangle.getGlobalBounds()};
 		std::string textStr{m_text.getString()};
@@ -482,7 +494,7 @@ namespace spss {
 			}
 		}
 
-		shiftTextToRight();
+		m_alphaUpdateNeeded = shiftTextToRight();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -510,11 +522,11 @@ namespace spss {
 			}
 		}
 
-		shiftTextToLeft();
+		m_alphaUpdateNeeded = shiftTextToLeft();
 	}
 
 	////////////////////////////////////////////////////////////
-	void TextEntryBox::shiftTextToLeft() {
+	bool TextEntryBox::shiftTextToLeft() {
 		float extraSpace{(m_caret.getPosition().x + m_caret.getGlobalBounds().width) -
 		                 (m_rectangle.getPosition().x + m_rectangle.getGlobalBounds().width)};
 
@@ -523,16 +535,17 @@ namespace spss {
 			pos.x -= extraSpace;
 			pos.x -= 2 * m_caret.getGlobalBounds().width;
 			setTextPosition(pos);
+			return true;
 		}
 
-		updateTransparency();
+		return false;
 	}
 
 	////////////////////////////////////////////////////////////
-	void TextEntryBox::shiftTextToRight() {
+	bool TextEntryBox::shiftTextToRight() {
 		if (m_caret.getPosition().x <= m_text.getPosition().x) {
 			resetTextPosition();
-			return;
+			return true;
 		}
 
 		float extraSpace{(m_caret.getPosition().x + m_caret.getGlobalBounds().width) -
@@ -543,9 +556,10 @@ namespace spss {
 			pos.x -= extraSpace;
 			pos.x += 2 * m_caret.getGlobalBounds().width;
 			setTextPosition(pos);
+			return true;
 		}
 
-		updateTransparency();
+		return false;
 	}
 
 	////////////////////////////////////////////////////////////
@@ -568,7 +582,7 @@ namespace spss {
 		m_selectionDirection = SELDIR::NEUTRAL;
 
 		updateCaret();
-		shiftTextToRight();
+		m_alphaUpdateNeeded = shiftTextToRight();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -589,7 +603,7 @@ namespace spss {
 		m_selectionDirection = SELDIR::NEUTRAL;
 
 		updateCaret();
-		shiftTextToLeft();
+		m_alphaUpdateNeeded = shiftTextToLeft();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -663,6 +677,9 @@ namespace spss {
 
 		updateCaret();
 		shiftTextToRight();
+
+		m_alphaUpdateNeeded = textTooWide();
+		updateTransparency();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -699,7 +716,9 @@ namespace spss {
 		m_selectionDirection = SELDIR::NEUTRAL;
 
 		updateCaret();
-		shiftTextToLeft();
+
+		m_alphaUpdateNeeded = textTooWide();
+		updateTransparency();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -713,6 +732,9 @@ namespace spss {
 
 		setTextString(newString);
 		moveRight();
+
+		m_alphaUpdateNeeded = textTooWide();
+		updateTransparency();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -757,6 +779,14 @@ namespace spss {
 		size_t t{m_selectionEnd};
 		m_selectionEnd   = m_selectionBegin;
 		m_selectionBegin = t;
+	}
+
+	////////////////////////////////////////////////////////////
+	bool TextEntryBox::textTooWide() const {
+		auto textWidth{m_text.getGlobalBounds().width};
+		auto boxWidth{m_rectangle.getGlobalBounds().width};
+
+		return textWidth >= boxWidth;
 	}
 
 } //namespace spss
