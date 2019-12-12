@@ -318,11 +318,11 @@ namespace spss {
 		/// \brief Sets the text position.
 		///
 		/// Sets the text's position and then calls updateCaret,
-		/// updateHighlight, and updateTransparency
+		/// updateHighlight, and updateAlpha
 		///
 		/// \see updateCaret
 		/// \see updateHighlight
-		/// \see updateTransparency
+		/// \see updateAlpha
 		///
 		////////////////////////////////////////////////////////////
 		void setTextPosition(const sf::Vector2f& _pos);
@@ -345,14 +345,10 @@ namespace spss {
 		/// \brief Updates the transparency of overflowing text
 		///
 		/// Checks for letters that are outside of the bounds of
-		/// the box and makes them transparent. Note that this
-		/// function only actually does something if m_alphaUp-
-		/// dateNeeded or _force is set to true
-		///
-		/// \param _force If true, will be called regardless of m_alphaUpdateNeeded's value
+		/// the box and makes them transparent.
 		///
 		////////////////////////////////////////////////////////////
-		void updateTransparency(bool _force = false);
+		void updateAlpha() const;
 
 		////////////////////////////////////////////////////////////
 		/// \brief Updates caret's position and transparency value
@@ -432,7 +428,7 @@ namespace spss {
 		///
 		/// Returns true if the text was shifted
 		///
-		/// \see updateTransparency
+		/// \see updateAlpha
 		///
 		///////////////////////////////////////////////////////////
 		bool shiftTextToLeft();
@@ -448,7 +444,7 @@ namespace spss {
 		///
 		/// Returns true if the text was shifted
 		///
-		/// \see updateTransparency
+		/// \see updateAlpha
 		///
 		///////////////////////////////////////////////////////////
 		bool shiftTextToRight();
@@ -563,26 +559,26 @@ namespace spss {
 		//Data members --------------------------------------------
 		///////////////////////////////////////////////////////////
 
-		const sf::Font&      m_font;                 ///< Font used to display the title and menu items
-		sf::RectangleShape   m_rectangle;            ///< The background rectangle
-		sf::RectangleShape   m_highlightedRectangle; ///< The rectangle used to highlight the current selection
-		size_t               m_selectionBegin;       ///< The beginning index of the current selection
-		size_t               m_selectionEnd;         ///< The end index of the current selection
-		SELDIR               m_selectionDirection;   ///< What direction the user is selecting text in
-		spss::MulticolorText m_text;                 ///< The text used to display what the user is entering
-		sf::Text             m_caret;                ///< The caret
-		bool                 m_enteringText;         ///< Is the text entry box active, i.e. accepting input?
-		mutable bool         m_inputComplete;        ///< Did the user finish entering text (press RETURN)?
-		bool                 m_alwaysVisible;        ///< Display the box at all times, even when m_enteringText is false?
-		bool                 m_alwaysActive;         ///< m_enteringText is always set to true and prevent text from being cleared upon pressing RETURN?
-		std::string          m_lastString;           ///< The last string entered by the user (RETURN was pressed)
-		unsigned int         m_charSize;             ///< m_text's character size
-		unsigned int         m_maxChars;             ///< The maximum amount of characters that can be entered
-		sf::Color            m_fillColor;            ///< m_text's fill color
-		sf::Color            m_outlineColor;         ///< m_text's outline color
-		float                m_outlineThickness;     ///< m_text's outline thickness
-		bool                 m_alphaUpdateNeeded;    ///< Does the transparency need to be rechecked when next possible?
-		float                m_xOffset;              ///< The delta offset that's been applied to the text's position via the shifting left/right functions
+		const sf::Font&              m_font;                 ///< Font used to display the title and menu items
+		sf::RectangleShape           m_rectangle;            ///< The background rectangle
+		sf::RectangleShape           m_highlightedRectangle; ///< The rectangle used to highlight the current selection
+		size_t                       m_selectionBegin;       ///< The beginning index of the current selection
+		size_t                       m_selectionEnd;         ///< The end index of the current selection
+		SELDIR                       m_selectionDirection;   ///< What direction the user is selecting text in
+		mutable spss::MulticolorText m_text;                 ///< The text used to display what the user is entering
+		sf::Text                     m_caret;                ///< The caret
+		bool                         m_enteringText;         ///< Is the text entry box active, i.e. accepting input?
+		mutable bool                 m_inputComplete;        ///< Did the user finish entering text (press RETURN)?
+		bool                         m_alwaysVisible;        ///< Display the box at all times, even when m_enteringText is false?
+		bool                         m_alwaysActive;         ///< m_enteringText is always set to true and prevent text from being cleared upon pressing RETURN?
+		std::string                  m_lastString;           ///< The last string entered by the user (RETURN was pressed)
+		unsigned int                 m_charSize;             ///< m_text's character size
+		unsigned int                 m_maxChars;             ///< The maximum amount of characters that can be entered
+		sf::Color                    m_fillColor;            ///< m_text's fill color
+		sf::Color                    m_outlineColor;         ///< m_text's outline color
+		float                        m_outlineThickness;     ///< m_text's outline thickness
+		mutable bool                 m_alphaUpdateNeeded;    ///< Does the transparency need to be rechecked when next possible?
+		float                        m_xOffset;              ///< The delta offset that's been applied to the text's position via the shifting left/right functions
 	};
 
 } //namespace spss

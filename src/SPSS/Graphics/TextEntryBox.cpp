@@ -1,5 +1,7 @@
 #include <SPSS/Graphics/TextEntryBox.h>
 
+#include <iostream>
+
 constexpr sf::Keyboard::Key LCTRL            = sf::Keyboard::LControl;
 constexpr sf::Keyboard::Key LSHIFT           = sf::Keyboard::LShift;
 constexpr sf::Keyboard::Key TEXT_SELECTALL   = sf::Keyboard::A;
@@ -159,7 +161,20 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::setWidth(float _width) {
+		float oldWidth{m_rectangle.getSize().x};
 		m_rectangle.setSize({_width, float(1.25 * getLineSpacing())});
+
+		//If our new size is smaller, we'll shift the text to the left
+		//if needed and update transparency if so. We'll also update
+		//the transparency if the text is wider than the box.
+		if (_width < oldWidth) {
+			m_alphaUpdateNeeded = shiftTextToLeft() || textTooWide();
+		}
+
+		//Similar logic applies if the new width is greater
+		else if (_width > oldWidth) {
+			m_alphaUpdateNeeded = shiftTextToRight() || textTooWide();
+		}
 	}
 
 	////////////////////////////////////////////////////////////
@@ -254,13 +269,14 @@ namespace spss {
 		if (m_enteringText) {
 			updateHighlight();
 			updateCaret();
-			updateTransparency();
 		}
 	}
 
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::draw(sf::RenderTarget& target,
 	                        sf::RenderStates  states) const {
+		updateAlpha();
+
 		if (m_enteringText || m_alwaysVisible) {
 			target.draw(m_rectangle, states);
 			target.draw(m_text, states);
@@ -331,7 +347,6 @@ namespace spss {
 
 		updateCaret();
 		updateHighlight();
-		updateTransparency();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -342,8 +357,8 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
-	void TextEntryBox::updateTransparency(bool _force) {
-		if (!m_alphaUpdateNeeded && !_force) {
+	void TextEntryBox::updateAlpha() const {
+		if (!m_alphaUpdateNeeded) {
 			return;
 		}
 
@@ -487,7 +502,7 @@ namespace spss {
 			}
 		}
 
-		updateTransparency(shiftTextToRight());
+		m_alphaUpdateNeeded = shiftTextToRight();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -515,7 +530,7 @@ namespace spss {
 			}
 		}
 
-		updateTransparency(shiftTextToLeft());
+		m_alphaUpdateNeeded = shiftTextToLeft();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -550,9 +565,13 @@ namespace spss {
 		auto caretPos{m_caret.getPosition()};
 		auto caretBounds{m_caret.getGlobalBounds()};
 		auto boxPos{m_rectangle.getPosition()};
+		auto boxBounds{m_rectangle.getGlobalBounds()};
 		auto textPos{m_text.getPosition()};
 
-		if (caretPos.x <= textPos.x) {
+		//If the caret is off to the left of the box, or if the text can
+		//fit within the box and we've applied a negative offset, we'll
+		//reset the text's position
+		if (caretPos.x <= textPos.x || (m_xOffset < 0 && !textTooWide())) {
 			resetTextPosition();
 			return true;
 		}
@@ -583,6 +602,8 @@ namespace spss {
 		textPos.x = m_rectangle.getPosition().x;
 		m_xOffset = 0.F;
 		setTextPosition(textPos);
+
+		m_alphaUpdateNeeded = shiftTextToLeft();
 	}
 
 	////////////////////////////////////////////////////////////
@@ -598,12 +619,15 @@ namespace spss {
 		m_selectionDirection = SELDIR::NEUTRAL;
 
 		updateCaret();
-		updateTransparency(shiftTextToRight() || textTooWide());
+		m_alphaUpdateNeeded = (shiftTextToRight() || textTooWide());
 	}
 
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::moveRight() {
-		if (keyPressed(LCTRL)) {
+		//In order to prevent skipping to the next word when
+		//pasting text (since the paste shortcut is CTRL+V),
+		//we'll check that we aren't pasting.
+		if (keyPressed(LCTRL) && !keyPressed(TEXT_PASTE)) {
 			m_selectionBegin = posAtNextWord(m_selectionBegin);
 			m_selectionEnd   = m_selectionBegin;
 		}
@@ -619,7 +643,7 @@ namespace spss {
 
 		updateCaret();
 
-		updateTransparency(shiftTextToLeft() || textTooWide());
+		m_alphaUpdateNeeded = (shiftTextToLeft() || textTooWide());
 	}
 
 	////////////////////////////////////////////////////////////
@@ -694,7 +718,7 @@ namespace spss {
 		updateCaret();
 		shiftTextToRight();
 
-		updateTransparency(textTooWide());
+		m_alphaUpdateNeeded = (textTooWide());
 	}
 
 	////////////////////////////////////////////////////////////
@@ -737,6 +761,12 @@ namespace spss {
 		newString.insert(m_selectionBegin, _str);
 
 		setTextString(newString);
+		//In some cases, like after selecting all and inputting
+		//a character, our caret will be too far off to the left.
+		//
+		//shiftTextToRight() will take care of that if so, and
+		//do nothing if not.
+		shiftTextToRight();
 
 		m_selectionEnd       = m_selectionBegin + _str.length() - 1;
 		m_selectionBegin     = m_selectionEnd;

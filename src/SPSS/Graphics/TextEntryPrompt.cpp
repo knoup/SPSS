@@ -9,6 +9,7 @@ namespace spss {
 	            : m_infoBox{_size, _position, _font, _charSize},
 	              m_textEntry{_font, _charSize, _size.x * 0.9F, _defaultStr} {
 		m_infoBox.setDraggable(true);
+		m_infoBox.setResizable(true);
 		m_textEntry.setAlwaysActive(true);
 
 		m_confirmButton.setSize({100, 30});
@@ -58,6 +59,7 @@ namespace spss {
 
 		float xOffset{(size.x - m_textEntry.getWidth()) / 2};
 
+		m_textEntry.setWidth(size.x);
 		m_textEntry.setPosition({pos.x + xOffset, pos.y});
 
 		m_confirmButton.setPosition({pos.x + (size.x * 0.25F), pos.y + (size.y * 0.75F)});
