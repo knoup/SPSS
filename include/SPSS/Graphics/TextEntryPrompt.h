@@ -10,8 +10,8 @@ namespace spss {
 		TextEntryPrompt(const sf::Vector2f& _size,
 		                const sf::Vector2f& _position,
 		                const sf::Font&     _font,
-		                const std::string&  _defaultStr = "",
-		                unsigned            _charSize   = 20);
+		                const unsigned int  _charSize   = 20,
+		                const std::string&  _defaultStr = "");
 
 		void getInput(sf::Event& _e);
 		void update();

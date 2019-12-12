@@ -35,9 +35,10 @@ namespace spss {
 		/// \param _str      The default string value
 		///
 		////////////////////////////////////////////////////////////
-		TextEntryBox(const sf::Font&    _font,
-		             unsigned int       _charSize,
-		             float              _width,
+		TextEntryBox(const float         _width,
+					 const sf::Vector2f& _position,
+					 const sf::Font&     _font,
+					 const unsigned int  _charSize = 20,
 		             const std::string& _str = "");
 
 		////////////////////////////////////////////////////////////

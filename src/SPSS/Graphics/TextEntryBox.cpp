@@ -32,10 +32,11 @@ const bool keysPressedTogether(const std::vector<sf::Keyboard::Key>& _keys) {
 namespace spss {
 
 	////////////////////////////////////////////////////////////
-	TextEntryBox::TextEntryBox(const sf::Font&    _font,
-	                           unsigned int       _charSize,
-	                           float              _width,
-	                           const std::string& _str)
+	TextEntryBox::TextEntryBox(const float         _width,
+							   const sf::Vector2f& _position,
+							   const sf::Font&     _font,
+					           const unsigned int  _charSize,
+							   const std::string& _str)
 	            : m_font{_font},
 	              m_rectangle(),
 	              m_selectionBegin(0),
@@ -54,6 +55,10 @@ namespace spss {
 	              m_outlineThickness{0},
 	              m_alphaUpdateNeeded{false},
 	              m_xOffset{0.F} {
+
+		setWidth(_width);
+		setPosition(_position);
+		setCharSize(m_charSize);
 		setTextString(_str);
 
 		m_rectangle.setFillColor(sf::Color(0, 0, 0, 120));
@@ -63,9 +68,6 @@ namespace spss {
 		m_caret.setFont(m_font);
 		m_caret.setFillColor(sf::Color(230, 230, 230));
 		m_caret.setString("I");
-
-		setWidth(_width);
-		setCharSize(m_charSize);
 
 		selectAll();
 		moveRight();

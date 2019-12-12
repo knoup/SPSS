@@ -4,12 +4,11 @@ namespace spss {
 	TextEntryPrompt::TextEntryPrompt(const sf::Vector2f& _size,
 	                                 const sf::Vector2f& _position,
 	                                 const sf::Font&     _font,
-	                                 const std::string&  _defaultStr,
-	                                 unsigned            _charSize)
+	                                 const unsigned int  _charSize,
+	                                 const std::string&  _defaultStr)
 	            : m_infoBox{_size, _position, _font, _charSize},
-	              m_textEntry{_font, _charSize, _size.x * 0.9F, _defaultStr} {
+	              m_textEntry{_size.x, _position, _font, _charSize, _defaultStr} {
 		m_infoBox.setDraggable(true);
-		m_infoBox.setResizable(true);
 		m_textEntry.setAlwaysActive(true);
 
 		m_confirmButton.setSize({100, 30});
@@ -57,10 +56,7 @@ namespace spss {
 		auto pos{m_infoBox.getPosition()};
 		auto size{m_infoBox.getSize()};
 
-		float xOffset{(size.x - m_textEntry.getWidth()) / 2};
-
-		m_textEntry.setWidth(size.x);
-		m_textEntry.setPosition({pos.x + xOffset, pos.y});
+		m_textEntry.setPosition(pos);
 
 		m_confirmButton.setPosition({pos.x + (size.x * 0.25F), pos.y + (size.y * 0.75F)});
 		m_cancelButton.setPosition({pos.x + (size.x * 0.75F), pos.y + (size.y * 0.75F)});
