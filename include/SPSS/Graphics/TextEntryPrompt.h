@@ -10,6 +10,7 @@ namespace spss {
 		TextEntryPrompt(const sf::Vector2f& _size,
 		                const sf::Vector2f& _position,
 		                const sf::Font&     _font,
+		                const std::string&  _promptTitle,
 		                const unsigned int  _charSize   = 20,
 		                const std::string&  _defaultStr = "");
 
@@ -31,14 +32,19 @@ namespace spss {
 		void setOrigin(const sf::Vector2f& _origin);
 
 	  private:
+	  	void dragBox();
 		void alignElements();
 
-		InfoBox            m_infoBox;
+		mutable sf::RenderWindow*  m_window;
+
+		sf::Vector2i       m_lastMousePosition;
+		bool               m_dragging;
+
+		sf::RectangleShape m_rect;
 		TextEntryBox       m_textEntry;
 
 		sf::Vector2f       m_lastPosition;
 
-		sf::Vector2f       m_origin;
 		sf::RectangleShape m_confirmButton;
 		sf::RectangleShape m_cancelButton;
 

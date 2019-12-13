@@ -11,7 +11,7 @@
 namespace spss {
 
 	struct Message {
-		Message(std::string _title = "", std::string _content = "")
+		Message(const std::string& _title = "", const std::string& _content = "")
 		            : title{_title}, content{_content} {
 		}
 		std::string title;
