@@ -194,6 +194,16 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
+	const sf::FloatRect& InfoBox::getLocalBounds() const {
+		return m_shadedRectangle.getLocalBounds();
+	}
+
+	////////////////////////////////////////////////////////////
+	const sf::FloatRect& InfoBox::getGlobalBounds() const {
+		return m_shadedRectangle.getGlobalBounds();
+	}
+
+	////////////////////////////////////////////////////////////
 	void InfoBox::setResizable(bool _r) {
 		m_resizable = _r;
 	}
