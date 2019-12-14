@@ -7,6 +7,7 @@
 /// ally activated. Useful for tooltip-style/informational boxes.
 ////////////////////////////////////////////////////////////////////
 
+#include <SPSS/Graphics/DrawableToWindow.h>
 #include <SPSS/Graphics/MulticolorText.h>
 #include <SPSS/Graphics/InfoBoxMessage.h>
 #include <SPSS/Graphics/Scrollbar.h>
@@ -15,7 +16,7 @@
 
 namespace spss {
 
-	class InfoBox : public sf::Drawable {
+	class InfoBox : public spss::DrawableToWindow {
 	  public:
 		////////////////////////////////////////////////////////////
 		/// \brief Construct the InfoBox
@@ -61,20 +62,6 @@ namespace spss {
 		///
 		////////////////////////////////////////////////////////////
 		void draw(sf::RenderWindow& window, sf::RenderStates states) const;
-
-		////////////////////////////////////////////////////////////
-		/// \brief Draw the text to a render target
-		///
-		/// Since we only want InfoBox to be drawable to sf::Render-
-		/// Windows, and since sf::Drawable requires this function to
-		/// be overloaded, we'll dynamically cast target to a sf::Render-
-		/// Window. If that's not possible, then draw() will do nothing.
-		///
-		/// \param target Render target to draw to
-		/// \param states Current render states
-		///
-		////////////////////////////////////////////////////////////
-		void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 		////////////////////////////////////////////////////////////
 		/// \brief Set the box's fill color

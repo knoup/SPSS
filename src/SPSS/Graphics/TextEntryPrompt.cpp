@@ -91,14 +91,6 @@ namespace spss {
 		window.draw(m_confirmButton, states);
 		window.draw(m_cancelButton, states);
 	}
-	void TextEntryPrompt::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-		sf::RenderWindow* w{dynamic_cast<sf::RenderWindow*>(&target)};
-		if (w == nullptr) {
-			return;
-		}
-
-		draw(*w, states);
-	}
 
 	const std::string& TextEntryPrompt::getString() const {
 		return m_textEntry.getCurrentString();

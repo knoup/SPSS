@@ -14,13 +14,14 @@
 ///
 ////////////////////////////////////////////////////////////////////
 
+#include <SPSS/Graphics/DrawableToWindow.h>
 #include <SFML/Graphics.hpp>
 #include <SPSS/Util/Input.h>
 
 namespace spss {
 
 	template<class ValueType>
-	class Slider : public sf::Drawable {
+	class Slider : public spss::DrawableToWindow {
 	  public:
 		////////////////////////////////////////////////////////////
 		/// \brief Construct the Slider
@@ -87,27 +88,6 @@ namespace spss {
 			m_window->draw(m_inner, states);
 			m_window->draw(m_title, states);
 		}
-
-		////////////////////////////////////////////////////////////
-		/// \brief Draw the text to a render target
-		///
-		/// Since we only want Slider to be drawable to sf::Render-
-		/// Windows, and since sf::Drawable requires this function to
-		/// be overloaded, we'll dynamically cast target to a sf::Render-
-		/// Window. If that's not possible, then draw() will do nothing.
-		///
-		/// \param target Render target to draw to
-		/// \param states Current render states
-		///
-		////////////////////////////////////////////////////////////
-		inline void draw(sf::RenderTarget& target, sf::RenderStates states) const {
-			sf::RenderWindow* w{dynamic_cast<sf::RenderWindow*>(&target)};
-			if (w == nullptr) {
-				return;
-			}
-
-			draw(*w, states);
-		};
 
 		////////////////////////////////////////////////////////////
 		/// \brief Set the slider's size

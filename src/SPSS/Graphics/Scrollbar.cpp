@@ -165,16 +165,6 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
-	void Scrollbar::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-		sf::RenderWindow* w{dynamic_cast<sf::RenderWindow*>(&target)};
-		if (w == nullptr) {
-			return;
-		}
-
-		draw(*w, states);
-	}
-
-	////////////////////////////////////////////////////////////
 	void Scrollbar::setColor(const sf::Color& _c) {
 		m_outer.setOutlineColor(_c);
 		m_inner.setFillColor(_c);

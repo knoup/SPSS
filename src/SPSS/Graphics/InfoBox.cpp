@@ -98,17 +98,6 @@ namespace spss {
 		}
 		m_window->setView(previousView);
 	}
-
-	////////////////////////////////////////////////////////////
-	void InfoBox::draw(sf::RenderTarget& target, sf::RenderStates states) const {
-		sf::RenderWindow* w{dynamic_cast<sf::RenderWindow*>(&target)};
-		if (w == nullptr) {
-			return;
-		}
-
-		draw(*w, states);
-	}
-
 	////////////////////////////////////////////////////////////
 	void InfoBox::setColor(const sf::Color& _color) {
 		m_shadedRectangle.setFillColor(_color);

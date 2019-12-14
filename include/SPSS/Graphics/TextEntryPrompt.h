@@ -1,11 +1,12 @@
 #ifndef TEXTENTRYPROMPT_H_INCLUDED
 #define TEXTENTRYPROMPT_H_INCLUDED
 
+#include <SPSS/Graphics/DrawableToWindow.h>
 #include <SPSS/Graphics/InfoBox.h>
 #include <SPSS/Graphics/TextEntryBox.h>
 
 namespace spss {
-	class TextEntryPrompt : public sf::Drawable {
+	class TextEntryPrompt : public spss::DrawableToWindow {
 	  public:
 		TextEntryPrompt(const sf::Vector2f& _size,
 		                const sf::Vector2f& _position,
@@ -17,7 +18,6 @@ namespace spss {
 		void getInput(sf::Event& _e);
 		void update();
 		void draw(sf::RenderWindow& window, sf::RenderStates states) const;
-		void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 		const std::string& getString() const;
 
