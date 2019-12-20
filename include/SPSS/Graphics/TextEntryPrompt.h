@@ -14,8 +14,8 @@ namespace spss {
 		                const sf::Vector2f&      _position,
 		                const sf::Font&          _font,
 		                const std::string&       _promptTitle,
-					    spss::Function<std::any> _onConfirm,
-					    spss::Function<std::any> _onCancel  = nullptr,
+		                spss::Function<std::any> _onConfirm,
+		                spss::Function<std::any> _onCancel   = nullptr,
 		                const unsigned int       _charSize   = 20,
 		                const std::string&       _defaultStr = "");
 
@@ -39,20 +39,23 @@ namespace spss {
 		void setColor(const sf::Color& _color);
 
 	  private:
-	  	void dragBox();
+		void handleMouseClick();
+		void handleMouseover();
+
+		void dragBox();
 		void alignElements();
 
-		mutable sf::RenderWindow*  m_window;
+		mutable sf::RenderWindow* m_window;
 
-		sf::Text                 m_title;
+		sf::Text m_title;
 
-		sf::Vector2i             m_lastMousePosition;
-		bool                     m_dragging;
+		sf::Vector2i m_lastMousePosition;
+		bool         m_dragging;
 
-		sf::RectangleShape       m_rect;
-		TextEntryBox             m_textEntry;
+		sf::RectangleShape m_rect;
+		TextEntryBox       m_textEntry;
 
-		sf::Vector2f             m_lastPosition;
+		sf::Vector2f m_lastPosition;
 
 		sf::RectangleShape       m_confirmButton;
 		sf::Text                 m_confirmText;
@@ -62,7 +65,7 @@ namespace spss {
 		sf::Text                 m_cancelText;
 		spss::Function<std::any> m_cancelAction;
 
-		bool                     m_alignmentNeeded;
+		bool m_alignmentNeeded;
 	};
 } // namespace spss
 
