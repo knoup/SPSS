@@ -36,8 +36,14 @@ namespace spss {
 				m_window.close();
 			}
 			if (m_stateStack.size() > 1) {
-				if (m_stateStack.end()[-2]->getInputInBackground()) {
-					m_stateStack.end()[-2]->getInput(event);
+				const int maxIndex{int(m_stateStack.size()) - 2};
+				int currIndex{0};
+
+				while (currIndex <= maxIndex) {
+					if (m_stateStack[currIndex]->getInputInBackground()) {
+						m_stateStack[currIndex]->getInput(event);
+					}
+					currIndex++;
 				}
 			}
 			m_stateStack.back()->getInput(event);
@@ -47,22 +53,35 @@ namespace spss {
 	////////////////////////////////////////////////////////////
 	void Core::update(int _timeslice) {
 		if (m_stateStack.size() > 1) {
-			if (m_stateStack.end()[-2]->updatedInBackground()) {
-				m_stateStack.end()[-2]->update(_timeslice);
+			const int maxIndex{int(m_stateStack.size()) - 2};
+			int currIndex{0};
+
+			while (currIndex <= maxIndex) {
+				if (m_stateStack[currIndex]->updatedInBackground()) {
+					m_stateStack[currIndex]->update(_timeslice);
+				}
+				currIndex++;
 			}
 		}
+
 		m_stateStack.back()->update(_timeslice);
 	}
 
 	////////////////////////////////////////////////////////////
 	void Core::draw() {
 		if (m_stateStack.size() > 1) {
-			if (m_stateStack.end()[-2]->drawnInBackground()) {
-				m_stateStack.end()[-2]->draw();
+			const int maxIndex{int(m_stateStack.size()) - 2};
+			int currIndex{0};
+
+			while (currIndex <= maxIndex) {
+				if (m_stateStack[currIndex]->drawnInBackground()) {
+					m_stateStack[currIndex]->draw();
+				}
+				currIndex++;
 			}
 		}
-		m_stateStack.back()->draw();
 
+		m_stateStack.back()->draw();
 		m_window.display();
 	}
 
