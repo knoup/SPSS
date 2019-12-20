@@ -23,7 +23,7 @@ namespace spss {
 		void update();
 		void draw(sf::RenderWindow& window, sf::RenderStates states) const;
 
-		const std::string& getString() const;
+		const std::string getString() const;
 
 		const sf::Vector2f& getPosition() const;
 		const sf::Vector2f& getSize() const;

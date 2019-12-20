@@ -145,7 +145,7 @@ namespace spss {
 		}
 	}
 
-	const std::string& TextEntryPrompt::getString() const {
+	const std::string TextEntryPrompt::getString() const {
 		return m_textEntry.getCurrentString();
 	}
 
