@@ -10,18 +10,17 @@
 namespace spss {
 	class TextEntryPrompt : public spss::DrawableToWindow {
 	  public:
-		TextEntryPrompt(const sf::Vector2f&      _size,
-		                const sf::Vector2f&      _position,
+		TextEntryPrompt(const sf::Vector2f&      _position,
 		                const sf::Font&          _font,
 		                const std::string&       _promptTitle,
-		                spss::Function<std::any> _onConfirm,
-		                spss::Function<std::any> _onCancel   = nullptr,
 		                const unsigned int       _charSize   = 20,
 		                const std::string&       _defaultStr = "");
 
 		void getInput(sf::Event& _e);
 		void update();
 		void draw(sf::RenderWindow& window, sf::RenderStates states) const;
+
+		void addButton(const std::string& _str, spss::Function<std::any> _action);
 
 		const std::string getString() const;
 
@@ -34,11 +33,27 @@ namespace spss {
 		const sf::Color& getColor() const;
 
 		void setPosition(const sf::Vector2f& _pos);
-		void setSize(const sf::Vector2f& _size);
 		void setOrigin(const sf::Vector2f& _origin);
 		void setColor(const sf::Color& _color);
 
 	  private:
+
+	  	struct Button {
+			sf::RectangleShape       m_shape;
+			sf::Text                 m_text;
+			spss::Function<std::any> m_action;
+
+			void setPosition(const sf::Vector2f& _pos) {
+				m_shape.setPosition(_pos);
+				m_text.setPosition(_pos);
+			}
+	  	};
+
+	  	void fitWidth(float _width);
+
+	  	void setHeight(float _height);
+	  	void setWidth(float _width);
+
 		void handleMouseClick();
 		void handleMouseover();
 
@@ -47,7 +62,9 @@ namespace spss {
 
 		mutable sf::RenderWindow* m_window;
 
-		sf::Text m_title;
+
+		const sf::Font& m_font;
+		sf::Text        m_title;
 
 		sf::Vector2i m_lastMousePosition;
 		bool         m_dragging;
@@ -57,13 +74,7 @@ namespace spss {
 
 		sf::Vector2f m_lastPosition;
 
-		sf::RectangleShape       m_confirmButton;
-		sf::Text                 m_confirmText;
-		spss::Function<std::any> m_confirmAction;
-
-		sf::RectangleShape       m_cancelButton;
-		sf::Text                 m_cancelText;
-		spss::Function<std::any> m_cancelAction;
+		std::vector<Button> m_buttons;
 
 		bool m_alignmentNeeded;
 	};

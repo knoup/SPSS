@@ -2,86 +2,64 @@
 
 #include <SPSS/Util/Input.h>
 
+#include <iostream>
+
 /// Since we're going to have an outline thickness of 1, we'll subtract
 /// 1 from the given width/height in the constructor.
 
-constexpr float MIN_WIDTH{200.F};
-constexpr float MIN_HEIGHT{150.F};
+constexpr float BUTTON_HEIGHT{30.F};
+constexpr float BUTTON_SPACING{5.F};
+
+constexpr float MAX_WIDTH{550.F};
+constexpr float MIN_WIDTH{300.F};
 
 const sf::Color HIGHLIGHTED_BORDER{sf::Color::White};
 const sf::Color UNHIGHLIGHTED_BORDER{255, 255, 255, 75};
 
 namespace spss {
-	TextEntryPrompt::TextEntryPrompt(const sf::Vector2f&      _size,
-	                                 const sf::Vector2f&      _position,
+	TextEntryPrompt::TextEntryPrompt(const sf::Vector2f&      _position,
 	                                 const sf::Font&          _font,
 	                                 const std::string&       _promptTitle,
-	                                 spss::Function<std::any> _onConfirm,
-	                                 spss::Function<std::any> _onCancel,
 	                                 const unsigned int       _charSize,
 	                                 const std::string&       _defaultStr)
 	            : m_window{nullptr},
+	              m_font{_font},
 	              m_lastMousePosition{},
 	              m_dragging{false},
-	              m_rect{{_size.x - 1 >= MIN_WIDTH ? _size.x - 1 : MIN_WIDTH,
-	                      _size.y - 1 >= MIN_HEIGHT ? _size.y - 1 : MIN_HEIGHT}},
-	              m_textEntry{_size.x - 1 >= MIN_WIDTH ? _size.x - 1 : MIN_WIDTH,
+	              m_rect{{MAX_WIDTH, 100}},
+	              m_textEntry{300,
 	                          _position,
-	                          _font,
+	                          m_font,
 	                          _charSize,
 	                          _defaultStr},
 	              m_lastPosition{_position},
-	              m_confirmAction{_onConfirm},
-	              m_cancelAction{_onCancel},
 	              m_alignmentNeeded{true} {
-		m_title.setFont(_font);
+		m_title.setCharacterSize(22);
+		m_title.setOutlineThickness(1);
+		m_title.setOutlineColor(sf::Color::Black);
+		m_title.setFont(m_font);
 		m_title.setString(_promptTitle);
-
-		m_confirmText.setCharacterSize(17);
-		m_confirmText.setFont(_font);
-		m_confirmText.setString("Ok");
-
-		m_cancelText.setCharacterSize(17);
-		m_cancelText.setFont(_font);
-		m_cancelText.setString("Cancel");
 
 		m_rect.setFillColor({0, 0, 0, 100});
 		m_rect.setOutlineThickness(1);
 
+		float titleWidth{m_title.getGlobalBounds().width};
+		float rectWidth{m_rect.getGlobalBounds().width};
+
+		if (titleWidth <= MIN_WIDTH) {
+			setWidth(MIN_WIDTH);
+		}
+
+		else if (titleWidth <= MAX_WIDTH) {
+			setWidth(titleWidth);
+		}
+
+		else {
+			setWidth(MAX_WIDTH);
+		}
+
 		setPosition(_position);
 		m_textEntry.setAlwaysActive(true);
-
-		m_confirmButton.setSize({100, 30});
-		m_cancelButton.setSize({100, 30});
-
-		m_confirmButton.setFillColor(sf::Color::Transparent);
-		m_cancelButton.setFillColor(sf::Color::Transparent);
-
-		m_confirmButton.setOutlineColor(UNHIGHLIGHTED_BORDER);
-		m_cancelButton.setOutlineColor(UNHIGHLIGHTED_BORDER);
-
-		m_confirmButton.setOutlineThickness(-2);
-		m_cancelButton.setOutlineThickness(-2);
-
-		m_confirmButton.setOrigin(m_confirmButton.getGlobalBounds().left +
-		                            m_confirmButton.getGlobalBounds().width / 2,
-		                          m_confirmButton.getGlobalBounds().top +
-		                            m_confirmButton.getGlobalBounds().height / 2);
-
-		m_cancelButton.setOrigin(m_cancelButton.getGlobalBounds().left +
-		                           m_cancelButton.getGlobalBounds().width / 2,
-		                         m_cancelButton.getGlobalBounds().top +
-		                           m_cancelButton.getGlobalBounds().height / 2);
-
-		m_confirmText.setOrigin(m_confirmText.getGlobalBounds().left +
-		                          m_confirmText.getGlobalBounds().width / 2,
-		                        m_confirmText.getGlobalBounds().top +
-		                          m_confirmText.getGlobalBounds().height / 2);
-
-		m_cancelText.setOrigin(m_cancelText.getGlobalBounds().left +
-		                         m_cancelText.getGlobalBounds().width / 2,
-		                       m_cancelText.getGlobalBounds().top +
-		                         m_cancelText.getGlobalBounds().height / 2);
 
 		alignElements();
 	}
@@ -121,12 +99,38 @@ namespace spss {
 		window.draw(m_rect, states);
 		window.draw(m_title, states);
 		window.draw(m_textEntry, states);
-		window.draw(m_confirmButton, states);
-		window.draw(m_confirmText, states);
-		if (m_cancelAction != nullptr) {
-			window.draw(m_cancelButton, states);
-			window.draw(m_cancelText, states);
+		for (auto& b : m_buttons) {
+			window.draw(b.m_shape);
+			window.draw(b.m_text);
 		}
+	}
+
+	void TextEntryPrompt::addButton(const std::string& _str, spss::Function<std::any> _action) {
+		Button b;
+
+		b.m_action = _action;
+
+		b.m_text.setCharacterSize(17);
+		b.m_text.setFont(m_font);
+		b.m_text.setString(_str);
+
+		b.m_shape.setSize({(0.9F * m_rect.getSize().x), BUTTON_HEIGHT});
+
+		b.m_shape.setFillColor(sf::Color::Transparent);
+		b.m_shape.setOutlineColor(UNHIGHLIGHTED_BORDER);
+		b.m_shape.setOutlineThickness(-1);
+
+		b.m_shape.setOrigin(b.m_shape.getGlobalBounds().left +
+						    b.m_shape.getGlobalBounds().width / 2,
+							0);
+
+		b.m_text.setOrigin(b.m_text.getGlobalBounds().left +
+						   b.m_text.getGlobalBounds().width / 2,
+						   0);
+
+		m_buttons.push_back(b);
+		m_alignmentNeeded = true;
+
 	}
 
 	const std::string TextEntryPrompt::getString() const {
@@ -158,15 +162,6 @@ namespace spss {
 		m_alignmentNeeded = true;
 	}
 
-	void TextEntryPrompt::setSize(const sf::Vector2f& _size) {
-		float w{_size.x >= MIN_WIDTH ? _size.x : MIN_WIDTH};
-		float h{_size.y >= MIN_HEIGHT ? _size.y : MIN_HEIGHT};
-
-		m_rect.setSize({w, h});
-		m_textEntry.setWidth(w);
-		m_alignmentNeeded = true;
-	}
-
 	void TextEntryPrompt::setOrigin(const sf::Vector2f& _origin) {
 		m_rect.setOrigin(_origin);
 		m_alignmentNeeded = true;
@@ -177,30 +172,79 @@ namespace spss {
 		m_textEntry.setBackgroundColor(_color);
 	}
 
+	////////////////////////////////////////////////////////////
+	void TextEntryPrompt::fitWidth(float _width) {
+		std::string str{m_title.getString()};
+		size_t lines = std::count(str.begin(), str.end(), '\n');
+
+		bool tooWide{m_title.getGlobalBounds().width > _width};
+		bool tooNarrow{m_title.getGlobalBounds().width < _width &&
+		               lines > 1};
+
+		if (!tooWide && !tooNarrow) {
+			return;
+		}
+
+		str.erase(std::remove(str.begin(), str.end(), '\n'), str.end());
+
+		float lineWidth{0};
+
+		for (size_t i{0}; i < str.length(); i++) {
+			auto pos{m_title.findCharacterPos(i)};
+			char charAtPos{str.at(i)};
+			auto glyph{m_title.getFont()->getGlyph(charAtPos, m_title.getCharacterSize(), false, m_title.getOutlineThickness())};
+
+			float charWidth{glyph.bounds.width};
+			float spacing{glyph.advance};
+
+			//Insert a newline at the prior position
+			//if needed
+			if (lineWidth + spacing >= _width) {
+				str.insert(i, 1, '\n');
+				lineWidth = 0;
+				i++;
+			}
+
+			lineWidth += spacing;
+		}
+
+		m_title.setString(str);
+	}
+
+	void TextEntryPrompt::setHeight(float _height) {
+		m_rect.setSize({m_rect.getSize().x, _height});
+		m_alignmentNeeded = true;
+	}
+
+	void TextEntryPrompt::setWidth(float _width) {
+		m_rect.setSize({_width, m_rect.getSize().y});
+		m_textEntry.setWidth(_width);
+		fitWidth(_width);
+		m_alignmentNeeded = true;
+	}
+
 	void TextEntryPrompt::handleMouseClick() {
 		auto view{m_window->getView()};
 		auto mousePos = sf::Mouse::getPosition(*m_window);
 		auto pixelPos{m_window->mapPixelToCoords(mousePos, view)};
 
 		auto bounds{m_rect.getGlobalBounds()};
-		auto confirmButtonBounds{m_confirmButton.getGlobalBounds()};
-		auto cancelButtonBounds{m_cancelButton.getGlobalBounds()};
-
 		bool insideBox{bounds.contains(pixelPos.x, pixelPos.y)};
-		bool insideConfirmButton{confirmButtonBounds.contains(pixelPos.x, pixelPos.y)};
-		bool insideCancelButton{cancelButtonBounds.contains(pixelPos.x, pixelPos.y)};
 
-		if (insideBox && !insideConfirmButton && !insideCancelButton) {
+		for (auto& b : m_buttons) {
+			auto buttonBounds{b.m_shape.getGlobalBounds()};
+			bool insideButton{buttonBounds.contains(pixelPos.x, pixelPos.y)};
+			bool buttonNull{b.m_action == nullptr};
+
+			if (insideButton && !buttonNull) {
+				b.m_action(std::any());
+				return;
+			}
+		}
+
+		if (insideBox) {
 			m_lastMousePosition = mousePos;
 			m_dragging          = true;
-		}
-
-		if (insideConfirmButton && m_confirmAction != nullptr) {
-			m_confirmAction(std::any());
-		}
-
-		else if (insideCancelButton && m_cancelAction != nullptr) {
-			m_cancelAction(std::any());
 		}
 	}
 
@@ -209,24 +253,17 @@ namespace spss {
 		auto mousePos = sf::Mouse::getPosition(*m_window);
 		auto pixelPos{m_window->mapPixelToCoords(mousePos, view)};
 
-		auto confirmButtonBounds{m_confirmButton.getGlobalBounds()};
-		auto cancelButtonBounds{m_cancelButton.getGlobalBounds()};
+		for (auto& b : m_buttons) {
+			auto buttonBounds{b.m_shape.getGlobalBounds()};
+			bool insideButton{buttonBounds.contains(pixelPos.x, pixelPos.y)};
+			bool buttonNull{b.m_action == nullptr};
 
-		bool insideConfirmButton{confirmButtonBounds.contains(pixelPos.x, pixelPos.y)};
-		bool insideCancelButton{cancelButtonBounds.contains(pixelPos.x, pixelPos.y)};
-
-		if (insideConfirmButton && m_confirmAction != nullptr) {
-			m_confirmButton.setOutlineColor(HIGHLIGHTED_BORDER);
-		}
-		else {
-			m_confirmButton.setOutlineColor(UNHIGHLIGHTED_BORDER);
-		}
-
-		if (insideCancelButton && m_cancelAction != nullptr) {
-			m_cancelButton.setOutlineColor(HIGHLIGHTED_BORDER);
-		}
-		else {
-			m_cancelButton.setOutlineColor(UNHIGHLIGHTED_BORDER);
+			if (insideButton && !buttonNull) {
+				b.m_shape.setOutlineColor(HIGHLIGHTED_BORDER);
+			}
+			else {
+				b.m_shape.setOutlineColor(UNHIGHLIGHTED_BORDER);
+			}
 		}
 	}
 
@@ -277,21 +314,48 @@ namespace spss {
 		auto pos{m_rect.getPosition()};
 		auto size{m_rect.getSize()};
 
-		auto titleHeight{m_title.getGlobalBounds().height};
-
 		m_title.setPosition(pos);
-		m_textEntry.setPosition({pos.x, pos.y + (2 * titleHeight)});
 
-		float buttonsY{pos.y + size.y - m_confirmButton.getGlobalBounds().height};
+		auto titleBounds{m_title.getGlobalBounds()};
 
-		sf::Vector2f confirmPosition{pos.x + (size.x * 0.25F), buttonsY};
-		sf::Vector2f cancelPosition{pos.x + (size.x * 0.75F), buttonsY};
+		m_textEntry.setPosition({pos.x, 10.F + (titleBounds.top + (titleBounds.height))});
 
-		m_confirmButton.setPosition(confirmPosition);
-		m_confirmText.setPosition(confirmPosition);
+		//We'll get the FloatRect describing the space where the buttons
+		//can be placed - that is, everything below the text entry box
 
-		m_cancelButton.setPosition(cancelPosition);
-		m_cancelText.setPosition(cancelPosition);
+		auto rectBounds{m_rect.getGlobalBounds()};
+		auto textEntryBounds{m_textEntry.getGlobalBounds()};
+
+		float rectBottom{rectBounds.top + rectBounds.height};
+		float textEntryBottom{textEntryBounds.top + textEntryBounds.height};
+
+		sf::FloatRect buttonBounds{rectBounds.left,
+		                           textEntryBottom + BUTTON_SPACING,
+		                           size.x,
+		                           rectBottom - textEntryBottom};
+
+		//We'll make sure that the remainder of the box fits
+		//the buttons just right - it will expand if it's too
+		//small, or shrink if it's too large
+
+		float heightNeeded{(m_buttons.size() * BUTTON_HEIGHT)
+						   +
+						   ((m_buttons.size() + 1) * BUTTON_SPACING)};
+
+		float diff{buttonBounds.height - heightNeeded};
+
+		if(diff != 0) {
+			setHeight(size.y - diff);
+			return;
+		}
+
+		float centerX{pos.x + size.x / 2};
+
+		for (int i{0}; i < m_buttons.size(); i++) {
+			float y{buttonBounds.top + (i * BUTTON_HEIGHT)};
+			y += i * BUTTON_SPACING;
+			m_buttons[i].setPosition({centerX, y});
+		}
 	}
 
 } // namespace spss

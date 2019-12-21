@@ -181,6 +181,22 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
+	const sf::Vector2f& TextEntryBox::getPosition() const {
+		return m_rectangle.getPosition();
+	}
+
+	////////////////////////////////////////////////////////////
+	const sf::FloatRect TextEntryBox::getLocalBounds() const {
+		return m_rectangle.getLocalBounds();
+	}
+
+	////////////////////////////////////////////////////////////
+	const sf::FloatRect TextEntryBox::getGlobalBounds() const {
+		return m_rectangle.getGlobalBounds();
+	}
+
+
+	////////////////////////////////////////////////////////////
 	float TextEntryBox::getWidth() const {
 		return m_rectangle.getSize().x;
 	}
