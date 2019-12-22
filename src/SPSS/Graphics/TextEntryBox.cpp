@@ -298,8 +298,6 @@ namespace spss {
 			target.draw(m_rectangle, states);
 			target.draw(m_text, states);
 			target.draw(m_highlightedRectangle, states);
-		}
-		if (m_enteringText && !sequenceSelected()) {
 			target.draw(m_caret, states);
 		}
 	}
@@ -381,7 +379,6 @@ namespace spss {
 
 		m_alphaUpdateNeeded = false;
 
-		auto        rectPos{m_rectangle.getPosition()};
 		auto        rectBounds{m_rectangle.getGlobalBounds()};
 		std::string textStr{m_text.getString()};
 
@@ -393,7 +390,7 @@ namespace spss {
 			auto fillColor{m_fillColor};
 			auto outlineColor{m_outlineColor};
 
-			if (pos.x < rectPos.x || (pos.x + charWidth) > (rectPos.x + rectBounds.width)) {
+			if (pos.x < rectBounds.left || (pos.x + charWidth) > (rectBounds.left + rectBounds.width)) {
 				fillColor    = sf::Color::Transparent;
 				outlineColor = sf::Color::Transparent;
 			}
@@ -408,12 +405,19 @@ namespace spss {
 		auto caretPos{m_rectangle.getPosition()};
 
 		if (!stringEmpty()) {
-			caretPos = m_text.findCharacterPos(m_selectionBegin);
-			if (m_selectionBegin > 0) {
+			size_t selectionToUse{m_selectionBegin};
+
+			if (m_selectionDirection == SELDIR::RIGHT) {
+				selectionToUse = m_selectionEnd;
+			}
+
+			caretPos = m_text.findCharacterPos(selectionToUse);
+
+			if (selectionToUse > 0) {
 				//We'll position the caret as accurately as possible,
 				//by positioning it exactly between the current and
 				//previous characters
-				size_t      prevPos{m_selectionBegin - 1};
+				size_t      prevPos{selectionToUse - 1};
 				std::string textStr{m_text.getString()};
 				char        charAtPrevPos{textStr.at(prevPos)};
 				auto        prevGlyph{m_font.getGlyph(charAtPrevPos, m_charSize, false, m_text.getOutlineThickness(prevPos))};
@@ -485,6 +489,8 @@ namespace spss {
 		m_selectionBegin     = 0;
 		m_selectionEnd       = m_text.getString().getSize();
 		m_selectionDirection = SELDIR::NEUTRAL;
+		updateCaret();
+		m_alphaUpdateNeeded = (shiftTextToRight() || textTooWide());
 	}
 
 	////////////////////////////////////////////////////////////
@@ -519,6 +525,7 @@ namespace spss {
 			}
 		}
 
+		updateCaret();
 		m_alphaUpdateNeeded = shiftTextToRight();
 	}
 
@@ -547,18 +554,17 @@ namespace spss {
 			}
 		}
 
+		updateCaret();
 		m_alphaUpdateNeeded = shiftTextToLeft();
 	}
 
 	////////////////////////////////////////////////////////////
 	bool TextEntryBox::shiftTextToLeft() {
-		auto caretPos{m_caret.getPosition()};
 		auto caretBounds{m_caret.getGlobalBounds()};
-		auto boxPos{m_rectangle.getPosition()};
 		auto boxBounds{m_rectangle.getGlobalBounds()};
 
-		float extraSpace{(caretPos.x + caretBounds.width) -
-		                 (boxPos.x + boxBounds.width)};
+		float extraSpace{(caretBounds.left + caretBounds.width) -
+		                 (boxBounds.left + boxBounds.width)};
 
 		if (extraSpace > -1 * caretBounds.width) {
 			auto newTextPos{m_text.getPosition()};
@@ -579,21 +585,19 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	bool TextEntryBox::shiftTextToRight() {
-		auto caretPos{m_caret.getPosition()};
 		auto caretBounds{m_caret.getGlobalBounds()};
 		auto boxPos{m_rectangle.getPosition()};
-		auto boxBounds{m_rectangle.getGlobalBounds()};
 		auto textPos{m_text.getPosition()};
 
 		//If the caret is off to the left of the box, or if the text can
 		//fit within the box and we've applied a negative offset, we'll
 		//reset the text's position
-		if (caretPos.x <= textPos.x || (m_xOffset < 0 && !textTooWide())) {
+		if (caretBounds.left + caretBounds.width <= textPos.x || m_xOffset < 0 && !textTooWide()) {
 			resetTextPosition();
 			return true;
 		}
 
-		float extraSpace{(caretPos.x + caretBounds.width) -
+		float extraSpace{(caretBounds.left + caretBounds.width) -
 		                 (boxPos.x)};
 
 		if (extraSpace < caretBounds.width) {
