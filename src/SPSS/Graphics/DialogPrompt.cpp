@@ -1,37 +1,35 @@
-#include <SPSS/Graphics/TextEntryPrompt.h>
+#include <SPSS/Graphics/DialogPrompt.h>
 
 #include <SPSS/Util/Input.h>
 
-#include <iostream>
-
-/// Since we're going to have an outline thickness of 1, we'll subtract
-/// 1 from the given width/height in the constructor.
+constexpr float MAX_WIDTH{550.F};
+constexpr float MIN_WIDTH{300.F};
 
 constexpr float BUTTON_HEIGHT{30.F};
 constexpr float BUTTON_SPACING{5.F};
+constexpr float BUTTON_TOP_PADDING{10.F};
+constexpr float BUTTON_BOTTOM_PADDING{10.F};
 
-constexpr float MAX_WIDTH{550.F};
-constexpr float MIN_WIDTH{300.F};
+constexpr float TITLE_TOP_PADDING{5.F};
+constexpr float TEXT_SIDE_PADDING{20.F};
+constexpr float TEXTENTRY_TOP_PADDING{5.F};
 
 const sf::Color HIGHLIGHTED_BORDER{sf::Color::White};
 const sf::Color UNHIGHLIGHTED_BORDER{255, 255, 255, 75};
 
 namespace spss {
-	TextEntryPrompt::TextEntryPrompt(const sf::Vector2f&      _position,
-	                                 const sf::Font&          _font,
-	                                 const std::string&       _promptTitle,
-	                                 const unsigned int       _charSize,
-	                                 const std::string&       _defaultStr)
+	DialogPrompt::DialogPrompt(bool                _textEntryEnabled,
+	                           const sf::Vector2f& _position,
+	                           const sf::Font&     _font,
+	                           const std::string&  _promptTitle,
+	                           const unsigned int  _charSize,
+	                           const std::string&  _defaultStr)
 	            : m_window{nullptr},
 	              m_font{_font},
 	              m_lastMousePosition{},
 	              m_dragging{false},
 	              m_rect{{MAX_WIDTH, 100}},
-	              m_textEntry{300,
-	                          _position,
-	                          m_font,
-	                          _charSize,
-	                          _defaultStr},
+	              m_textEntry{!_textEntryEnabled ? nullptr : std::make_unique<TextEntryBox>(MAX_WIDTH, _position, m_font, _charSize, _defaultStr)},
 	              m_lastPosition{_position},
 	              m_alignmentNeeded{true} {
 		m_title.setCharacterSize(22);
@@ -44,7 +42,6 @@ namespace spss {
 		m_rect.setOutlineThickness(1);
 
 		float titleWidth{m_title.getGlobalBounds().width};
-		float rectWidth{m_rect.getGlobalBounds().width};
 
 		if (titleWidth <= MIN_WIDTH) {
 			setWidth(MIN_WIDTH);
@@ -59,13 +56,21 @@ namespace spss {
 		}
 
 		setPosition(_position);
-		m_textEntry.setAlwaysActive(true);
+
+		if (m_textEntry != nullptr) {
+			m_textEntry->setAlwaysActive(true);
+			//We'll make the text entry box transparent so that it
+			//takes on the color of the dialog prompt
+			m_textEntry->setBackgroundColor(sf::Color::Transparent);
+		}
 
 		alignElements();
 	}
 
-	void TextEntryPrompt::getInput(sf::Event& _e) {
-		m_textEntry.getInput(_e);
+	void DialogPrompt::getInput(sf::Event& _e) {
+		if (m_textEntry != nullptr) {
+			m_textEntry->getInput(_e);
+		}
 
 		if (m_window == nullptr) {
 			return;
@@ -82,9 +87,11 @@ namespace spss {
 		}
 	}
 
-	void TextEntryPrompt::update() {
+	void DialogPrompt::update() {
 		dragBox();
-		m_textEntry.update();
+		if (m_textEntry != nullptr) {
+			m_textEntry->update();
+		}
 
 		if (m_rect.getPosition() != m_lastPosition) {
 			m_lastPosition    = m_rect.getPosition();
@@ -94,18 +101,20 @@ namespace spss {
 		alignElements();
 	}
 
-	void TextEntryPrompt::draw(sf::RenderWindow& window, sf::RenderStates states) const {
+	void DialogPrompt::draw(sf::RenderWindow& window, sf::RenderStates states) const {
 		m_window = &window;
 		window.draw(m_rect, states);
 		window.draw(m_title, states);
-		window.draw(m_textEntry, states);
+		if (m_textEntry != nullptr) {
+			window.draw(*m_textEntry, states);
+		}
 		for (auto& b : m_buttons) {
 			window.draw(b.m_shape);
 			window.draw(b.m_text);
 		}
 	}
 
-	void TextEntryPrompt::addButton(const std::string& _str, spss::Function<std::any> _action) {
+	void DialogPrompt::addButton(const std::string& _str, spss::Function<std::any> _action) {
 		Button b;
 
 		b.m_action = _action;
@@ -121,61 +130,69 @@ namespace spss {
 		b.m_shape.setOutlineThickness(-1);
 
 		b.m_shape.setOrigin(b.m_shape.getGlobalBounds().left +
-						    b.m_shape.getGlobalBounds().width / 2,
-							0);
+		                      b.m_shape.getGlobalBounds().width / 2,
+		                    0);
 
 		b.m_text.setOrigin(b.m_text.getGlobalBounds().left +
-						   b.m_text.getGlobalBounds().width / 2,
-						   0);
+		                     b.m_text.getGlobalBounds().width / 2,
+		                   0);
 
 		m_buttons.push_back(b);
 		m_alignmentNeeded = true;
-
 	}
 
-	const std::string TextEntryPrompt::getString() const {
-		return m_textEntry.getCurrentString();
+	const std::string DialogPrompt::getString() const {
+		if (m_textEntry != nullptr) {
+			return m_textEntry->getCurrentString();
+		}
+		else {
+			return std::string{""};
+		}
 	}
 
-	const sf::Vector2f& TextEntryPrompt::getPosition() const {
+	const sf::Vector2f& DialogPrompt::getPosition() const {
 		return m_rect.getPosition();
 	}
 
-	const sf::Vector2f& TextEntryPrompt::getSize() const {
+	const sf::Vector2f& DialogPrompt::getSize() const {
 		return m_rect.getSize();
 	}
 
-	const sf::FloatRect& TextEntryPrompt::getLocalBounds() const {
+	const sf::FloatRect& DialogPrompt::getLocalBounds() const {
 		return m_rect.getLocalBounds();
 	}
 
-	const sf::FloatRect& TextEntryPrompt::getGlobalBounds() const {
+	const sf::FloatRect& DialogPrompt::getGlobalBounds() const {
 		return m_rect.getGlobalBounds();
 	}
 
-	const sf::Color& TextEntryPrompt::getColor() const {
+	const sf::Color& DialogPrompt::getColor() const {
 		return m_rect.getFillColor();
 	}
 
-	void TextEntryPrompt::setPosition(const sf::Vector2f& _pos) {
+	void DialogPrompt::setPosition(const sf::Vector2f& _pos) {
 		m_rect.setPosition(_pos);
 		m_alignmentNeeded = true;
 	}
 
-	void TextEntryPrompt::setOrigin(const sf::Vector2f& _origin) {
+	void DialogPrompt::setOrigin(const sf::Vector2f& _origin) {
 		m_rect.setOrigin(_origin);
 		m_alignmentNeeded = true;
 	}
 
-	void TextEntryPrompt::setColor(const sf::Color& _color) {
+	void DialogPrompt::setColor(const sf::Color& _color) {
 		m_rect.setFillColor(_color);
-		m_textEntry.setBackgroundColor(_color);
 	}
 
 	////////////////////////////////////////////////////////////
-	void TextEntryPrompt::fitWidth(float _width) {
+	void DialogPrompt::fitWidth(float _width) {
 		std::string str{m_title.getString()};
-		size_t lines = std::count(str.begin(), str.end(), '\n');
+		size_t      lines = std::count(str.begin(), str.end(), '\n');
+
+		//We'll reduce the effective width a little bit, just for
+		//some padding on the sides.
+
+		_width -= TEXT_SIDE_PADDING;
 
 		bool tooWide{m_title.getGlobalBounds().width > _width};
 		bool tooNarrow{m_title.getGlobalBounds().width < _width &&
@@ -190,11 +207,9 @@ namespace spss {
 		float lineWidth{0};
 
 		for (size_t i{0}; i < str.length(); i++) {
-			auto pos{m_title.findCharacterPos(i)};
-			char charAtPos{str.at(i)};
-			auto glyph{m_title.getFont()->getGlyph(charAtPos, m_title.getCharacterSize(), false, m_title.getOutlineThickness())};
-
-			float charWidth{glyph.bounds.width};
+			auto  pos{m_title.findCharacterPos(i)};
+			char  charAtPos{str.at(i)};
+			auto  glyph{m_title.getFont()->getGlyph(charAtPos, m_title.getCharacterSize(), false, m_title.getOutlineThickness())};
 			float spacing{glyph.advance};
 
 			//Insert a newline at the prior position
@@ -211,19 +226,21 @@ namespace spss {
 		m_title.setString(str);
 	}
 
-	void TextEntryPrompt::setHeight(float _height) {
+	void DialogPrompt::setHeight(float _height) {
 		m_rect.setSize({m_rect.getSize().x, _height});
 		m_alignmentNeeded = true;
 	}
 
-	void TextEntryPrompt::setWidth(float _width) {
+	void DialogPrompt::setWidth(float _width) {
 		m_rect.setSize({_width, m_rect.getSize().y});
-		m_textEntry.setWidth(_width);
+		if (m_textEntry != nullptr) {
+			m_textEntry->setWidth(_width - (2 * TEXT_SIDE_PADDING));
+		}
 		fitWidth(_width);
 		m_alignmentNeeded = true;
 	}
 
-	void TextEntryPrompt::handleMouseClick() {
+	void DialogPrompt::handleMouseClick() {
 		auto view{m_window->getView()};
 		auto mousePos = sf::Mouse::getPosition(*m_window);
 		auto pixelPos{m_window->mapPixelToCoords(mousePos, view)};
@@ -248,7 +265,7 @@ namespace spss {
 		}
 	}
 
-	void TextEntryPrompt::handleMouseover() {
+	void DialogPrompt::handleMouseover() {
 		auto view{m_window->getView()};
 		auto mousePos = sf::Mouse::getPosition(*m_window);
 		auto pixelPos{m_window->mapPixelToCoords(mousePos, view)};
@@ -267,7 +284,7 @@ namespace spss {
 		}
 	}
 
-	void TextEntryPrompt::dragBox() {
+	void DialogPrompt::dragBox() {
 		if (!m_dragging || m_window == nullptr) {
 			return;
 		}
@@ -304,7 +321,7 @@ namespace spss {
 		setPosition(newPos);
 	}
 
-	void TextEntryPrompt::alignElements() {
+	void DialogPrompt::alignElements() {
 		if (!m_alignmentNeeded) {
 			return;
 		}
@@ -314,44 +331,62 @@ namespace spss {
 		auto pos{m_rect.getPosition()};
 		auto size{m_rect.getSize()};
 
-		m_title.setPosition(pos);
+		m_title.setPosition({pos.x + TEXT_SIDE_PADDING, pos.y + TITLE_TOP_PADDING});
 
 		auto titleBounds{m_title.getGlobalBounds()};
 
-		m_textEntry.setPosition({pos.x, 10.F + (titleBounds.top + (titleBounds.height))});
+		if (m_textEntry != nullptr) {
+			m_textEntry->setPosition({pos.x + TEXT_SIDE_PADDING,
+			                          titleBounds.top + titleBounds.height + TEXTENTRY_TOP_PADDING});
+		}
 
 		//We'll get the FloatRect describing the space where the buttons
 		//can be placed - that is, everything below the text entry box
 
 		auto rectBounds{m_rect.getGlobalBounds()};
-		auto textEntryBounds{m_textEntry.getGlobalBounds()};
+
+		//If we have a text entry box, our buttons will appear directly
+		//below the title, so we'll use the title's bounds instead.
+
+		//If we have a text entry box though, the buttons will appear
+		//below it.
+
+		auto bottomElementBounds{m_textEntry == nullptr ? m_title.getGlobalBounds() : m_textEntry->getGlobalBounds()};
 
 		float rectBottom{rectBounds.top + rectBounds.height};
-		float textEntryBottom{textEntryBounds.top + textEntryBounds.height};
+		float bottomElementBottom{bottomElementBounds.top + bottomElementBounds.height};
 
 		sf::FloatRect buttonBounds{rectBounds.left,
-		                           textEntryBottom + BUTTON_SPACING,
+		                           bottomElementBottom + BUTTON_TOP_PADDING,
 		                           size.x,
-		                           rectBottom - textEntryBottom};
+		                           rectBottom - bottomElementBottom};
 
 		//We'll make sure that the remainder of the box fits
 		//the buttons just right - it will expand if it's too
 		//small, or shrink if it's too large
 
-		float heightNeeded{(m_buttons.size() * BUTTON_HEIGHT)
-						   +
-						   ((m_buttons.size() + 1) * BUTTON_SPACING)};
+		//We wouldn't want to perform 0-1 on a size_t now, would we?
+		float totalSpacing{0.F};
+		if (m_buttons.size() > 0) {
+			totalSpacing = (m_buttons.size() - 1) * BUTTON_SPACING;
+		}
+
+		float heightNeeded{(m_buttons.size() * BUTTON_HEIGHT) +
+		                   totalSpacing};
+
+		heightNeeded += BUTTON_TOP_PADDING;
+		heightNeeded += BUTTON_BOTTOM_PADDING;
 
 		float diff{buttonBounds.height - heightNeeded};
 
-		if(diff != 0) {
+		if (diff != 0) {
 			setHeight(size.y - diff);
 			return;
 		}
 
 		float centerX{pos.x + size.x / 2};
 
-		for (int i{0}; i < m_buttons.size(); i++) {
+		for (size_t i{0}; i < m_buttons.size(); i++) {
 			float y{buttonBounds.top + (i * BUTTON_HEIGHT)};
 			y += i * BUTTON_SPACING;
 			m_buttons[i].setPosition({centerX, y});

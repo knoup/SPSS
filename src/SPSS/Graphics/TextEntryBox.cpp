@@ -33,10 +33,10 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	TextEntryBox::TextEntryBox(const float         _width,
-							   const sf::Vector2f& _position,
-							   const sf::Font&     _font,
-					           const unsigned int  _charSize,
-							   const std::string& _str)
+	                           const sf::Vector2f& _position,
+	                           const sf::Font&     _font,
+	                           const unsigned int  _charSize,
+	                           const std::string&  _str)
 	            : m_font{_font},
 	              m_rectangle(),
 	              m_selectionBegin(0),
@@ -55,7 +55,6 @@ namespace spss {
 	              m_outlineThickness{0},
 	              m_alphaUpdateNeeded{false},
 	              m_xOffset{0.F} {
-
 		setWidth(_width);
 		setPosition(_position);
 		setCharSize(m_charSize);
@@ -100,7 +99,7 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::setFillColor(const sf::Color& _c) {
-		m_fillColor = _c;
+		m_fillColor         = _c;
 		m_alphaUpdateNeeded = true;
 	}
 
@@ -194,7 +193,6 @@ namespace spss {
 	const sf::FloatRect TextEntryBox::getGlobalBounds() const {
 		return m_rectangle.getGlobalBounds();
 	}
-
 
 	////////////////////////////////////////////////////////////
 	float TextEntryBox::getWidth() const {
