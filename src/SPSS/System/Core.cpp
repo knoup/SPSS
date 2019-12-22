@@ -37,7 +37,7 @@ namespace spss {
 			}
 			if (m_stateStack.size() > 1) {
 				const int maxIndex{int(m_stateStack.size()) - 2};
-				int currIndex{0};
+				int       currIndex{0};
 
 				while (currIndex <= maxIndex) {
 					if (m_stateStack[currIndex]->getInputInBackground()) {
@@ -54,7 +54,7 @@ namespace spss {
 	void Core::update(int _timeslice) {
 		if (m_stateStack.size() > 1) {
 			const int maxIndex{int(m_stateStack.size()) - 2};
-			int currIndex{0};
+			int       currIndex{0};
 
 			while (currIndex <= maxIndex) {
 				if (m_stateStack[currIndex]->updatedInBackground()) {
@@ -71,7 +71,7 @@ namespace spss {
 	void Core::draw() {
 		if (m_stateStack.size() > 1) {
 			const int maxIndex{int(m_stateStack.size()) - 2};
-			int currIndex{0};
+			int       currIndex{0};
 
 			while (currIndex <= maxIndex) {
 				if (m_stateStack[currIndex]->drawnInBackground()) {

@@ -16,8 +16,7 @@ namespace spss {
 	template<class KeyType, class ResourceType>
 	class ResourceManager {
 	  public:
-
-	  	////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////
 		/// \brief Default constructor
 		///
 		////////////////////////////////////////////////////////////
@@ -32,7 +31,7 @@ namespace spss {
 		///
 		////////////////////////////////////////////////////////////
 		const ResourceType* get(const KeyType& _Id) {
-			if(m_resources.find(_Id) == m_resources.end()) {
+			if (m_resources.find(_Id) == m_resources.end()) {
 				return nullptr;
 			}
 

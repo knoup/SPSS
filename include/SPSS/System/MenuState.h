@@ -106,7 +106,7 @@ namespace spss {
 		////////////////////////////////////////////////////////////
 		MenuState(sf::RenderWindow&  _w,
 		          const sf::Font&    _f,
-		          const std::string& _titleStr = "",
+		          const std::string& _titleStr     = "",
 		          bool               _titleAutoPos = true);
 
 		////////////////////////////////////////////////////////////
@@ -176,7 +176,7 @@ namespace spss {
 		///
 		////////////////////////////////////////////////////////////
 		virtual void addMenuItem(const std::string&       _string,
-								 const sf::Vector2f&      _pos,
+		                         const sf::Vector2f&      _pos,
 		                         spss::Function<std::any> f        = nullptr,
 		                         int                      _keyCode = sf::Keyboard::Unknown);
 

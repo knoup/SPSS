@@ -15,26 +15,26 @@ namespace spss {
 
 	class Scrollbar : public spss::DrawableToWindow {
 	  public:
-	  	////////////////////////////////////////////////////////////
-	  	///
-	  	/// The three types of Anchor behave as follows:
-	  	///
-	  	/// NONE: no special behaviour.
-	  	///
-	  	/// SOFT: if the scrollbar is already at the bottommost
-	  	/// position when reset() is called, it will ensure it
-	  	/// stays there.
-	  	///
-	  	/// HARD: the scrollbar is always set to the bottommost
-	  	/// position when reset() is called.
-	  	///
-	  	////////////////////////////////////////////////////////////
-	  	enum class Anchor
-	  	{
+		////////////////////////////////////////////////////////////
+		///
+		/// The three types of Anchor behave as follows:
+		///
+		/// NONE: no special behaviour.
+		///
+		/// SOFT: if the scrollbar is already at the bottommost
+		/// position when reset() is called, it will ensure it
+		/// stays there.
+		///
+		/// HARD: the scrollbar is always set to the bottommost
+		/// position when reset() is called.
+		///
+		////////////////////////////////////////////////////////////
+		enum class Anchor
+		{
 			NONE,
 			SOFT,
 			HARD
-	  	};
+		};
 
 		////////////////////////////////////////////////////////////
 		/// \brief Construct the Scrollbar
@@ -155,17 +155,17 @@ namespace spss {
 		void snapToBottom();
 
 	  private:
-	  	////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////
 		/// \brief Is the scrollbar at the uppermost possible position?
 		///
 		////////////////////////////////////////////////////////////
-	  	bool atTop() const;
+		bool atTop() const;
 
-	  	////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////
 		/// \brief Is the scrollbar at the botommost possible position?
 		///
 		////////////////////////////////////////////////////////////
-	  	bool atBottom() const;
+		bool atBottom() const;
 
 		////////////////////////////////////////////////////////////
 		/// \brief Is the scrollbar being moused over?

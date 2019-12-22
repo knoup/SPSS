@@ -35,16 +35,14 @@ namespace spss {
 	                      const sf::Vector2f& _pos,
 	                      float               _min,
 	                      float               _max) {
-
 		//If we have a soft anchor, we'll need to check if the
 		//scrollbar is at the bottommost position before we
 		//resize it. We'll also check if the scrollbar just
 		//became active.
 		bool softAnchorNeeded{false};
 
-		if (m_anchor == Anchor::SOFT
-			&&
-			(atBottom() || !m_active)) {
+		if (m_anchor == Anchor::SOFT &&
+		    (atBottom() || !m_active)) {
 			softAnchorNeeded = true;
 		}
 
@@ -77,8 +75,7 @@ namespace spss {
 		m_inner.setSize({_size.x, scrollbarHeight * ratio});
 
 		//If we have a hard/soft anchor, we can skip the rest
-		if (m_anchor == Anchor::HARD
-			|| softAnchorNeeded) {
+		if (m_anchor == Anchor::HARD || softAnchorNeeded) {
 			snapToBottom();
 			return;
 		}
@@ -127,7 +124,7 @@ namespace spss {
 		if (_event.type == sf::Event::MouseWheelMoved) {
 			sf::FloatRect blankBounds{};
 
-			if(_mouseBounds != blankBounds) {
+			if (_mouseBounds != blankBounds) {
 				sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
 				sf::Vector2f pixelPos{m_window->mapPixelToCoords(mousePos, m_backgroundView)};
 
@@ -187,8 +184,8 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	void Scrollbar::snapToTop() {
-		auto innerPos{m_inner.getPosition()};
-		auto outerPos{m_outer.getPosition()};
+		auto  innerPos{m_inner.getPosition()};
+		auto  outerPos{m_outer.getPosition()};
 		float lowerLimit{outerPos.y};
 		innerPos.y = lowerLimit;
 		m_inner.setPosition({outerPos.x, innerPos.y});
@@ -196,10 +193,10 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	void Scrollbar::snapToBottom() {
-		auto outerPos{m_outer.getPosition()};
-		auto outerBounds{m_outer.getGlobalBounds()};
-		auto innerPos{m_inner.getPosition()};
-		auto innerBounds{m_inner.getGlobalBounds()};
+		auto  outerPos{m_outer.getPosition()};
+		auto  outerBounds{m_outer.getGlobalBounds()};
+		auto  innerPos{m_inner.getPosition()};
+		auto  innerBounds{m_inner.getGlobalBounds()};
 		float upperLimit{outerPos.y + outerBounds.height - innerBounds.height};
 		innerPos.y = upperLimit;
 		m_inner.setPosition({outerPos.x, innerPos.y});
@@ -214,7 +211,7 @@ namespace spss {
 		auto  pos{m_inner.getPosition()};
 		float min{m_outer.getPosition().y};
 
-		if (spss::Util::Math::almostEqual(pos.y, min) ||  pos.y < min) {
+		if (spss::Util::Math::almostEqual(pos.y, min) || pos.y < min) {
 			return true;
 		}
 

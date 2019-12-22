@@ -114,7 +114,7 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	void MenuState::addMenuItem(const std::string&       _string,
-								const sf::Vector2f&      _pos,
+	                            const sf::Vector2f&      _pos,
 	                            spss::Function<std::any> f,
 	                            int                      _keyCode) {
 		sf::Text text;
@@ -123,7 +123,7 @@ namespace spss {
 		text.setOutlineThickness(1);
 		text.setCharacterSize(34);
 		text.setString(_string);
-		text.setOrigin(text.getLocalBounds().width  / 2, 0);
+		text.setOrigin(text.getLocalBounds().width / 2, 0);
 
 		sf::Vector2f ratioPos{_pos};
 

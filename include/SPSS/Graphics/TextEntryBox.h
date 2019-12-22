@@ -36,10 +36,10 @@ namespace spss {
 		///
 		////////////////////////////////////////////////////////////
 		TextEntryBox(const float         _width,
-					 const sf::Vector2f& _position,
-					 const sf::Font&     _font,
-					 const unsigned int  _charSize = 20,
-		             const std::string& _str = "");
+		             const sf::Vector2f& _position,
+		             const sf::Font&     _font,
+		             const unsigned int  _charSize = 20,
+		             const std::string&  _str      = "");
 
 		////////////////////////////////////////////////////////////
 		/// \brief Set the position of the text entry box
