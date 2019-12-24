@@ -137,14 +137,14 @@ namespace spss {
 		if (m_size.x < MIN_SIZE_X) {
 			m_size.x = MIN_SIZE_X;
 		}
-		else if (m_size.x > m_window->getSize().x) {
+		else if (m_size.x > m_window->getView().getSize().x) {
 			m_size.x = m_window->getSize().x;
 		}
 
 		if (m_size.y < MIN_SIZE_Y) {
 			m_size.y = MIN_SIZE_Y;
 		}
-		else if (m_size.y > m_window->getSize().y) {
+		else if (m_size.y > m_window->getView().getSize().y) {
 			m_size.y = m_window->getSize().y;
 		}
 	}
@@ -160,15 +160,15 @@ namespace spss {
 		if (m_position.x < 0) {
 			m_position.x = 0;
 		}
-		else if (m_position.x + m_size.x > m_window->getSize().x) {
-			m_position.x = m_window->getSize().x - m_size.x;
+		else if (m_position.x + m_size.x > m_window->getView().getSize().x) {
+			m_position.x = m_window->getView().getSize().x - m_size.x;
 		}
 
 		if (m_position.y < 0) {
 			m_position.y = 0;
 		}
-		else if (m_position.y + m_size.y > m_window->getSize().y) {
-			m_position.y = m_window->getSize().y - m_size.y;
+		else if (m_position.y + m_size.y > m_window->getView().getSize().y) {
+			m_position.y = m_window->getView().getSize().y - m_size.y;
 		}
 	}
 

@@ -43,7 +43,7 @@ namespace spss {
 		////////////////////////////////////////////////////////////
 		/// \brief Get input
 		///
-		/// \param A reference to a captured event
+		/// \param _e A reference to a captured event
 		///
 		////////////////////////////////////////////////////////////
 		void getInput(sf::Event& _event);

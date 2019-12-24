@@ -27,10 +27,10 @@ namespace spss {
 	            : m_window{nullptr},
 	              m_font{_font},
 	              m_lastMousePosition{},
+	              m_lastPosition{_position},
 	              m_dragging{false},
 	              m_rect{{MAX_WIDTH, 100}},
 	              m_textEntry{!_textEntryEnabled ? nullptr : std::make_unique<TextEntryBox>(MAX_WIDTH, _position, m_font, _charSize, _defaultStr)},
-	              m_lastPosition{_position},
 	              m_alignmentNeeded{true} {
 		m_title.setCharacterSize(22);
 		m_title.setOutlineThickness(1);
@@ -175,11 +175,6 @@ namespace spss {
 		m_alignmentNeeded = true;
 	}
 
-	void DialogPrompt::setOrigin(const sf::Vector2f& _origin) {
-		m_rect.setOrigin(_origin);
-		m_alignmentNeeded = true;
-	}
-
 	void DialogPrompt::setColor(const sf::Color& _color) {
 		m_rect.setFillColor(_color);
 	}
@@ -228,15 +223,26 @@ namespace spss {
 
 	void DialogPrompt::setHeight(float _height) {
 		m_rect.setSize({m_rect.getSize().x, _height});
+
+		auto bounds{m_rect.getLocalBounds()};
+		m_rect.setOrigin(bounds.left + (bounds.width / 2),
+						 bounds.top  + (bounds.height / 2));
+
 		m_alignmentNeeded = true;
 	}
 
 	void DialogPrompt::setWidth(float _width) {
-		m_rect.setSize({_width, m_rect.getSize().y});
 		if (m_textEntry != nullptr) {
 			m_textEntry->setWidth(_width - (2 * TEXT_SIDE_PADDING));
 		}
+
+		m_rect.setSize({_width, m_rect.getSize().y});
 		fitWidth(_width);
+
+		auto bounds{m_rect.getLocalBounds()};
+		m_rect.setOrigin(bounds.left + (bounds.width / 2),
+						 bounds.top  + (bounds.height / 2));
+
 		m_alignmentNeeded = true;
 	}
 
@@ -299,23 +305,34 @@ namespace spss {
 
 		m_lastMousePosition = mousePos;
 
+		auto bounds{m_rect.getGlobalBounds()};
+
 		sf::Vector2f newPos{m_rect.getPosition()};
 		newPos.x += diff.x;
 		newPos.y += diff.y;
 
-		auto bounds{m_rect.getGlobalBounds()};
+		//validBounds will represent the range of valid positions that our dialog
+		//prompt can have. Since our origin will be centered, the min x/y values
+		//will be half the width and half the height respectively. The max x/y
+		//values will be the edges of the screen - the width/height.
 
-		if (newPos.x < 0) {
-			newPos.x = 0;
+		sf::FloatRect validBounds{bounds.width / 2,
+								  bounds.height / 2,
+								  m_window->getView().getSize().x - (bounds.width),
+								  m_window->getView().getSize().y - (bounds.height)};
+
+		if (newPos.x < validBounds.left) {
+			newPos.x = validBounds.left;
 		}
-		if (newPos.x + bounds.width > m_window->getSize().x) {
-			newPos.x = m_window->getSize().x - bounds.width;
+		else if (newPos.x > validBounds.left + validBounds.width) {
+			newPos.x = validBounds.left + validBounds.width;
 		}
-		if (newPos.y < 0) {
-			newPos.y = 0;
+
+		if (newPos.y < validBounds.top) {
+			newPos.y = validBounds.top;
 		}
-		if (newPos.y + bounds.height > m_window->getSize().y) {
-			newPos.y = m_window->getSize().y - bounds.height;
+		else if (newPos.y > validBounds.top + validBounds.height) {
+			newPos.y = validBounds.top + validBounds.height;
 		}
 
 		setPosition(newPos);
@@ -328,7 +345,13 @@ namespace spss {
 
 		m_alignmentNeeded = false;
 
-		auto pos{m_rect.getPosition()};
+		auto rectBounds{m_rect.getGlobalBounds()};
+
+		//For the purpose of aligning elements, we'll want to get the position of
+		//the upperleft most corner of m_rect. This is why we don't call m_rect.getPosition()
+		//(which would return the center of the box, since the origin is always centered)
+
+		sf::Vector2f pos{rectBounds.left, rectBounds.top};
 		auto size{m_rect.getSize()};
 
 		m_title.setPosition({pos.x + TEXT_SIDE_PADDING, pos.y + TITLE_TOP_PADDING});
@@ -342,8 +365,6 @@ namespace spss {
 
 		//We'll get the FloatRect describing the space where the buttons
 		//can be placed - that is, everything below the text entry box
-
-		auto rectBounds{m_rect.getGlobalBounds()};
 
 		//If we have a text entry box, our buttons will appear directly
 		//below the title, so we'll use the title's bounds instead.
@@ -379,6 +400,9 @@ namespace spss {
 
 		float diff{buttonBounds.height - heightNeeded};
 
+		//If a resize is needed, we'll just call setHeight() and return.
+		//setHeight() will set m_alignment to true, so this function will
+		//be called again with the updated, correct size the next frame.
 		if (diff != 0) {
 			setHeight(size.y - diff);
 			return;
