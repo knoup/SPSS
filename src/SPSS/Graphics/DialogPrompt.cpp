@@ -18,6 +18,8 @@ const sf::Color HIGHLIGHTED_BORDER{sf::Color::White};
 const sf::Color UNHIGHLIGHTED_BORDER{255, 255, 255, 75};
 
 namespace spss {
+
+	////////////////////////////////////////////////////////////
 	DialogPrompt::DialogPrompt(bool                _textEntryEnabled,
 	                           const sf::Vector2f& _position,
 	                           const sf::Font&     _font,
@@ -67,6 +69,7 @@ namespace spss {
 		alignElements();
 	}
 
+	////////////////////////////////////////////////////////////
 	void DialogPrompt::getInput(sf::Event& _e) {
 		if (m_textEntry != nullptr) {
 			m_textEntry->getInput(_e);
@@ -87,6 +90,7 @@ namespace spss {
 		}
 	}
 
+	////////////////////////////////////////////////////////////
 	void DialogPrompt::update() {
 		dragBox();
 		if (m_textEntry != nullptr) {
@@ -101,6 +105,7 @@ namespace spss {
 		alignElements();
 	}
 
+	////////////////////////////////////////////////////////////
 	void DialogPrompt::draw(sf::RenderWindow& window, sf::RenderStates states) const {
 		m_window = &window;
 		window.draw(m_rect, states);
@@ -114,6 +119,7 @@ namespace spss {
 		}
 	}
 
+	////////////////////////////////////////////////////////////
 	void DialogPrompt::addButton(const std::string& _str, spss::Function<std::any> _action) {
 		Button b;
 
@@ -141,6 +147,7 @@ namespace spss {
 		m_alignmentNeeded = true;
 	}
 
+	////////////////////////////////////////////////////////////
 	const std::string DialogPrompt::getString() const {
 		if (m_textEntry != nullptr) {
 			return m_textEntry->getCurrentString();
@@ -150,33 +157,47 @@ namespace spss {
 		}
 	}
 
+	////////////////////////////////////////////////////////////
 	const sf::Vector2f& DialogPrompt::getPosition() const {
 		return m_rect.getPosition();
 	}
 
+	////////////////////////////////////////////////////////////
 	const sf::Vector2f& DialogPrompt::getSize() const {
 		return m_rect.getSize();
 	}
 
+	////////////////////////////////////////////////////////////
 	const sf::FloatRect& DialogPrompt::getLocalBounds() const {
 		return m_rect.getLocalBounds();
 	}
 
+	////////////////////////////////////////////////////////////
 	const sf::FloatRect& DialogPrompt::getGlobalBounds() const {
 		return m_rect.getGlobalBounds();
 	}
 
+	////////////////////////////////////////////////////////////
 	const sf::Color& DialogPrompt::getColor() const {
 		return m_rect.getFillColor();
 	}
 
+	////////////////////////////////////////////////////////////
 	void DialogPrompt::setPosition(const sf::Vector2f& _pos) {
 		m_rect.setPosition(_pos);
 		m_alignmentNeeded = true;
 	}
 
+	////////////////////////////////////////////////////////////
 	void DialogPrompt::setColor(const sf::Color& _color) {
 		m_rect.setFillColor(_color);
+	}
+
+	////////////////////////////////////////////////////////////
+	void DialogPrompt::setMaxChars(unsigned int _i) {
+		if (m_textEntry != nullptr) {
+			m_textEntry->setMaxChars(_i);
+		}
 	}
 
 	////////////////////////////////////////////////////////////
@@ -221,6 +242,7 @@ namespace spss {
 		m_title.setString(str);
 	}
 
+	////////////////////////////////////////////////////////////
 	void DialogPrompt::setHeight(float _height) {
 		m_rect.setSize({m_rect.getSize().x, _height});
 
@@ -231,6 +253,7 @@ namespace spss {
 		m_alignmentNeeded = true;
 	}
 
+	////////////////////////////////////////////////////////////
 	void DialogPrompt::setWidth(float _width) {
 		if (m_textEntry != nullptr) {
 			m_textEntry->setWidth(_width - (2 * TEXT_SIDE_PADDING));
@@ -246,6 +269,7 @@ namespace spss {
 		m_alignmentNeeded = true;
 	}
 
+	////////////////////////////////////////////////////////////
 	void DialogPrompt::handleMouseClick() {
 		auto view{m_window->getView()};
 		auto mousePos = sf::Mouse::getPosition(*m_window);
@@ -271,6 +295,7 @@ namespace spss {
 		}
 	}
 
+	////////////////////////////////////////////////////////////
 	void DialogPrompt::handleMouseover() {
 		auto view{m_window->getView()};
 		auto mousePos = sf::Mouse::getPosition(*m_window);
@@ -290,6 +315,7 @@ namespace spss {
 		}
 	}
 
+	////////////////////////////////////////////////////////////
 	void DialogPrompt::dragBox() {
 		if (!m_dragging || m_window == nullptr) {
 			return;
@@ -338,6 +364,7 @@ namespace spss {
 		setPosition(newPos);
 	}
 
+	////////////////////////////////////////////////////////////
 	void DialogPrompt::alignElements() {
 		if (!m_alignmentNeeded) {
 			return;
