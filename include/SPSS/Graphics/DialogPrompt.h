@@ -29,17 +29,20 @@ namespace spss {
 		/// \param _textEntryEnabled  Whether text entry is enabled
 		/// \param _position          The position (in pixels)
 		/// \param _font              Font used to draw text
-		/// \param _promptTitle       The prompt's title text
-		/// \param _charSize          The character size
-		/// \param _defaultStr        The text entry box's default string
+		/// \param _promptTitle       The prompt title's default string
+		/// \param _titleCharSize     The prompt title's character size
+		/// \param _boxDefaultStr     The text entry box's default string
+		/// \param _boxCharSize       The text entry box's character size
 		///
 		////////////////////////////////////////////////////////////
 		DialogPrompt(bool                _textEntryEnabled,
 		             const sf::Vector2f& _position,
 		             const sf::Font&     _font,
 		             const std::string&  _promptTitle,
-		             const unsigned int  _charSize   = 20,
-		             const std::string&  _defaultStr = "");
+		             const unsigned int  _titleCharSize = 22,
+					 const std::string&  _boxDefaultStr = "",
+		             const unsigned int  _boxCharSize   = 20
+		             );
 
 		////////////////////////////////////////////////////////////
 		/// \brief Get input
@@ -135,6 +138,14 @@ namespace spss {
 		////////////////////////////////////////////////////////////
 		void setMaxChars(unsigned int _i);
 
+		////////////////////////////////////////////////////////////
+		/// \brief Set whether the prompt is draggable
+		///
+		/// \param _d Is it draggable?
+		///
+		////////////////////////////////////////////////////////////
+		void setDraggable(bool _d);
+
 	  private:
 	  	////////////////////////////////////////////////////////////
 	  	/// This struct will represent the clickable buttons
@@ -208,6 +219,7 @@ namespace spss {
 		sf::Text                      m_title;             ///< The dialog prompt's title text
 		sf::Vector2i                  m_lastMousePosition; ///< The last known mouse position (used to determine offset when dragging)
 		sf::Vector2f                  m_lastPosition;      ///< The last known prompt position (used to determine whether re-alignment is needed)
+		bool                          m_draggable;         ///< Whether the prompt can be dragged
 		bool                          m_dragging;          ///< Whether the prompt is being dragged
 		sf::RectangleShape            m_rect;              ///< The prompt's main rectangle shape
 		std::unique_ptr<TextEntryBox> m_textEntry;         ///< The [optional] text entry field

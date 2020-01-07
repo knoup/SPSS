@@ -21,20 +21,22 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	DialogPrompt::DialogPrompt(bool                _textEntryEnabled,
-	                           const sf::Vector2f& _position,
-	                           const sf::Font&     _font,
-	                           const std::string&  _promptTitle,
-	                           const unsigned int  _charSize,
-	                           const std::string&  _defaultStr)
+		                       const sf::Vector2f& _position,
+		                       const sf::Font&     _font,
+		                       const std::string&  _promptTitle,
+		                       const unsigned int  _titleCharSize,
+					           const std::string&  _boxDefaultStr,
+		                       const unsigned int  _boxCharSize)
 	            : m_window{nullptr},
 	              m_font{_font},
 	              m_lastMousePosition{},
 	              m_lastPosition{_position},
+	              m_draggable{true},
 	              m_dragging{false},
 	              m_rect{{MAX_WIDTH, 100}},
-	              m_textEntry{!_textEntryEnabled ? nullptr : std::make_unique<TextEntryBox>(MAX_WIDTH, _position, m_font, _charSize, _defaultStr)},
+	              m_textEntry{!_textEntryEnabled ? nullptr : std::make_unique<TextEntryBox>(MAX_WIDTH, _position, m_font, _boxCharSize, _boxDefaultStr)},
 	              m_alignmentNeeded{true} {
-		m_title.setCharacterSize(22);
+		m_title.setCharacterSize(_titleCharSize);
 		m_title.setOutlineThickness(1);
 		m_title.setOutlineColor(sf::Color::Black);
 		m_title.setFont(m_font);
@@ -201,6 +203,11 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
+	void DialogPrompt::setDraggable(bool _d) {
+		m_draggable = _d;
+	}
+
+	////////////////////////////////////////////////////////////
 	void DialogPrompt::fitWidth(float _width) {
 		std::string str{m_title.getString()};
 		size_t      lines = std::count(str.begin(), str.end(), '\n');
@@ -317,7 +324,7 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	void DialogPrompt::dragBox() {
-		if (!m_dragging || m_window == nullptr) {
+		if (!m_draggable || !m_dragging || m_window == nullptr) {
 			return;
 		}
 		sf::Vector2i mousePos = sf::Mouse::getPosition(*m_window);
