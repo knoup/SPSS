@@ -1,5 +1,4 @@
-#ifndef SPSS_TEXTENTRYBOX_H_INCLUDED
-#define SPSS_TEXTENTRYBOX_H_INCLUDED
+#pragma once
 
 ////////////////////////////////////////////////////////////////////
 ///
@@ -601,5 +600,3 @@ namespace spss {
 	};
 
 } //namespace spss
-
-#endif // SPSS_TEXTENTRYBOX_H_INCLUDED

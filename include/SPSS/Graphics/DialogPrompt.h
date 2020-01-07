@@ -1,5 +1,4 @@
-#ifndef DIALOGPROMPT_H_INCLUDED
-#define DIALOGPROMPT_H_INCLUDED
+#pragma once
 
 ////////////////////////////////////////////////////////////////////
 /// spss::DialogPrompt is a draggable box which can be used for
@@ -209,5 +208,3 @@ namespace spss {
 		bool                          m_alignmentNeeded;   ///< Whether elements need to be re-aligned
 	};
 } // namespace spss
-
-#endif // DIALOGPROMPT_H_INCLUDED

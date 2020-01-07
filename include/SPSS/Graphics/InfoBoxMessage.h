@@ -1,5 +1,4 @@
-#ifndef INFOBOXMESSAGE_H_INCLUDED
-#define INFOBOXMESSAGE_H_INCLUDED
+#pragma once
 
 ////////////////////////////////////////////////////////////////////
 /// spss::InfoBoxMessage is a wrapper around spss::MulticolorText.
@@ -220,5 +219,3 @@ namespace spss {
 		                                     //---------------------------------------------
 	};
 } // namespace spss
-
-#endif // INFOBOXMESSAGE_H_INCLUDED

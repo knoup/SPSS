@@ -1,5 +1,4 @@
-#ifndef SCROLLBAR_H_INCLUDED
-#define SCROLLBAR_H_INCLUDED
+#pragma once
 
 ////////////////////////////////////////////////////////////////////
 /// spss::Scrollbar represents and functions as a conventional scro-
@@ -211,5 +210,3 @@ namespace spss {
 	};
 
 } // namespace spss
-
-#endif // SCROLLBAR_H_INCLUDED

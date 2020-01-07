@@ -1,5 +1,4 @@
-#ifndef RESOURCEMANAGER_H_INCLUDED
-#define RESOURCEMANAGER_H_INCLUDED
+#pragma once
 
 ////////////////////////////////////////////////////////////////////
 /// spss::ResourceManager is a very simple class intended to manage
@@ -55,5 +54,3 @@ namespace spss {
 	};
 
 } //namespace spss
-
-#endif // RESOURCEMANAGER_H_INCLUDED

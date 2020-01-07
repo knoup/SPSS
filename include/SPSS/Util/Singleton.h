@@ -1,5 +1,4 @@
-#ifndef SPSS_SINGLETON_H_INCLUDED
-#define SPSS_SINGLETON_H_INCLUDED
+#pragma once
 
 ////////////////////////////////////////////////////////////
 /// A simple and straightforward abstract Singleton wrapper
@@ -37,5 +36,3 @@ namespace spss {
 	};
 
 } //namespace spss
-
-#endif // SPSS_SINGLETON_H_INCLUDED

@@ -1,5 +1,4 @@
-#ifndef INFOBOX_H_INCLUDED
-#define INFOBOX_H_INCLUDED
+#pragma once
 
 ////////////////////////////////////////////////////////////////////
 /// spss::InfoBox is a resizable and movable box to which InfoBoxMessages
@@ -277,5 +276,3 @@ namespace spss {
 		                                                   //---------------------------------------------
 	};
 } // namespace spss
-
-#endif // INFOBOX_H_INCLUDED

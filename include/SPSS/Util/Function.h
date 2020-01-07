@@ -1,5 +1,4 @@
-#ifndef SPSS_FUNCTION_H_INCLUDED
-#define SPSS_FUNCTION_H_INCLUDED
+#pragma once
 
 ////////////////////////////////////////////////////////////
 ///
@@ -16,5 +15,3 @@ namespace spss {
 	using Function = std::function<void(Args...)>;
 
 } //namespace spss
-
-#endif // SPSS_FUNCTION_H_INCLUDED

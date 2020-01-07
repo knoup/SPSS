@@ -1,5 +1,4 @@
-#ifndef SPSS_STATE_H_INCLUDED
-#define SPSS_STATE_H_INCLUDED
+#pragma once
 
 ////////////////////////////////////////////////////////////////////
 /// spss::State represents the behaviour of a certain state.
@@ -86,5 +85,3 @@ namespace spss {
 	};
 
 } //namespace spss
-
-#endif // SPSSPSS_STATE_H_INCLUDED

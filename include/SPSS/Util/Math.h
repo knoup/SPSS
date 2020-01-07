@@ -1,5 +1,4 @@
-#ifndef UTILMATH_H_INCLUDED
-#define UTILMATH_H_INCLUDED
+#pragma once
 
 #include <cmath>
 
@@ -23,5 +22,3 @@ namespace spss::Util::Math {
 	}
 
 } // namespace spss::Util::Math
-
-#endif // UTILMATH_H_INCLUDED

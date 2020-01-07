@@ -1,5 +1,4 @@
-#ifndef SPSS_MENUSTATE_H_INCLUDED
-#define SPSS_MENUSTATE_H_INCLUDED
+#pragma once
 
 ////////////////////////////////////////////////////////////////////
 /// spss::MenuState inherits from spss::State and has the ability
@@ -441,5 +440,3 @@ namespace spss {
 	};
 
 } //namespace spss
-
-#endif // SPSS_MENUSTATE_H_INCLUDED

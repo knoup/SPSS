@@ -1,5 +1,4 @@
-#ifndef SLIDER_H_INCLUDED
-#define SLIDER_H_INCLUDED
+#pragma once
 
 ////////////////////////////////////////////////////////////////////
 /// spss::Slider can be used to present the user with multiple sele-
@@ -367,5 +366,3 @@ namespace spss {
 	};
 
 } // namespace spss
-
-#endif // SLIDER_H_INCLUDED

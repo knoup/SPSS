@@ -3,9 +3,13 @@
 ## SPSS (Simple Program State System) 
 
 is a modern C++ library 
-built on top of [SFML 2.5.1](https://www.sfml-dev.org/). Its primary purpose is to provide an intuitive and easy to use **state-based core** that handles the typical "game loop" (get input, update, draw) with a fixed timestep in an elegant manner. I found myself rewriting the same basic concept across projects and thus decided to create this libary.
+built on top of [SFML 2.5.1](https://www.sfml-dev.org/). I found myself rewriting the same basic concepts across my personal projects and thus decided to consolidate the ideas I've found work best into one convenient library. Its primary features include:
 
-In addition, SPSS contains a **MenuState** system that's very easy to use. It allows you to create simple menus and bind callback functions (only with a void return type, for now) to your menu items that are called upon clicking, so you can get started with the meat of your program right away rather than spending valuable time creating menus. 
+* An intuitive and easy to use **state-based core** that handles the typical "game loop" (get input, update, draw) with a fixed timestep in an elegant manner. 
+
+* A collection modules providing practical implementations of functionality that is useful in a variety of different applications (for example, text entry boxes, scrollbars, and dialog prompts).
+
+* A **MenuState** system that's very easy to use. It allows you to create simple menus and bind callback functions (only with a void return type, for now) to your menu items that are called upon clicking, so you can get started with the meat of your program right away rather than spending valuable time creating menus. 
 
 SPSS also contains some other useful modules, such as:
 
@@ -13,11 +17,11 @@ SPSS also contains some other useful modules, such as:
 
 **MulticolorText**: a modified version of sf::Text that removes the limitation of only being able to set one colour for the entire text object. You can not only specify different colours for different index ranges, but also outline colours and thicknesses.
 
-**Scrollbar** (examples/documentation coming soon)
+**Scrollbar**: A conventional scrollbar. Includes 3 anchor types.
 
-**InfoBox** (examples/documentation coming soon)
+**InfoBox**: A resizable and repositionable box to which messages can be shown. Includes built-in functionality to automatically handle the text's position, linebreaks, and determine if a scrollbar is needed.
 
-With time, more useful features will be added and expanded upon.
+SPSS is a constantly evolving project that I'm always tweaking and adding new features to, as I come across the need.
 
 A compiler that supports at least C++17 is required to compile SPSS.
 

@@ -1,5 +1,4 @@
-#ifndef SPSS_CORE_H_INCLUDED
-#define SPSS_CORE_H_INCLUDED
+#pragma once
 
 ////////////////////////////////////////////////////////////////////
 /// spss::Core manages the fundementals of a typical program loop.
@@ -122,5 +121,3 @@ namespace spss {
 	};
 
 } //namespace spss
-
-#endif // SPSS_CORE_H_INCLUDED

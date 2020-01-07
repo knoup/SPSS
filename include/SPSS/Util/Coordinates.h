@@ -1,5 +1,4 @@
-#ifndef COORDINATES_H_INCLUDED
-#define COORDINATES_H_INCLUDED
+#pragma once
 
 #include <SFML/System/Vector2.hpp>
 
@@ -51,5 +50,3 @@ namespace spss::Util::Coordinates {
 	}
 
 } // namespace spss::Util::Coordinates
-
-#endif // COORDINATES_H_INCLUDED

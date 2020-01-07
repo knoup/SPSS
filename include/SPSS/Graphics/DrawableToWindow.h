@@ -1,5 +1,4 @@
-#ifndef DRAWABLETOWINDOW_H_INCLUDED
-#define DRAWABLETOWINDOW_H_INCLUDED
+#pragma once
 
 ////////////////////////////////////////////////////////////////////
 /// spss::DrawableToWindow inherits from sf::Drawable and is meant
@@ -54,5 +53,3 @@ namespace spss {
 		}
 	};
 } // namespace spss
-
-#endif // DRAWABLETOWINDOW_H_INCLUDED

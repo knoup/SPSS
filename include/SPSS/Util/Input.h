@@ -1,5 +1,4 @@
-#ifndef UTILINPUT_H_INCLUDED
-#define UTILINPUT_H_INCLUDED
+#pragma once
 
 #include <SFML/Window/Event.hpp>
 
@@ -38,5 +37,3 @@ namespace spss::Util::Input {
 	}
 
 } // namespace spss::Util::Input
-
-#endif // UTILINPUT_H_INCLUDED
