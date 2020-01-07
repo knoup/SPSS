@@ -2,30 +2,35 @@
 
 ## SPSS (Simple Program State System) 
 
-is a modern C++ library 
-built on top of [SFML 2.5.1](https://www.sfml-dev.org/). I found myself rewriting the same basic concepts across my personal projects and thus decided to consolidate the ideas I've found work best into one convenient library. Its primary features include:
+is a modern C++ library built on top - and inspired by the style - of [SFML 2.5.1](https://www.sfml-dev.org/). A compiler that supports at least **C++17** is required to compile SPSS.
 
-* An intuitive and easy to use **state-based core** that handles the typical "game loop" (get input, update, draw) with a fixed timestep in an elegant manner. 
+I found myself rewriting the same basic concepts across my personal projects, and thus decided to consolidate the ideas I've found work best for me into one convenient library. It also includes several modules that provide practical implementations of functionality that is useful in a variety of different applications. Some of its primary features include: 
 
-* A collection modules providing practical implementations of functionality that is useful in a variety of different applications (for example, text entry boxes, scrollbars, and dialog prompts).
+* An intuitive and easy to use **state-based core** that handles the typical "game loop" (get input, update, draw) with a fixed timestep in an elegant manner. Most modules are also based on this same 3-function principle.
 
 * A **MenuState** system that's very easy to use. It allows you to create simple menus and bind callback functions (only with a void return type, for now) to your menu items that are called upon clicking, so you can get started with the meat of your program right away rather than spending valuable time creating menus. 
 
-SPSS also contains some other useful modules, such as:
+* **ResourceManager**: a simple and straightforward class template to store resources. You can specify what type of resource you'd like to store, and what type of key you'd like to use to access it - generally, an enum class is a good idea.
 
-**TextEntryBox**: a fully functional text entry box with most of the functionality you'd expect from one, including selecting multiple characters, skipping words, copying and pasting.
+* **DialogPrompt**: a draggable box which can be used for things like notifications. You can add buttons, with associated actions, as well as an optional text entry field. The size is automatically determined.
 
-**MulticolorText**: a modified version of sf::Text that removes the limitation of only being able to set one colour for the entire text object. You can not only specify different colours for different index ranges, but also outline colours and thicknesses.
+* **TextEntryBox**: a fully functional text entry box with most of the functionality you'd expect from one, including selecting multiple characters, skipping words, copying and pasting.
 
-**Scrollbar**: A conventional scrollbar. Includes 3 anchor types.
+* **MulticolorText**: a modified version of sf::Text that removes the limitation of only being able to set one colour for the entire text object. You can not only specify different colours for different index ranges, but also outline colours and thicknesses.
 
-**InfoBox**: A resizable and repositionable box to which messages can be shown. Includes built-in functionality to automatically handle the text's position, linebreaks, and determine if a scrollbar is needed.
+* **Slider**: A horizontal slider that presents the user with multiple selectable values. A template class, the value type can be specified. The size of the inner bar will be automatically determined depending on the number of elements. The user can drag the inner bar, or click anywhere within the slider, to change the selected value.
 
-SPSS is a constantly evolving project that I'm always tweaking and adding new features to, as I come across the need.
+* **Scrollbar**: A conventional scrollbar. Includes 3 anchor types:
 
-A compiler that supports at least C++17 is required to compile SPSS.
+	* None: no special behavior
+	* Soft: if the scrollbar is already at the bottom-most position when reset() is called, it stays there.
+	* Hard: the scrollbar is always set to the bottom-most position when reset() is called.
+
+SPSS is a constantly evolving project that I'm always tweaking and adding new features to, as I come across the need for them.
 
 # Usage
+
+Here's a quick overview of the main modules and how they're meant to be used. More extensive documentation is available in the source code itself.
 
 ## Core/States
 
@@ -72,11 +77,64 @@ int main() {
 }
 ```
 
+Note that you can also specify an optional position	as the second argument of addMenuItem(). For example, we could've replaced the "Quit" entry with this:
+
+`menuState->addMenuItem("Quit", {0.9, 0.9} std::bind(&spss::Core::exit, &core));`
+
+to have the "Quit" button be positioned at the bottom right of the screen (90% X, 90% Y). If we don't specify this argument, position will be automatically determined.
+
 Additionally, if there are more MenuItems than can fit on the screen, a scrollbar will be automatically activated.
 
 ![img](https://i.imgur.com/TmUWMYA.png)
 
 See the demo for a more complete example.
+
+## ResourceManager
+
+Create a class that inherits from ResourceManager, specifying the resource type you want to store and the key type you'll use to access it. It's a good idea to also inherit from spss::Singleton, as you [presumably] only want one instance of whatever manager it is you're creating to exist in your program.
+
+`class FontManager : public spss::ResourceManager<std::string, sf::Font>, public spss::Singleton<FontManager>`
+
+Add resources (unique pointers):
+
+```
+FontManager manager;
+auto f{std::make_unique<sf::Font>()};
+f->loadFromFile("...");
+manager.add("MyFont", std::move(f));
+```
+
+You can attempt to access a resource by calling get() with the desired key type as a parameter. This will return a const pointer to the element if it exists, and nullptr if it doesn't.
+
+```
+auto a{manager.get("MyFont")}; //Will return a const pointer to the font we created earlier
+auto b{manager.get("qwerty")}; //Will return nullptr
+```
+
+## DialogPrompt
+
+Initialize a prompt:
+
+```
+spss::DialogPrompt prompt{true,           //< enable text entry?
+                          {600.F, 600.F}, //< position
+                          font,           
+                          "Prompt Title"};
+```
+
+Add buttons bounds to functions:
+
+```
+prompt.addButton("Ok", std::bind(...));
+prompt.addButton("Cancel", std::bind(...));
+```
+
+Get the currently typed string (if text entry is disabled, returns a blank string):
+
+`prompt.getString();`
+
+![img](https://i.imgur.com/HEqI5LS.png)
+
 
 ## TextEntryBox
 
@@ -110,6 +168,32 @@ Upon pressing RETURN, the contents of the box are cleared and the box becomes in
 Usage is identical to sf::Text, except `setFillColor()`, `setOutlineColor()`, and `setOutlineThickness()` can also be given optional start and end pos arguments.
 
 Note that upon calling `setString()`, all current fill colors, outline colors, and outline thicknesses are reset.
+
+## Slider
+
+Initialize a slider. In this example, we'll use an enum class as our slider's value type.
+
+`enum class Options {OPTION1, OPTION2, OPTION3};`
+
+```
+spss::Slider<Options> slider{{200,20},  //< size
+                              {0, 0},   //< position
+                              font,
+                              "Size: "};
+```
+
+Add values:
+
+```
+slider.addValue(Options::OPTION1, "small");
+slider.addValue(Options::OPTION2, "medium", true); //< This is the default value
+slider.addValue(Options::OPTION3, "large");
+```
+![img](https://i.imgur.com/VUhDIqR.png)
+
+## Scrollbar
+
+Scrollbar is mostly used internally by certain modules, but you're free to use it in your own implementations as well. Usage is straightforward: simply give the constructor its requested arguments, and call `getInput() / update() / draw()`. To reset it, call `reset()`. For complete documentation, refer to _Scrollbar.h_.
 
 ## Contributing
 

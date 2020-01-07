@@ -1,3 +1,6 @@
+/*
+NOTE: InfoBoxMessage is currently undergoing a revamp and may even be deprecated.
+
 #include <SPSS/Graphics/InfoBoxMessage.h>
 
 namespace spss {
@@ -275,3 +278,4 @@ namespace spss {
 		m_text.setFillColor(m_contentColor, contentBegin, contentEnd);
 	}
 } // namespace spss
+*/

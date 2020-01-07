@@ -1,3 +1,6 @@
+/*
+NOTE: InfoBox is currently undergoing a revamp and may even be deprecated.
+
 #include <SPSS/Graphics/InfoBox.h>
 #include <SPSS/Util/Input.h>
 
@@ -501,3 +504,4 @@ namespace spss {
 	}
 
 } // namespace spss
+*/

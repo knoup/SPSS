@@ -1,3 +1,6 @@
+/*
+NOTE: InfoBoxMessage is currently undergoing a revamp and may even be deprecated.
+
 #pragma once
 
 ////////////////////////////////////////////////////////////////////
@@ -219,3 +222,5 @@ namespace spss {
 		                                     //---------------------------------------------
 	};
 } // namespace spss
+
+*/

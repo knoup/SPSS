@@ -28,8 +28,8 @@ namespace spss {
 		////////////////////////////////////////////////////////////
 		Slider(const sf::Vector2f& _size,
 		       const sf::Vector2f& _pos,
-		       const std::string&  _titleStr,
 		       const sf::Font&     _font,
+		       const std::string&  _titleStr,
 		       const unsigned int  _fontSize = 17)
 		            : m_color{sf::Color::White},
 		              m_window{nullptr},
