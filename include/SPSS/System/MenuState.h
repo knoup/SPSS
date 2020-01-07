@@ -128,7 +128,7 @@ namespace spss {
 		/// \brief Draw
 		///
 		////////////////////////////////////////////////////////////
-		virtual void draw();
+		virtual void draw() const;
 
 		////////////////////////////////////////////////////////////
 		/// \brief Add a clickable menu item
@@ -148,9 +148,9 @@ namespace spss {
 		///
 		////////////////////////////////////////////////////////////
 
-		virtual void addMenuItem(const std::string&       _string,
-		                         spss::Function<std::any> f        = nullptr,
-		                         int                      _keyCode = sf::Keyboard::Unknown);
+		void addMenuItem(const std::string&       _string,
+						 spss::Function<std::any> f        = nullptr,
+						 int                      _keyCode = sf::Keyboard::Unknown);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Add a clickable menu item
@@ -174,10 +174,10 @@ namespace spss {
 		/// \param _keyCode The keyboard shortcut to emulate a mouse click
 		///
 		////////////////////////////////////////////////////////////
-		virtual void addMenuItem(const std::string&       _string,
-		                         const sf::Vector2f&      _pos,
-		                         spss::Function<std::any> f        = nullptr,
-		                         int                      _keyCode = sf::Keyboard::Unknown);
+		void addMenuItem(const std::string&       _string,
+		                 const sf::Vector2f&      _pos,
+		                 spss::Function<std::any> f        = nullptr,
+		                 int                      _keyCode = sf::Keyboard::Unknown);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Adds an empty line

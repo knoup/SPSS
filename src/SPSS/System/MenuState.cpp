@@ -76,7 +76,7 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
-	void MenuState::draw() {
+	void MenuState::draw() const {
 		m_window.setView(m_view);
 		for (const auto& menuItem : m_menuItems) {
 			if (!menuItem.manualPos) {

@@ -412,7 +412,7 @@ namespace spss {
 		/// \param states Current render states
 		///
 		////////////////////////////////////////////////////////////
-		virtual void draw(sf::RenderTarget& target, sf::RenderStates states) const;
+		void draw(sf::RenderTarget& target, sf::RenderStates states) const;
 
 		////////////////////////////////////////////////////////////
 		/// \brief Make sure the text's geometry is updated
