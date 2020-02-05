@@ -53,13 +53,13 @@ namespace spss {
 		////////////////////////////////////////////////////////////
 		virtual void onStateSwitch();
 
-		void setGetInputInBackground(bool _b);
-		void setDrawnInBackground(bool _b);
-		void setUpdatedInBackground(bool _b);
+		void pollPreviousState(bool _b);
+		void drawPreviousState(bool _b);
+		void updatePreviousState(bool _b);
 
-		bool getInputInBackground() const;
-		bool drawnInBackground() const;
-		bool updatedInBackground() const;
+		bool previousStatePolled() const;
+		bool previousStateDrawn() const;
+		bool previousStateUpdated() const;
 
 	  protected:
 		////////////////////////////////////////////////////////////
@@ -79,9 +79,9 @@ namespace spss {
 		sf::RenderWindow& m_window;
 
 	  private:
-		bool m_drawnInBackground;
-		bool m_updatedInBackground;
-		bool m_getInputInBackground;
+	  	bool m_pollPreviousState;
+		bool m_drawPreviousState;
+		bool m_updatePreviousState;
 	};
 
 } //namespace spss

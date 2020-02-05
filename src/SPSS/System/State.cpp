@@ -8,9 +8,9 @@ namespace spss {
 	////////////////////////////////////////////////////////////
 	State::State(sf::RenderWindow& _w)
 	            : m_window{_w},
-	              m_drawnInBackground{false},
-	              m_updatedInBackground{false},
-	              m_getInputInBackground{false} {
+	              m_pollPreviousState{false},
+	              m_drawPreviousState{false},
+	              m_updatePreviousState{false} {
 	}
 
 	////////////////////////////////////////////////////////////
@@ -37,33 +37,33 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
-	void State::setGetInputInBackground(bool _b) {
-		m_getInputInBackground = _b;
+	void State::pollPreviousState(bool _b) {
+		m_pollPreviousState = _b;
 	}
 
 	////////////////////////////////////////////////////////////
-	void State::setDrawnInBackground(bool _b) {
-		m_drawnInBackground = _b;
+	void State::drawPreviousState(bool _b) {
+		m_drawPreviousState = _b;
 	}
 
 	////////////////////////////////////////////////////////////
-	void State::setUpdatedInBackground(bool _b) {
-		m_updatedInBackground = _b;
+	void State::updatePreviousState(bool _b) {
+		m_updatePreviousState = _b;
 	}
 
 	////////////////////////////////////////////////////////////
-	bool State::drawnInBackground() const {
-		return m_drawnInBackground;
+	bool State::previousStatePolled() const {
+		return m_pollPreviousState;
 	}
 
 	////////////////////////////////////////////////////////////
-	bool State::updatedInBackground() const {
-		return m_updatedInBackground;
+	bool State::previousStateDrawn() const {
+		return m_drawPreviousState;
 	}
 
 	////////////////////////////////////////////////////////////
-	bool State::getInputInBackground() const {
-		return m_getInputInBackground;
+	bool State::previousStateUpdated() const {
+		return m_updatePreviousState;
 	}
 
 	////////////////////////////////////////////////////////////
