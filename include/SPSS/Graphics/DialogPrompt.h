@@ -39,7 +39,7 @@ namespace spss {
 		             const sf::Vector2f& _position,
 		             const sf::Font&     _font,
 		             const std::string&  _promptTitle,
-		             const unsigned int  _titleCharSize = 22,
+		             const unsigned int  _titleCharSize = 20,
 		             const std::string&  _boxDefaultStr = "",
 		             const unsigned int  _boxCharSize   = 20);
 

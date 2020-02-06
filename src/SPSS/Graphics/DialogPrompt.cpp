@@ -2,7 +2,7 @@
 
 #include <SPSS/Util/Input.h>
 
-constexpr float MAX_WIDTH{550.F};
+constexpr float MAX_WIDTH{650.F};
 constexpr float MIN_WIDTH{300.F};
 
 constexpr float BUTTON_HEIGHT{30.F};
@@ -37,8 +37,6 @@ namespace spss {
 	              m_textEntry{!_textEntryEnabled ? nullptr : std::make_unique<TextEntryBox>(MAX_WIDTH, _position, m_font, _boxCharSize, _boxDefaultStr)},
 	              m_alignmentNeeded{true} {
 		m_title.setCharacterSize(_titleCharSize);
-		m_title.setOutlineThickness(1);
-		m_title.setOutlineColor(sf::Color::Black);
 		m_title.setFont(m_font);
 		m_title.setString(_promptTitle);
 
