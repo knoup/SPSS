@@ -62,10 +62,10 @@ namespace spss {
 		///
 		/// \param _color The color
 		///
-		/// \see getBackgroundColor
+		/// \see getColor
 		///
 		////////////////////////////////////////////////////////////
-		void setBackgroundColor(const sf::Color& _color);
+		void setColor(const sf::Color& _color);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Set the color of the caret
@@ -78,17 +78,7 @@ namespace spss {
 		void setCaretColor(const sf::Color& _color);
 
 		////////////////////////////////////////////////////////////
-		/// \brief Set the text's fill color
-		///
-		/// \param _color The color
-		///
-		/// \see getFillColor
-		///
-		////////////////////////////////////////////////////////////
-		void setFillColor(const sf::Color& _c);
-
-		////////////////////////////////////////////////////////////
-		/// \brief Set the text's outline color
+		/// \brief Set the rect's outline color
 		///
 		/// \param _color The color
 		///
@@ -98,7 +88,7 @@ namespace spss {
 		void setOutlineColor(const sf::Color& _c);
 
 		////////////////////////////////////////////////////////////
-		/// \brief Set the text's outline thickness
+		/// \brief Set the rect's outline thickness
 		///
 		/// \param _f The thickness
 		///
@@ -108,12 +98,42 @@ namespace spss {
 		void setOutlineThickness(float _f);
 
 		////////////////////////////////////////////////////////////
-		/// \brief Get the box's color
+		/// \brief Set the text's fill color
 		///
-		/// \see setBackgroundColor
+		/// \param _color The color
+		///
+		/// \see getTextFillColor
 		///
 		////////////////////////////////////////////////////////////
-		const sf::Color getBackgroundColor() const;
+		void setTextFillColor(const sf::Color& _c);
+
+		////////////////////////////////////////////////////////////
+		/// \brief Set the text's outline color
+		///
+		/// \param _color The color
+		///
+		/// \see getTextOutlineColor
+		///
+		////////////////////////////////////////////////////////////
+		void setTextOutlineColor(const sf::Color& _c);
+
+		////////////////////////////////////////////////////////////
+		/// \brief Set the text's outline thickness
+		///
+		/// \param _f The thickness
+		///
+		/// \see getTextOutlineThickness
+		///
+		////////////////////////////////////////////////////////////
+		void setTextOutlineThickness(float _f);
+
+		////////////////////////////////////////////////////////////
+		/// \brief Get the box's color
+		///
+		/// \see setColor
+		///
+		////////////////////////////////////////////////////////////
+		const sf::Color getColor() const;
 
 		////////////////////////////////////////////////////////////
 		/// \brief Get the caret's color
@@ -124,15 +144,7 @@ namespace spss {
 		const sf::Color getCaretColor() const;
 
 		////////////////////////////////////////////////////////////
-		/// \brief Get the text's fill color
-		///
-		/// \see setFillColor
-		///
-		////////////////////////////////////////////////////////////
-		const sf::Color getFillColor() const;
-
-		////////////////////////////////////////////////////////////
-		/// \brief Get the text's outline color
+		/// \brief Get the rect's outline color
 		///
 		/// \see setOutlineColor
 		///
@@ -140,12 +152,36 @@ namespace spss {
 		const sf::Color getOutlineColor() const;
 
 		////////////////////////////////////////////////////////////
-		/// \brief Get the text's outline thickness
+		/// \brief Get the rect's outline thickness
 		///
 		/// \see setOutlineThickness
 		///
 		////////////////////////////////////////////////////////////
 		float getOutlineThickness() const;
+
+		////////////////////////////////////////////////////////////
+		/// \brief Get the text's fill color
+		///
+		/// \see setTextFillColor
+		///
+		////////////////////////////////////////////////////////////
+		const sf::Color getTextFillColor() const;
+
+		////////////////////////////////////////////////////////////
+		/// \brief Get the text's outline color
+		///
+		/// \see setTextOutlineColor
+		///
+		////////////////////////////////////////////////////////////
+		const sf::Color getTextOutlineColor() const;
+
+		////////////////////////////////////////////////////////////
+		/// \brief Get the text's outline thickness
+		///
+		/// \see setTextOutlineThickness
+		///
+		////////////////////////////////////////////////////////////
+		float getTextOutlineThickness() const;
 
 		////////////////////////////////////////////////////////////
 		/// \brief Set the text's character size
@@ -592,9 +628,9 @@ namespace spss {
 		std::string                  m_lastString;           ///< The last string entered by the user (RETURN was pressed)
 		unsigned int                 m_charSize;             ///< m_text's character size
 		unsigned int                 m_maxChars;             ///< The maximum amount of characters that can be entered
-		sf::Color                    m_fillColor;            ///< m_text's fill color
-		sf::Color                    m_outlineColor;         ///< m_text's outline color
-		float                        m_outlineThickness;     ///< m_text's outline thickness
+		sf::Color                    m_textFillColor;        ///< m_text's fill color
+		sf::Color                    m_textOutlineColor;     ///< m_text's outline color
+		float                        m_textOutlineThickness; ///< m_text's outline thickness
 		mutable bool                 m_alphaUpdateNeeded;    ///< Does the transparency need to be rechecked when next possible?
 		float                        m_xOffset;              ///< The delta offset that's been applied to the text's position via the shifting left/right functions
 	};

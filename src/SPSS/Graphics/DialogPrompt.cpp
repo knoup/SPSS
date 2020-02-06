@@ -65,7 +65,7 @@ namespace spss {
 			m_textEntry->setAlwaysActive(true);
 			//We'll make the text entry box transparent so that it
 			//takes on the color of the dialog prompt
-			m_textEntry->setBackgroundColor(sf::Color::Transparent);
+			m_textEntry->setColor(sf::Color::Transparent);
 		}
 
 		alignElements();

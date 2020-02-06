@@ -50,9 +50,9 @@ namespace spss {
 	              m_lastString{},
 	              m_charSize{_charSize},
 	              m_maxChars{255},
-	              m_fillColor{sf::Color::White},
-	              m_outlineColor{sf::Color::Black},
-	              m_outlineThickness{0},
+	              m_textFillColor{sf::Color::White},
+	              m_textOutlineColor{sf::Color::Black},
+	              m_textOutlineThickness{0},
 	              m_alphaUpdateNeeded{false},
 	              m_xOffset{0.F} {
 		setWidth(_width);
@@ -88,7 +88,7 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
-	void TextEntryBox::setBackgroundColor(const sf::Color& _color) {
+	void TextEntryBox::setColor(const sf::Color& _color) {
 		m_rectangle.setFillColor(_color);
 	}
 
@@ -98,23 +98,33 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
-	void TextEntryBox::setFillColor(const sf::Color& _c) {
-		m_fillColor         = _c;
-		m_alphaUpdateNeeded = true;
-	}
-
-	////////////////////////////////////////////////////////////
 	void TextEntryBox::setOutlineColor(const sf::Color& _c) {
-		m_outlineColor = _c;
+		m_rectangle.setOutlineColor(_c);
 	}
 
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::setOutlineThickness(float _f) {
-		m_outlineThickness = _f;
+		m_rectangle.setOutlineThickness(_f);
 	}
 
 	////////////////////////////////////////////////////////////
-	const sf::Color TextEntryBox::getBackgroundColor() const {
+	void TextEntryBox::setTextFillColor(const sf::Color& _c) {
+		m_textFillColor     = _c;
+		m_alphaUpdateNeeded = true;
+	}
+
+	////////////////////////////////////////////////////////////
+	void TextEntryBox::setTextOutlineColor(const sf::Color& _c) {
+		m_textOutlineColor = _c;
+	}
+
+	////////////////////////////////////////////////////////////
+	void TextEntryBox::setTextOutlineThickness(float _f) {
+		m_textOutlineThickness = _f;
+	}
+
+	////////////////////////////////////////////////////////////
+	const sf::Color TextEntryBox::getColor() const {
 		return m_rectangle.getFillColor();
 	}
 
@@ -124,18 +134,28 @@ namespace spss {
 	}
 
 	////////////////////////////////////////////////////////////
-	const sf::Color TextEntryBox::getFillColor() const {
-		return m_fillColor;
-	}
-
-	////////////////////////////////////////////////////////////
 	const sf::Color TextEntryBox::getOutlineColor() const {
-		return m_outlineColor;
+		return m_rectangle.getOutlineColor();
 	}
 
 	////////////////////////////////////////////////////////////
 	float TextEntryBox::getOutlineThickness() const {
-		return m_outlineThickness;
+		return m_rectangle.getOutlineThickness();
+	}
+
+	////////////////////////////////////////////////////////////
+	const sf::Color TextEntryBox::getTextFillColor() const {
+		return m_textFillColor;
+	}
+
+	////////////////////////////////////////////////////////////
+	const sf::Color TextEntryBox::getTextOutlineColor() const {
+		return m_textOutlineColor;
+	}
+
+	////////////////////////////////////////////////////////////
+	float TextEntryBox::getTextOutlineThickness() const {
+		return m_textOutlineThickness;
 	}
 
 	////////////////////////////////////////////////////////////
@@ -370,7 +390,7 @@ namespace spss {
 	////////////////////////////////////////////////////////////
 	void TextEntryBox::setTextString(const std::string& _str) {
 		m_text.setString(_str);
-		m_text.setOutlineThickness(m_outlineThickness);
+		m_text.setOutlineThickness(m_textOutlineThickness);
 		updateCaret();
 	}
 
@@ -390,8 +410,8 @@ namespace spss {
 			char charAtPos{textStr.at(i)};
 			auto glyph{m_font.getGlyph(charAtPos, m_charSize, false, m_text.getOutlineThickness(i))};
 			auto charWidth{glyph.bounds.width};
-			auto fillColor{m_fillColor};
-			auto outlineColor{m_outlineColor};
+			auto fillColor{m_textFillColor};
+			auto outlineColor{m_textOutlineColor};
 
 			if (pos.x < rectBounds.left || (pos.x + charWidth) > (rectBounds.left + rectBounds.width)) {
 				fillColor    = sf::Color::Transparent;
