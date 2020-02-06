@@ -298,6 +298,9 @@ namespace spss {
 			target.draw(m_rectangle, states);
 			target.draw(m_text, states);
 			target.draw(m_highlightedRectangle, states);
+		}
+
+		if (m_enteringText) {
 			target.draw(m_caret, states);
 		}
 	}
