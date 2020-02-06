@@ -79,7 +79,7 @@ namespace spss {
 		sf::RenderWindow& m_window;
 
 	  private:
-	  	bool m_pollPreviousState;
+		bool m_pollPreviousState;
 		bool m_drawPreviousState;
 		bool m_updatePreviousState;
 	};

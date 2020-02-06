@@ -149,8 +149,8 @@ namespace spss {
 		////////////////////////////////////////////////////////////
 
 		void addMenuItem(const std::string&       _string,
-						 spss::Function<std::any> f        = nullptr,
-						 int                      _keyCode = sf::Keyboard::Unknown);
+		                 spss::Function<std::any> f        = nullptr,
+		                 int                      _keyCode = sf::Keyboard::Unknown);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Add a clickable menu item

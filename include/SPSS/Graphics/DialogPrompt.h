@@ -23,7 +23,7 @@
 namespace spss {
 	class DialogPrompt : public spss::DrawableToWindow {
 	  public:
-	  	////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////
 		/// \brief Construct the DialogPrompt
 		///
 		/// \param _textEntryEnabled  Whether text entry is enabled
@@ -40,9 +40,8 @@ namespace spss {
 		             const sf::Font&     _font,
 		             const std::string&  _promptTitle,
 		             const unsigned int  _titleCharSize = 22,
-					 const std::string&  _boxDefaultStr = "",
-		             const unsigned int  _boxCharSize   = 20
-		             );
+		             const std::string&  _boxDefaultStr = "",
+		             const unsigned int  _boxCharSize   = 20);
 
 		////////////////////////////////////////////////////////////
 		/// \brief Get input
@@ -147,9 +146,9 @@ namespace spss {
 		void setDraggable(bool _d);
 
 	  private:
-	  	////////////////////////////////////////////////////////////
-	  	/// This struct will represent the clickable buttons
-	  	///
+		////////////////////////////////////////////////////////////
+		/// This struct will represent the clickable buttons
+		///
 		struct Button {
 			sf::RectangleShape       m_shape;
 			sf::Text                 m_text;

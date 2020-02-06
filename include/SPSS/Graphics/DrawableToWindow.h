@@ -18,7 +18,7 @@
 namespace spss {
 	class DrawableToWindow : public sf::Drawable {
 	  public:
-	  	////////////////////////////////////////////////////////////
+		////////////////////////////////////////////////////////////
 		/// \brief Draw the text to a render window
 		///
 		/// This function is abstract and must be defined by any

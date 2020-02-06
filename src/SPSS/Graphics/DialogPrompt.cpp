@@ -21,12 +21,12 @@ namespace spss {
 
 	////////////////////////////////////////////////////////////
 	DialogPrompt::DialogPrompt(bool                _textEntryEnabled,
-		                       const sf::Vector2f& _position,
-		                       const sf::Font&     _font,
-		                       const std::string&  _promptTitle,
-		                       const unsigned int  _titleCharSize,
-					           const std::string&  _boxDefaultStr,
-		                       const unsigned int  _boxCharSize)
+	                           const sf::Vector2f& _position,
+	                           const sf::Font&     _font,
+	                           const std::string&  _promptTitle,
+	                           const unsigned int  _titleCharSize,
+	                           const std::string&  _boxDefaultStr,
+	                           const unsigned int  _boxCharSize)
 	            : m_window{nullptr},
 	              m_font{_font},
 	              m_lastMousePosition{},
@@ -255,7 +255,7 @@ namespace spss {
 
 		auto bounds{m_rect.getLocalBounds()};
 		m_rect.setOrigin(bounds.left + (bounds.width / 2),
-						 bounds.top  + (bounds.height / 2));
+		                 bounds.top + (bounds.height / 2));
 
 		m_alignmentNeeded = true;
 	}
@@ -271,7 +271,7 @@ namespace spss {
 
 		auto bounds{m_rect.getLocalBounds()};
 		m_rect.setOrigin(bounds.left + (bounds.width / 2),
-						 bounds.top  + (bounds.height / 2));
+		                 bounds.top + (bounds.height / 2));
 
 		m_alignmentNeeded = true;
 	}
@@ -350,9 +350,9 @@ namespace spss {
 		//values will be the edges of the screen - the width/height.
 
 		sf::FloatRect validBounds{bounds.width / 2,
-								  bounds.height / 2,
-								  m_window->getView().getSize().x - (bounds.width),
-								  m_window->getView().getSize().y - (bounds.height)};
+		                          bounds.height / 2,
+		                          m_window->getView().getSize().x - (bounds.width),
+		                          m_window->getView().getSize().y - (bounds.height)};
 
 		if (newPos.x < validBounds.left) {
 			newPos.x = validBounds.left;
@@ -386,7 +386,7 @@ namespace spss {
 		//(which would return the center of the box, since the origin is always centered)
 
 		sf::Vector2f pos{rectBounds.left, rectBounds.top};
-		auto size{m_rect.getSize()};
+		auto         size{m_rect.getSize()};
 
 		m_title.setPosition({pos.x + TEXT_SIDE_PADDING, pos.y + TITLE_TOP_PADDING});
 
